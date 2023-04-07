@@ -1,6 +1,6 @@
 
 #include "delay.h"
-
+#include "displayLCD.h"
 #include "sys.h"
 #include "usart.h"
 #include "usmart.h"
@@ -17,10 +17,10 @@
 
 int main(void)
 {
-	int weekday;
+	
     u8 i=0;
     u8 time=0;
-    u8 display_string[100];
+    
     u8 printer_cmd[200];
     u8 flag = 1;
     u8 canbuf[8];
@@ -53,60 +53,31 @@ int main(void)
             break;
         delay_ms(200);
     }
-//	RTC_Init(2023,1,14,17,42,55);	  			//RTC初始化
-    while(flag)
-    {
-        if(USART3_RX_STA&0X8000)    //接收到数据
-        {
-            USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
-            if(USART3_RX_BUF[0] == 0xFE)
-            {
-                printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",time_info->w_year, time_info->w_month, time_info->w_date,time_info->hour,time_info->min,time_info->sec);
-                RTC_Init(time_info->w_year, time_info->w_month, time_info->w_date, time_info->hour, time_info->min, time_info->sec);	//RTC初始化
-                flag = 0;
-//				memset(USART3_TX_BUF,0,sizeof(USART3_TX_BUF));
-                USART3_TX_BUF[0] = 0xfe;
-                //USART3_TX_BUF[1] = 0xfe;
-                Usart_SendStr_length(USART3, USART3_TX_BUF, 1);
-            }
-            USART3_RX_STA = 0;
-        }
-    }
+	RTC_Init(2023,4,7,15,13,55);	  			//RTC初始化
+//    while(flag)
+//    {
+//        if(USART3_RX_STA&0X8000)    //接收到数据
+//        {
+//            USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
+//            if(USART3_RX_BUF[0] == 0xFE)
+//            {
+//                printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",time_info->w_year, time_info->w_month, time_info->w_date,time_info->hour,time_info->min,time_info->sec);
+//                RTC_Init(time_info->w_year, time_info->w_month, time_info->w_date, time_info->hour, time_info->min, time_info->sec);	//RTC初始化
+//                flag = 0;
+////				memset(USART3_TX_BUF,0,sizeof(USART3_TX_BUF));
+//                USART3_TX_BUF[0] = 0xfe;
+//                //USART3_TX_BUF[1] = 0xfe;
+//                Usart_SendStr_length(USART3, USART3_TX_BUF, 1);
+//            }
+//            USART3_RX_STA = 0;
+//        }
+//    }
     while(1)
     {
         if(time!=calendar.sec)
         {
             time=calendar.sec;
-            printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year,calendar.w_month,calendar.w_date,calendar.hour,calendar.min,calendar.sec);
-//            memset(display_string, 0, 100);
-//			sprintf(display_string, "test");
-//			ShowString(0xB1,0x18, 0x23,display_string,12);
-
-			weekday = WeekYearday(calendar.w_year,calendar.w_month,calendar.w_date);
-			
-			
-			displayIcon(0xB0,0x10, 0x0,icon_4G);
-			displayIcon(0xB0,0x11, 0x0,icon_beidou);
-			displayIcon(0xB0,0x12, 0x0,icon_ppl);
-			displayIcon(0xB0,0x13, 0x0,icon_SD);
-			displayIcon(0xB0,0x14, 0x0,icon_charged);
-//			displayIcon(0xB0,0x14, 0x0,icon_battery);
-			
-//			displayIcon(0xB0,0x17, 0x0,icon_test);
-			
-			
-			
-			
-            displayChineseBreak(0xB2,0x10, 0x0);
-			displayWeekday(0xB4,0x10,0x0,weekday);
-//            displayChineseSpeed(0xB4,0x10, 0x0);
-//			sprintf(display_string,"%3d",velocity);
-            sprintf(display_string,"100",3);
-            ShowString(0xB2,0x13, 0x0c,display_string,24);
-            sprintf(display_string,"km/h");
-            ShowString(0xB3,0x16, 0x04,display_string,16);
-            sprintf(display_string,"%04d-%02d-%02d,%02d:%02d:%02d",calendar.w_year,calendar.w_month,calendar.w_date,calendar.hour,calendar.min,calendar.sec);
-            ShowString(0xB6,0x10, 0x00,display_string,12);
+			showMainMenu();
 
             car_info.mileage = car_info.mileage + 1;
             car_info.velocity = car_info.velocity + 1;

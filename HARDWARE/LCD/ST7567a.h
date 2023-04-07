@@ -83,7 +83,9 @@ extern  unsigned char shu1[];
 extern  unsigned char shu2[];
 extern  unsigned char shu3[];
 
-
+extern unsigned char need_break[][24];
+extern unsigned char over_speed[][24];
+extern unsigned char weekday_array[][24];
 extern unsigned char icon_test[][16];
 extern unsigned char icon_4G[][16];
 extern unsigned char icon_beidou[][16];
@@ -99,16 +101,10 @@ void LcdInitial(void);
 void dispchar(unsigned char page,unsigned char CaddrH,unsigned char CaddrL,unsigned char StartL, unsigned char num);
 void LcdFill(unsigned char buffera,unsigned char bufferb,unsigned char bufferc,unsigned char bufferd);
 void ShowString(unsigned char page,unsigned char CaddrH,unsigned char CaddrL,unsigned char *chr,u8 size1);
-void displayChineseSpeed(unsigned char page,unsigned char CaddrH,unsigned char CaddrL);
-void displayChineseBreak(unsigned char page,unsigned char CaddrH,unsigned char CaddrL);
-void displayWeekday(unsigned char page,unsigned char CaddrH,unsigned char CaddrL,int weekday);
-
-void displayIcon(unsigned char page,unsigned char CaddrH,unsigned char CaddrL, unsigned char arr[2][16]);
-
-void displayIcon4G(unsigned char page,unsigned char CaddrH,unsigned char CaddrL);
-void displayBeidou(unsigned char page,unsigned char CaddrH,unsigned char CaddrL);
-void displayPPL(unsigned char page,unsigned char CaddrH,unsigned char CaddrL);
-int WeekYearday(int years, int months, int days);
+void SendDataByte(unsigned char data1);
+void SendCmdByte(unsigned char cmd1);
+void SendCmdWord(unsigned char cmdh,unsigned char cmdl);
+void SendByte(unsigned char databyte);
 
 
 //void ST7567_WR_Byte(uint8_t chData , uint8_t chCmd);
