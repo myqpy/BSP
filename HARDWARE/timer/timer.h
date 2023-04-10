@@ -15,8 +15,8 @@
 //All rights reserved									  
 //********************************************************************************
 extern	uint32_t distance;
-extern	uint16_t pluse_counter_2;
-extern	uint16_t pluse_counter_1;
+extern	uint16_t pulse_counter_2;
+extern	uint16_t pulse_counter_1;
 extern	uint32_t velocity;
 extern 	uint32_t impulse_ratio;
 extern	car_info_t car_info;

@@ -7,101 +7,101 @@
 #pragma pack(1)
 typedef struct TerminalParameters_str
 {
-	unsigned int impulse_ratio;//脉冲系数，车辆每前进1公里收到的脉冲数
-	unsigned int mileage;
-}TerminalParameters_t;
+    unsigned int impulse_ratio;//脉冲系数，车辆每前进1公里收到的脉冲数
+    unsigned int mileage;
+} TerminalParameters_t;
 
- typedef struct car_info_str
+typedef struct car_info_str
 {
-	unsigned char op;
-	unsigned int mileage;
-	unsigned int velocity;
-	unsigned char driver_num[18];//机动车驾驶证号码
-	unsigned char fire;//点火状态
-	unsigned char brake;//刹车状态
-	unsigned char left;//左转灯
-	unsigned char right;//右转灯	
-	unsigned char low_beam;//近光灯
-	unsigned char hign_beam;//远光灯		
-}car_info_t;
+    unsigned char op;
+    unsigned int mileage;
+    unsigned int velocity;
+    unsigned char driver_num[18];//机动车驾驶证号码
+    unsigned char fire;//点火状态
+    unsigned char brake;//刹车状态
+    unsigned char left;//左转灯
+    unsigned char right;//右转灯
+    unsigned char low_beam;//近光灯
+    unsigned char hign_beam;//远光灯
+} car_info_t;
 
- typedef struct car_time_str
+typedef struct car_time_str
 {
-	unsigned char op;
-	unsigned char hour;
-	unsigned char min;
-	unsigned char sec;			
-	//公历日月年周
-	unsigned short int w_year;
-	unsigned char  w_month;
-	unsigned char  w_date;
-}time_t;
+    unsigned char op;
+    unsigned char hour;
+    unsigned char min;
+    unsigned char sec;
+    //公历日月年周
+    unsigned short int w_year;
+    unsigned char  w_month;
+    unsigned char  w_date;
+} time_t;
 
 #endif // JT808_TERMINAL_PARAMETER_H_
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //#ifndef JT808_TERMINAL_PARAMETER_H_
 //#define JT808_TERMINAL_PARAMETER_H_
 
@@ -133,13 +133,13 @@ typedef struct TerminalParameters_str
 ////    kSMSMsgRetransmissionTimes = 0x0007,
 ////    // DWORD, 位置汇报策略, 0:定时汇报; 1:定距汇报; 2:定时和定距汇报.
 
-//		
+//
 //		kMainServerAddress = 0x0013,
 //		//STRING, 主服务器地址,IP 或域名
-//		
+//
 //		kServerPort = 0x0018,
 //		//DWORD, 服务器 TCP 端口
-//		
+//
 ////    kLocationReportWay = 0x0020,
 ////    // DWORD, 位置汇报方案, 0:根据 ACC 状态; 1:根据登录状态和ACC
 ////    //        状态, 先判断登录状态, 若登录再根据 ACC 状态.
@@ -187,16 +187,16 @@ typedef struct TerminalParameters_str
 ////    //        bit3, 0: 禁用Galileo定位, 1: 启用Galileo定位.
 //		kProvinceID = 0x0081,
 //		// WORD, 车辆所在的省域 ID
-//		
+//
 //		KCityID = 0x0082,
 //		// WORD, 车辆所在的市域 ID
-//		
+//
 //		KCarPlateNum = 0x0083,
 //		//STRING, 公安交通管理部门颁发的机动车号牌
-//		
+//
 //		KCarPlateColor = 0x0084,
 //		//车牌颜色，按照 JT/T415-2006 的 5.4.12
-//		
+//
 //    kGNSSPositionMode = 0x0090,
 //    // BYTE,  GNSS波特率, 定义如下:
 //    //        0x00: 4800; 0x01: 9600: 0x02: 19200;

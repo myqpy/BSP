@@ -1,4 +1,4 @@
-
+#include "key.h"
 #include "delay.h"
 #include "displayLCD.h"
 #include "sys.h"
@@ -29,7 +29,7 @@ int main(void)
 
     impulse_ratio = 570;
     car_info.op = 0xfe;
-
+	KEY_Init();
     delay_init();	    	 //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置中断优先级分组为组2：2位抢占优先级，2位响应优先级
     uart_init(115200);	 	//串口初始化为115200
@@ -53,7 +53,7 @@ int main(void)
             break;
         delay_ms(200);
     }
-	RTC_Init(2023,4,7,15,13,55);	  			//RTC初始化
+	RTC_Init(2023,4,10,8,57,55);	  			//RTC初始化
 //    while(flag)
 //    {
 //        if(USART3_RX_STA&0X8000)    //接收到数据
@@ -77,10 +77,14 @@ int main(void)
         if(time!=calendar.sec)
         {
             time=calendar.sec;
-			showMainMenu();
+			showMainMenu(3000,car_info.velocity);
 
             car_info.mileage = car_info.mileage + 1;
             car_info.velocity = car_info.velocity + 1;
+			if(car_info.velocity>66)
+			{
+				car_info.velocity = 0;
+			}
 //			car_info.status = GPIO_Scan();
 //			car_info.brake;
             Usart_SendStr_length(USART3, (uint8_t*)&car_info, sizeof(car_info_t));

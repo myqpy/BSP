@@ -341,7 +341,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\RTC;..\USMART;..\HARDWARE\IIC;..\HARDWARE\24CXX;..\HARDWARE\LCD;..\HARDWARE\printer;..\HARDWARE\timer;..\HARDWARE\USART3;.\inlcude;..\HARDWARE\CAN;..\HARDWARE\GPIO</IncludePath>
+              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\RTC;..\USMART;..\HARDWARE\IIC;..\HARDWARE\24CXX;..\HARDWARE\LCD;..\HARDWARE\printer;..\HARDWARE\timer;..\HARDWARE\USART3;.\inlcude;..\HARDWARE\CAN;..\HARDWARE\GPIO;..\HARDWARE\KEY</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -454,6 +454,11 @@
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\GPIO\gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\KEY\key.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -75,26 +75,6 @@
 #define ST7567_CMD   0    //Ð´ÃüÁî
 #define ST7567_DATA  1    //Ð´Êý¾Ý
 
-
-
-
-
-extern  unsigned char shu1[];
-extern  unsigned char shu2[];
-extern  unsigned char shu3[];
-
-extern unsigned char need_break[][24];
-extern unsigned char over_speed[][24];
-extern unsigned char weekday_array[][24];
-extern unsigned char icon_test[][16];
-extern unsigned char icon_4G[][16];
-extern unsigned char icon_beidou[][16];
-extern unsigned char icon_ppl[][16];
-extern unsigned char icon_SD[][16];
-extern unsigned char icon_charged[][16];
-extern unsigned char icon_battery[][16];
-
-
 void Delay_nms(uint16_t nms);
 void LcdInitial(void);
 //void LcdFrame(); 
@@ -106,29 +86,5 @@ void SendCmdByte(unsigned char cmd1);
 void SendCmdWord(unsigned char cmdh,unsigned char cmdl);
 void SendByte(unsigned char databyte);
 
-
-//void ST7567_WR_Byte(uint8_t chData , uint8_t chCmd);
-//void ST7567_Init();
-//void ST7567_Clear(uint8_t a);
-//void ST7567_Refresh_Gram(void);
-
-//void ST7567_battery_show(void);
-//void ST7567_disk_show(void);
-//void ST7567_memory_show(void);
-//void ST7567_laser_show(void);
-//void ST7567_temperature_show(void);
-//void ST7567_image_show(void);
-//void ST7567_symbol_show(void);
-//void ST7567_data1_show(uint8_t temp);
-//void ST7567_data2_show(uint8_t temp);
-//void ST7567_data3_show(uint8_t temp);
-//void ST7567_data4_show(uint8_t temp);
-
-//void ST7567_data1_small_show(uint8_t temp);
-//void ST7567_data2_small_show(uint8_t temp);
-//void ST7567_data3_small_show(uint8_t temp);
-//void ST7567_data4_small_show(uint8_t temp);
-
-//void Unit_show(uint8_t row,uint8_t a);
 
 #endif 

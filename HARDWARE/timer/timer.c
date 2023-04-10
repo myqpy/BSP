@@ -1,8 +1,8 @@
 #include "timer.h"
 #include "terminal_parameter.h"
 uint32_t distance = 0;
-uint16_t pluse_counter_2 = 0;
-uint16_t pluse_counter_1 = 0;
+uint16_t pulse_counter_2 = 0;
+uint16_t pulse_counter_1 = 0;
 uint32_t velocity = 0;
 uint32_t impulse_ratio = 0;
 car_info_t car_info;
@@ -104,18 +104,18 @@ void TIM6_IRQHandler(void)   //TIM6中断
 	if (TIM_GetITStatus(TIM6, TIM_IT_Update) != RESET)  //检查TIM3更新中断发生与否
 	{
 		TIM_ClearITPendingBit(TIM6, TIM_IT_Update);  //清除TIMx更新中断标志 
-		pluse_counter_1 = TIM_GetCounter(TIM3);
-		if(pluse_counter_1 != pluse_counter_2)
+		pulse_counter_1 = TIM_GetCounter(TIM3);
+		if(pulse_counter_1 != pulse_counter_2)
 		{
-			if(pluse_counter_1 >= pluse_counter_2)
+			if(pulse_counter_1 >= pulse_counter_2)
 			{
-				velocity = pluse_counter_1 - pluse_counter_2;
+				velocity = pulse_counter_1 - pulse_counter_2;
 			}
 			else
 			{
-				velocity = impulse_ratio - pluse_counter_2 + pluse_counter_1;
+				velocity = impulse_ratio - pulse_counter_2 + pulse_counter_1;
 			}
-			pluse_counter_2 = pluse_counter_1;
+			pulse_counter_2 = pulse_counter_1;
 			velocity = velocity*3600/impulse_ratio;
 			car_info.velocity = velocity;
 		}
