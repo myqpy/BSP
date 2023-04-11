@@ -22,7 +22,7 @@ void KEY_Init(void)
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE,ENABLE);//使能PORTA,PORTC时钟
 
-    GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);//关闭jtag，使能SWD，可以用SWD模式调试
+//    GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);//关闭jtag，使能SWD，可以用SWD模式调试
 
     GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_2;//PE2
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; //设置成上拉输入

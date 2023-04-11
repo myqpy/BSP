@@ -16,6 +16,7 @@ extern unsigned char icon_SD[][16];
 extern unsigned char icon_charged[][16];
 extern unsigned char icon_battery[][16];
 
+void LCD_Clear(void);
 void displayEmpty(unsigned char page,unsigned char CaddrH,unsigned char CaddrL);
 void displayChineseSpeed(unsigned char page,unsigned char CaddrH,unsigned char CaddrL);
 void displayChineseBreak(unsigned char page,unsigned char CaddrH,unsigned char CaddrL);
