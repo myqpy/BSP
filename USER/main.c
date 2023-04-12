@@ -80,33 +80,10 @@ int main(void)
         {
             time=calendar.sec;
 
-				
-//                t=KEY_Scan(0);		//得到键值
-//                switch(t)
-//                {                
-//					
-//				case KEY_menu_PRES:
-//                    printf("菜单 press\r\n");
-//                    break;
-//                case KEY_confirmed_PRES:
-//                    printf("确定 press\r\n");
-
-//                    break;
-//                case KEY_DownArrow_PRES:
-//                    printf("↓ press\r\n");
-//                    break;
-//                case KEY_UpArrow_PRES:
-//                    printf("↑ press\r\n");
-//                    break;
-
-//                default:
-//                    showMainMenu(3000,car_info.velocity);
-//                    break;
-//                }=
 
 
-//            car_info.mileage = car_info.mileage + 1;
-//            car_info.velocity = car_info.velocity + 1;
+//          car_info.mileage = car_info.mileage + 1;
+//          car_info.velocity = car_info.velocity + 1;
 //			if(car_info.velocity>66)
 //			{
 //				car_info.velocity = 0;
