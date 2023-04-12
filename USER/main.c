@@ -4,6 +4,7 @@
 #include "sys.h"
 #include "usart.h"
 #include "usmart.h"
+#include "menu.h"
 #include "rtc.h"
 #include "ST7567a.h"
 #include "timer.h"
@@ -20,7 +21,7 @@ int main(void)
 
     u8 i=0;
     u8 time=0;
-    u8 t=0;
+//    u8 t=0;
     u8 printer_cmd[200];
     u8 flag = 1;
     u8 canbuf[8];
@@ -53,7 +54,7 @@ int main(void)
             break;
         delay_ms(200);
     }
-    RTC_Init(2023,4,10,8,57,55);	  			//RTC初始化
+    RTC_Init(2023,4,12,8,57,55);	  			//RTC初始化
 //    while(flag)
 //    {
 //        if(USART3_RX_STA&0X8000)    //接收到数据
@@ -74,40 +75,34 @@ int main(void)
 //    }
     while(1)
     {
+		MENU_processing();
         if(time!=calendar.sec)
         {
             time=calendar.sec;
 
+				
+//                t=KEY_Scan(0);		//得到键值
+//                switch(t)
+//                {                
+//					
+//				case KEY_menu_PRES:
+//                    printf("菜单 press\r\n");
+//                    break;
+//                case KEY_confirmed_PRES:
+//                    printf("确定 press\r\n");
 
+//                    break;
+//                case KEY_DownArrow_PRES:
+//                    printf("↓ press\r\n");
+//                    break;
+//                case KEY_UpArrow_PRES:
+//                    printf("↑ press\r\n");
+//                    break;
 
-            while(1)
-            {
-
-                t=KEY_Scan(0);		//得到键值
-                switch(t)
-                {                
-					
-				case KEY_menu_PRES:
-                    printf("菜单 press\r\n");
-//                  LCD_Clear();
-//					delay_ms(2000);
-                    break;
-                case KEY_confirmed_PRES:
-                    printf("确定 press\r\n");
-
-                    break;
-                case KEY_DownArrow_PRES:
-                    printf("↓ press\r\n");
-                    break;
-                case KEY_UpArrow_PRES:
-                    printf("↑ press\r\n");
-                    break;
-
-                default:
-                    showMainMenu(3000,car_info.velocity);
-                    break;
-                }
-            }
+//                default:
+//                    showMainMenu(3000,car_info.velocity);
+//                    break;
+//                }=
 
 
 //            car_info.mileage = car_info.mileage + 1;

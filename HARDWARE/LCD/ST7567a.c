@@ -491,7 +491,7 @@ void dispchar(unsigned char page,unsigned char CaddrH,unsigned char CaddrL,unsig
 //size1:字体大小
 //*chr:字符串起始地址
 //mode:0,反色显示;1,正常显示
-void ShowString(unsigned char page,unsigned char CaddrH,unsigned char CaddrL,unsigned char *chr,u8 size1)
+void ShowString(unsigned char page,unsigned char CaddrH,unsigned char CaddrL,char *chr,u8 size1)
 {
     while((*chr>=' ')&&(*chr<='~'))//判断是不是非法字符!
     {

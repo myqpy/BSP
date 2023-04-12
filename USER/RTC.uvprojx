@@ -341,7 +341,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\RTC;..\USMART;..\HARDWARE\IIC;..\HARDWARE\24CXX;..\HARDWARE\LCD;..\HARDWARE\printer;..\HARDWARE\timer;..\HARDWARE\USART3;.\inlcude;..\HARDWARE\CAN;..\HARDWARE\GPIO;..\HARDWARE\KEY</IncludePath>
+              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\RTC;..\USMART;..\HARDWARE\IIC;..\HARDWARE\24CXX;..\HARDWARE\LCD;..\HARDWARE\printer;..\HARDWARE\timer;..\HARDWARE\USART3;.\include;..\HARDWARE\CAN;..\HARDWARE\GPIO;..\HARDWARE\KEY;.\APP</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -399,11 +399,6 @@
               <FileName>system_stm32f10x.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\system_stm32f10x.c</FilePath>
-            </File>
-            <File>
-              <FileName>displayLCD.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\displayLCD.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -584,6 +579,21 @@
               <FileName>README.TXT</FileName>
               <FileType>5</FileType>
               <FilePath>..\README.TXT</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>APP</GroupName>
+          <Files>
+            <File>
+              <FileName>displayLCD.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\displayLCD.c</FilePath>
+            </File>
+            <File>
+              <FileName>menu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\menu.c</FilePath>
             </File>
           </Files>
         </Group>

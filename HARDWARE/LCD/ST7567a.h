@@ -80,7 +80,7 @@ void LcdInitial(void);
 //void LcdFrame(); 
 void dispchar(unsigned char page,unsigned char CaddrH,unsigned char CaddrL,unsigned char StartL, unsigned char num);
 void LcdFill(unsigned char buffera,unsigned char bufferb,unsigned char bufferc,unsigned char bufferd);
-void ShowString(unsigned char page,unsigned char CaddrH,unsigned char CaddrL,unsigned char *chr,u8 size1);
+void ShowString(unsigned char page,unsigned char CaddrH,unsigned char CaddrL, char *chr,u8 size1);
 void SendDataByte(unsigned char data1);
 void SendCmdByte(unsigned char cmd1);
 void SendCmdWord(unsigned char cmdh,unsigned char cmdl);
