@@ -37,6 +37,11 @@ typedef struct car_time_str
     unsigned char  w_date;
 } time_t;
 
+struct struct_rk_info
+{
+    unsigned char velocityStatus;
+};
+
 #endif // JT808_TERMINAL_PARAMETER_H_
 
 

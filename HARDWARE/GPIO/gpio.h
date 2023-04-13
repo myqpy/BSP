@@ -15,19 +15,26 @@
 //////////////////////////////////////////////////////////////////////////////////   	 
 
 
-
 #define GPIO0  GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_4)
 #define GPIO1  GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_3)
 #define GPIO2  GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_1)
 #define GPIO4  GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_0)
-//#define 
 
-//#define GPIO0_PRES 	1	//GPIO0按下
-//#define GPIO1_PRES	2	//GPIO1按下
-//#define GPIO2_PRES	3	//GPIO2按下
-//#define WKUP_PRES   4	//GPIO_UP按下(即WK_UP/GPIO_UP)
+
+#define KEY0	GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_2)//读取按键0
+#define KEY1	GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_3)//读取按键1
+#define KEY2   	GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_4)//读取按键2 
+#define KEY3   	GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_5)//读取按键3
+
+
+
+#define KEY_confirmed_PRES	1		//KEY0  
+#define KEY_DownArrow_PRES	2		//KEY1 
+#define KEY_UpArrow_PRES	3		//KEY2  
+#define KEY_menu_PRES	4		//KEY3  
 
 
 void InPut_Init(void);//IO初始化
-u8 GPIO_Scan(void);  	//按键扫描函数					    
+u8 GPIO_Scan(void);  	//按键扫描函数	
+u8 KEY_Scan(u8 mode);  	//按键扫描函数
 #endif

@@ -450,11 +450,6 @@
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\GPIO\gpio.c</FilePath>
             </File>
-            <File>
-              <FileName>key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\KEY\key.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

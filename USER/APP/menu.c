@@ -1,12 +1,14 @@
 
 #include "menu.h"
 #include "displayLCD.h"
-#include "key.h"
+#include "gpio.h"
 #include "delay.h"
 #include "ST7567a.h"
 #include "terminal_parameter.h"
 #include <stdio.h>
 
+
+//struct struct_rk_info *rk_info;
 int page = 0;
 int page_min = 0;
 int page_max = 3;
@@ -136,7 +138,6 @@ void MENU_processing(void)
             break;
         case KEY_confirmed_PRES:
             page++;
-			page1_row = 0xB0;
             if(page>=page_max) {
                 page=page_max;
             }
@@ -198,7 +199,6 @@ void MENU_processing(void)
             break;
         case KEY_confirmed_PRES:
             page++;
-			page2_row = 0xB0;
             if(page>=page_max) {
                 page=page_max;
             }
@@ -293,8 +293,10 @@ void MENU_processing(void)
             /*»ú¶¯³µºÅÅÆºÅÂë*/
             displayChinese_16x16(0xB2,0x10,0x0,Chinese_car_plate,0,4);
             displayChinese_16x16(0xB2,0x14,0x0,Chinese_car_plate,10,11);
+			
             displayChinese_16x16(0xB4,0x10,0x0,car_plate_province,10,10);
-            sprintf(printString,"A88888");
+            
+			sprintf(printString,"A88888");
             ShowString(0xB4,0x11, 0x0,printString,12);
             displayChinese_16x16(0xB6,0x10,0x0,pulseRatio,0,3);
             sprintf(printString,"6000");
