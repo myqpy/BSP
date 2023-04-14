@@ -1,4 +1,3 @@
-#include "key.h"
 #include "delay.h"
 #include "displayLCD.h"
 #include "sys.h"
@@ -53,7 +52,7 @@ int main(void)
             break;
         delay_ms(200);
     }
-    RTC_Init(2023,4,12,8,57,55);	  			//RTC初始化
+    RTC_Init(2023,4,13,17,49,55);	  			//RTC初始化
 //    while(flag)
 //    {
 //        if(USART3_RX_STA&0X8000)    //接收到数据

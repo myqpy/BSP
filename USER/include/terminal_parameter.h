@@ -39,6 +39,10 @@ typedef struct car_time_str
 
 struct struct_rk_info
 {
+	unsigned char EC20Status;
+	unsigned char BDStatus;
+	unsigned char SDStatus;
+	unsigned char cameraStatus;
     unsigned char velocityStatus;
 };
 

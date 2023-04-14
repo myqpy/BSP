@@ -90,7 +90,7 @@ void MENU_processing(void)
 
         }
 
-        showMainMenu(0,0);
+        showMainMenu(35999,122);
 
         if(page_status!=page)
         {
@@ -150,7 +150,8 @@ void MENU_processing(void)
         /*车辆及驾驶员信息*/
         displayChinese_16x16(0xB0,0x12,0x0,vehicle_driver_info,0,7);
         /*超时驾驶记录*/
-        displayChinese_16x16(0xB2,0x12,0x0,overTimeDriveRecord,1,6);
+        displayChinese_16x16(0xB2,0x12,0x0,overTimeDriveRecord,1,2);
+		displayChinese_16x16(0xB2,0x13,0x8,overTimeDriveRecord,5,8);
         sprintf(printString,"-->");
         ShowString(page1_row,0x10, 0x0,printString,12);
 
@@ -212,7 +213,7 @@ void MENU_processing(void)
         {
             /*车辆信息*/
             displayChinese_16x16(0xB0,0x12,0x0,vehicle_driver_info,0,1);
-            displayChinese_16x16(0xB0,0x14,0x0,vehicle_driver_info,6,7);
+            displayChinese_16x16(0xB0,0x13,0x8,vehicle_driver_info,6,7);
 
             /*驾驶员信息*/
             displayChinese_16x16(0xB2,0x12,0x0,vehicle_driver_info,3,7);
@@ -223,7 +224,8 @@ void MENU_processing(void)
         if(page1_row==0xB2)
         {
             /*无超时驾驶记录*/
-            displayChinese_16x16(0xB3,0x12,0x0,overTimeDriveRecord,0,6);
+            displayChinese_16x16(0xB3,0x12,0x0,overTimeDriveRecord,0,2);
+			displayChinese_16x16(0xB3,0x14,0x5,overTimeDriveRecord,5,8);
         }
 
 
@@ -289,10 +291,10 @@ void MENU_processing(void)
             displayChinese_16x16(0xB0,0x10,0x0,Chinese_car_plate,0,6);
             /*机动车号牌颜色*/
             displayChinese_16x16(0xB0,0x16,0x0,car_plate_color,1,1);
-            displayChinese_16x16(0xB0,0x17,0x0,car_plate_color,4,4);
+            displayChinese_16x16(0xB0,0x16,0xd,car_plate_color,4,4);
             /*机动车号牌号码*/
             displayChinese_16x16(0xB2,0x10,0x0,Chinese_car_plate,0,4);
-            displayChinese_16x16(0xB2,0x14,0x0,Chinese_car_plate,10,11);
+            displayChinese_16x16(0xB2,0x13,0xd,Chinese_car_plate,10,11);
 			
             displayChinese_16x16(0xB4,0x10,0x0,car_plate_province,10,10);
             
@@ -312,12 +314,12 @@ void MENU_processing(void)
             displayChinese_16x16(0xB0,0x10,0x0,car_IO_status,0,1);
             /*空挡*/
             displayChinese_16x16(0xB2,0x10,0x0,car_IO_status,2,2);
-            displayChinese_16x16(0xB2,0x11,0x0,car_IO_status,4,4);
+            displayChinese_16x16(0xB2,0x10,0xc,car_IO_status,4,4);
             /*倒挡*/
             displayChinese_16x16(0xB4,0x10,0x0,car_IO_status,3,4);
             /*远光灯*/
             displayChinese_16x16(0xB6,0x10,0x0,car_IO_status,5,6);
-            displayChinese_16x16(0xB6,0x12,0x0,car_IO_status,13,13);
+            displayChinese_16x16(0xB6,0x11,0x8,car_IO_status,13,13);
 
         }
         if(page1_row==0xB0 && page2_row==0xB0 && page3_row==0xB4)
@@ -325,14 +327,14 @@ void MENU_processing(void)
 //			LCD_Clear();
             /*近光灯*/
             displayChinese_16x16(0xB0,0x10,0x0,car_IO_status,7,8);
-            displayChinese_16x16(0xB0,0x12,0x0,car_IO_status,13,13);
+            displayChinese_16x16(0xB0,0x11,0x8,car_IO_status,13,13);
             /*右转向灯*/
             displayChinese_16x16(0xB2,0x10,0x0,car_IO_status,9,9);
-            displayChinese_16x16(0xB2,0x11,0x0,car_IO_status,11,12);
-            displayChinese_16x16(0xB2,0x13,0x0,car_IO_status,13,13);
+            displayChinese_16x16(0xB2,0x10,0xc,car_IO_status,11,12);
+            displayChinese_16x16(0xB2,0x12,0x4,car_IO_status,13,13);
             /*左转向灯*/
             displayChinese_16x16(0xB4,0x10,0x0,car_IO_status,10,12);
-            displayChinese_16x16(0xB4,0x13,0x0,car_IO_status,13,13);
+            displayChinese_16x16(0xB4,0x12,0x5,car_IO_status,13,13);
             /*制动*/
             displayChinese_16x16(0xB6,0x10,0x0,car_IO_status,14,15);
         }
@@ -344,7 +346,7 @@ void MENU_processing(void)
         {
             /*机动车驾驶证号码*/
             displayChinese_16x16(0xB0,0x10,0x0,Chinese_car_plate,0,2);
-            displayChinese_16x16(0xB0,0x13,0x0,Chinese_car_plate,7,11);
+            displayChinese_16x16(0xB0,0x12,0x6,Chinese_car_plate,7,11);
             sprintf(printString,"410105199607150035");
             ShowString(0xB2,0x10, 0x0,printString,12);
         }
