@@ -44,14 +44,15 @@ int main(void)
     printer_init(115200);//打印机
     CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,CAN_Mode_LoopBack);//CAN初始化环回模式,波特率500Kbps
     InPut_Init();//外部开关量
-    while(AT24CXX_Check())
-    {
-        printf("card don't insert\r\n");
-        i++;
-        if(i > 5)
-            break;
-        delay_ms(200);
-    }
+//    while(AT24CXX_Check())
+//    {
+//        printf("card don't insert\r\n");
+//        i++;
+//        if(i > 5)
+//            break;
+//        delay_ms(200);
+//    }
+	
     RTC_Init(2023,4,13,17,49,55);	  			//RTC初始化
 //    while(flag)
 //    {

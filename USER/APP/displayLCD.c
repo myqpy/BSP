@@ -2,6 +2,12 @@
 #include "usart.h"
 #include "ST7567a.h"
 #include "rtc.h"
+#include "24cxx.h"
+
+unsigned char icon_empty[][16]= {
+{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00},
+{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00},
+};
 
 unsigned char icon_test[][16]= {
 {0xF8,0xFC,0x0C,0x7C,0xFE,0xFF,0xFF,0xFF,0xFF,0xFF,0xFE,0x7C,0x0C,0x0C,0xFC,0xF8},
@@ -209,6 +215,7 @@ unsigned char car_IO_status[][24]= {
 int weekday = 0;
 int time_h=0,time_m=0,time_s=0;
 char display_string[100];
+extern car_info_t car_info;
 
 void LCD_Clear(void)
 {
@@ -271,7 +278,7 @@ void displayChinese_16x16(unsigned char page,unsigned char CaddrH,unsigned char 
 	}
 }
 
-void showMainMenu(int time, int velocity)
+void showMainMenu(int time, int velocity,struct struct_rk_info *rk_info)
 {
 //    printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year,calendar.w_month,calendar.w_date,calendar.hour,calendar.min,calendar.sec);
 
@@ -279,14 +286,63 @@ void showMainMenu(int time, int velocity)
     weekday = WeekYearday(calendar.w_year,calendar.w_month,calendar.w_date);
 
 
-    displayIcon(0xB0,0x10, 0x0,icon_4G);
-    displayIcon(0xB0,0x11, 0x0,icon_beidou);
-    displayIcon(0xB0,0x12, 0x0,icon_ppl);
-    displayIcon(0xB0,0x13, 0x0,icon_SD);
-    displayIcon(0xB0,0x14, 0x0,icon_charged);
-	displayIcon(0xB0,0x15, 0x0,icon_camera);
+	if(rk_info->EC20Status == 1)
+	{
+		displayIcon(0xB0,0x10, 0x0,icon_4G);
+	}
+	else
+	{
+		displayIcon(0xB0,0x10, 0x0,icon_empty);
+	}
+    
 	
-//	displayIcon(0xB0,0x14, 0x0,icon_battery);
+	if(rk_info->BDStatus == 1)
+	{
+		displayIcon(0xB0,0x11, 0x0,icon_beidou);
+	}
+	else
+	{
+		displayIcon(0xB0,0x11, 0x0,icon_empty);
+	}
+    
+	if(!AT24CXX_Check())
+	{
+		displayIcon(0xB0,0x12, 0x0,icon_ppl);
+	}
+	else
+	{
+		displayIcon(0xB0,0x12, 0x0,icon_empty);
+	}
+    
+	if(rk_info->SDStatus == 1)
+	{
+		displayIcon(0xB0,0x13, 0x0,icon_SD);
+	}
+	else
+	{
+		displayIcon(0xB0,0x13, 0x0,icon_empty);
+	}
+    
+	if(car_info.isCharged == 1)
+	{
+		displayIcon(0xB0,0x14, 0x0,icon_charged);
+	}
+    else
+	{
+		displayIcon(0xB0,0x14, 0x0,icon_battery);
+	}
+	
+	if(rk_info->cameraStatus == 1)
+	{
+		displayIcon(0xB0,0x15, 0x0,icon_camera);
+	}
+	else
+	{
+		displayIcon(0xB0,0x15, 0x0,icon_empty);
+	}
+	
+	
+
 
 //	displayIcon(0xB0,0x17, 0x0,icon_test);
 

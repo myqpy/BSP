@@ -23,6 +23,7 @@ typedef struct car_info_str
     unsigned char right;//右转灯
     unsigned char low_beam;//近光灯
     unsigned char hign_beam;//远光灯
+	unsigned char isCharged; //外部供电or电池供电
 } car_info_t;
 
 typedef struct car_time_str

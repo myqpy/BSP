@@ -1,9 +1,8 @@
 
 #include "sys.h"	    
+#include "terminal_parameter.h"
 
 
-
-void showMainMenu(int time, int velocity);
 
 
 extern unsigned char vehicle_driver_info[][24];
@@ -15,7 +14,7 @@ extern unsigned char car_plate_province[][24];
 extern unsigned char car_IO_status[][24];
 
 void LCD_Clear(void);
-
+void showMainMenu(int time, int velocity,struct struct_rk_info *rk_info);
 void displayEmpty(unsigned char page,unsigned char CaddrH,unsigned char CaddrL);
 void displayChinese_16x16(unsigned char page,unsigned char CaddrH,unsigned char CaddrL,unsigned char arr[][24],unsigned char startWord, unsigned char endWord);
 
@@ -23,6 +22,7 @@ void displayWeekday(unsigned char page,unsigned char CaddrH,unsigned char CaddrL
 
 
 void displayIcon(unsigned char page,unsigned char CaddrH,unsigned char CaddrL, unsigned char arr[2][16]);
+
 
 int WeekYearday(int years, int months, int days);
 
