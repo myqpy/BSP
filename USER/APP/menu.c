@@ -8,7 +8,6 @@
 #include <stdio.h>
 
 
-struct struct_rk_info *rk_info;
 int page = 0;
 int page_min = 0;
 int page_max = 3;
@@ -37,7 +36,7 @@ char printString[100];
 //
 //}
 
-void MENU_processing(void)
+void MENU_processing(struct struct_rk_info *rk_info, int time_second)
 {
     key_text=KEY_Scan(0);		//µÃµ½¼üÖµ
     if(page<=0)
@@ -90,7 +89,7 @@ void MENU_processing(void)
 
         }
 
-        showMainMenu(35999,122, rk_info);
+        showMainMenu(time_second,122, rk_info);
 
         if(page_status!=page)
         {

@@ -21,6 +21,8 @@ int main(void)
     u8 i=0;
     u8 time=0;
 //    u8 t=0;
+    struct struct_rk_info *rk_info;
+	u8 drive_time=0;
     u8 printer_cmd[200];
     u8 flag = 1;
     u8 canbuf[8];
@@ -29,6 +31,7 @@ int main(void)
 
     impulse_ratio = 570;
     car_info.op = 0xfe;
+
     delay_init();	    	 //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置中断优先级分组为组2：2位抢占优先级，2位响应优先级
     uart_init(115200);	 	//串口初始化为115200
@@ -44,16 +47,8 @@ int main(void)
     printer_init(115200);//打印机
     CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,CAN_Mode_LoopBack);//CAN初始化环回模式,波特率500Kbps
     InPut_Init();//外部开关量
-//    while(AT24CXX_Check())
-//    {
-//        printf("card don't insert\r\n");
-//        i++;
-//        if(i > 5)
-//            break;
-//        delay_ms(200);
-//    }
-	
-    RTC_Init(2023,4,13,17,49,55);	  			//RTC初始化
+	memset(USART3_RX_BUF,0,sizeof(USART3_RX_BUF));
+    RTC_Init(2023,4,18,9,37,55);	  			//RTC初始化
 //    while(flag)
 //    {
 //        if(USART3_RX_STA&0X8000)    //接收到数据
@@ -74,13 +69,13 @@ int main(void)
 //    }
     while(1)
     {
-		MENU_processing();
+        MENU_processing(rk_info, drive_time);
         if(time!=calendar.sec)
         {
             time=calendar.sec;
+			
 
-
-
+			drive_time++;
 //          car_info.mileage = car_info.mileage + 1;
 //          car_info.velocity = car_info.velocity + 1;
 //			if(car_info.velocity>66)
@@ -95,12 +90,38 @@ int main(void)
         if(USART3_RX_STA&0X8000)    //接收到数据
         {
             USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
+            if(USART3_RX_BUF[0] == 0xEE)
+            {
+                memcpy(rk_info,USART3_RX_BUF, USART3_RX_STA);
+				printf("rk_info->op:%02x\r\n", rk_info->op);
+				printf("rk_info->SDStatus:%02x\r\n", rk_info->SDStatus);
+//			printf("rk_info->EC20Status:%02x\r\n", rk_info->EC20Status);
+//			printf("rk_info->EC20SignalStrength:%02x\r\n", rk_info->EC20SignalStrength);
+//			printf("rk_info->cameraStatus:%02x\r\n", rk_info->cameraStatus);
+//			printf("rk_info->velocityStatus:%02x\r\n", rk_info->velocityStatus);
+//			printf("rk_info->BDStatus:%02x\r\n", rk_info->BDStatus);
+
+            }
+
             for(i = 0; i<USART3_RX_STA; i++)
             {
-                printf("%c",USART3_RX_BUF[i]);
+                printf("%02x ",USART3_RX_BUF[i]);
             }
+			printf("\r\n");
             USART3_RX_STA = 0;
+//			memset(USART3_RX_BUF,0,sizeof(USART3_RX_BUF));
         }
+
+//		if(USART3_RX_STA&0X8000)    //接收到数据
+//        {
+//            USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
+//            for(i = 0; i<USART3_RX_STA; i++)
+//            {
+//                printf("%c",USART3_RX_BUF[i]);
+//            }
+//            USART3_RX_STA = 0;
+//        }
+
         if(Can_Receive_Msg(canbuf))//接收到有数据
         {
             for(i = 0; i<sizeof(canbuf); i++)

@@ -4,13 +4,18 @@
 #include "sys.h"
 #include "stdlib.h"
 
-#pragma pack(1)
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
 typedef struct TerminalParameters_str
 {
     unsigned int impulse_ratio;//脉冲系数，车辆每前进1公里收到的脉冲数
     unsigned int mileage;
 } TerminalParameters_t;
+#pragma pack() // 恢复默认字节对齐
 
+
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
 typedef struct car_info_str
 {
     unsigned char op;
@@ -25,7 +30,10 @@ typedef struct car_info_str
     unsigned char hign_beam;//远光灯
 	unsigned char isCharged; //外部供电or电池供电
 } car_info_t;
+#pragma pack() // 恢复默认字节对齐
 
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
 typedef struct car_time_str
 {
     unsigned char op;
@@ -37,15 +45,22 @@ typedef struct car_time_str
     unsigned char  w_month;
     unsigned char  w_date;
 } time_t;
+#pragma pack() // 恢复默认字节对齐
 
+
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
 struct struct_rk_info
 {
-	unsigned char EC20Status;
-	unsigned char BDStatus;
-	unsigned char SDStatus;
-	unsigned char cameraStatus;
-    unsigned char velocityStatus;
+	unsigned char 	op;
+	unsigned char 	EC20Status;
+	unsigned char	EC20SignalStrength;
+	unsigned char 	BDStatus;
+	unsigned char 	SDStatus;
+	unsigned char 	cameraStatus;
+    unsigned char 	velocityStatus;
 };
+#pragma pack() // 恢复默认字节对齐
 
 #endif // JT808_TERMINAL_PARAMETER_H_
 
