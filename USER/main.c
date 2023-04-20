@@ -15,17 +15,18 @@
 #include "gpio.h"
 #include <string.h>
 
+
 int main(void)
 {
-
-    u8 i=0;
-    u8 time=0;
-//    u8 t=0;
-    struct struct_rk_info *rk_info;
+	
+    u8 i=0; 
+	u8 time=0;
+	u8 flag = 1;
 	u8 drive_time=0;
     u8 printer_cmd[200];
-    u8 flag = 1;
     u8 canbuf[8];
+	
+	struct struct_rk_info *rk_info;
     time_t *time_info = (time_t*)USART3_RX_BUF;
     u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
 
@@ -42,12 +43,12 @@ int main(void)
     USART3_Init(115200);//3399通信串口
     TIM3_ETR(impulse_ratio,0);//脉冲捕获计数器，统计里程
     TIM6_Int_Init(10000,7199);//脉冲计数器，一秒钟
+	Tim5_Int_Init(10000 - 1, 7199);
     LcdInitial();//显示屏
     AT24CXX_Init();//IIC初始化，读IC卡
     printer_init(115200);//打印机
     CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,CAN_Mode_LoopBack);//CAN初始化环回模式,波特率500Kbps
     InPut_Init();//外部开关量
-	memset(USART3_RX_BUF,0,sizeof(USART3_RX_BUF));
     RTC_Init(2023,4,18,9,37,55);	  			//RTC初始化
 //    while(flag)
 //    {
@@ -67,6 +68,7 @@ int main(void)
 //            USART3_RX_STA = 0;
 //        }
 //    }
+
     while(1)
     {
         MENU_processing(rk_info, drive_time);
@@ -93,21 +95,21 @@ int main(void)
             if(USART3_RX_BUF[0] == 0xEE)
             {
                 memcpy(rk_info,USART3_RX_BUF, USART3_RX_STA);
-				printf("rk_info->op:%02x\r\n", rk_info->op);
-				printf("rk_info->SDStatus:%02x\r\n", rk_info->SDStatus);
-//			printf("rk_info->EC20Status:%02x\r\n", rk_info->EC20Status);
-//			printf("rk_info->EC20SignalStrength:%02x\r\n", rk_info->EC20SignalStrength);
-//			printf("rk_info->cameraStatus:%02x\r\n", rk_info->cameraStatus);
-//			printf("rk_info->velocityStatus:%02x\r\n", rk_info->velocityStatus);
-//			printf("rk_info->BDStatus:%02x\r\n", rk_info->BDStatus);
+//				printf("rk_info->op:%02x\r\n", rk_info->op);
+//				printf("rk_info->SDStatus:%02x\r\n", rk_info->SDStatus);
+//				printf("rk_info->EC20Status:%02x\r\n", rk_info->EC20Status);
+//				printf("rk_info->EC20SignalStrength:%02x\r\n", rk_info->EC20SignalStrength);
+//				printf("rk_info->cameraStatus:%02x\r\n", rk_info->cameraStatus);
+//				printf("rk_info->velocityStatus:%02x\r\n", rk_info->velocityStatus);
+//				printf("rk_info->BDStatus:%02x\r\n", rk_info->BDStatus);
 
             }
 
-            for(i = 0; i<USART3_RX_STA; i++)
-            {
-                printf("%02x ",USART3_RX_BUF[i]);
-            }
-			printf("\r\n");
+//            for(i = 0; i<USART3_RX_STA; i++)
+//            {
+//                printf("%02x ",USART3_RX_BUF[i]);
+//            }
+//			printf("\r\n");
             USART3_RX_STA = 0;
 //			memset(USART3_RX_BUF,0,sizeof(USART3_RX_BUF));
         }
@@ -131,4 +133,5 @@ int main(void)
         }
     }
 }
+
 

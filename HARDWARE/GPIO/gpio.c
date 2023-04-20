@@ -16,6 +16,7 @@
 //////////////////////////////////////////////////////////////////////////////////  
 								    
 //按键初始化函数
+
 void InPut_Init(void) //IO初始化
 { 
  	GPIO_InitTypeDef GPIO_InitStructure;
@@ -50,6 +51,7 @@ u8 KEY_Scan(u8 mode)
     {
         delay_ms(10);//去抖动
         key_up=0;
+		
         if(KEY0==0)return KEY_confirmed_PRES;
 		
 		else if(KEY2==0)return KEY_UpArrow_PRES;
@@ -57,6 +59,8 @@ u8 KEY_Scan(u8 mode)
         else if(KEY1==0)return KEY_DownArrow_PRES;
         
 		else if(KEY3==0)return KEY_menu_PRES;
+		
+		
     } 
 	else if(KEY0==1&&KEY1==1&&KEY2==1&&KEY3==1)
 	{
@@ -64,4 +68,3 @@ u8 KEY_Scan(u8 mode)
 	}
     return 0;// 无按键按下
 }
-
