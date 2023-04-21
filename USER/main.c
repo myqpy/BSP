@@ -22,9 +22,10 @@ int main(void)
     u8 i=0; 
 	u8 time=0;
 	u8 flag = 1;
-	u8 drive_time=0;
+	int drive_time=0;
     u8 printer_cmd[200];
     u8 canbuf[8];
+	int h,m,s;
 	
 	struct struct_rk_info *rk_info;
     time_t *time_info = (time_t*)USART3_RX_BUF;
@@ -77,7 +78,12 @@ int main(void)
             time=calendar.sec;
 			
 
-			drive_time++;
+			drive_time++;		
+			h=drive_time/3600;
+			m=drive_time%3600/60;
+			s=drive_time%60;
+			printf("%d \r\n",drive_time);
+			printf("%d %d %d \r\n \r\n",h,m,s);
 //          car_info.mileage = car_info.mileage + 1;
 //          car_info.velocity = car_info.velocity + 1;
 //			if(car_info.velocity>66)

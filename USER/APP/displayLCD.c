@@ -392,52 +392,32 @@ void showMainMenu(int time, int velocity,struct struct_rk_info *rk_info)
         displayEmpty(0xB4,0x12, 0x0);
     }
 
-//    sprintf(display_string,"100",3);
-    if(time>14400)
+    if(time>1)
     {
 		/*连续驾驶*/
         displayChinese_16x16(0xB2,0x10, 0x0,overTimeDriveRecord,3,6);
 		time_h=time/3600;
 		time_m=time%3600/60;
 		time_s=time%60;
-		if(time<36000 && time>1800)
-		{
-			sprintf(display_string,"%d",time_h);
-			ShowString(0xB2,0x13, 0x0,display_string,12);
-			/*时*/
-			displayChinese_16x16(0xB2,0x13,0x8,weekday_array,9,9);
-//			sprintf(display_string,"%d",time_m);
-//			ShowString(0xB2,0x14, 0x8,display_string,12);
-//			/*分*/
-//			displayChinese_16x16(0xB2,0x15,0x8,weekday_array,10,10);
-//			sprintf(display_string,"%d",time_s);
-//			ShowString(0xB2,0x16, 0x8,display_string,12);
-//			/*秒*/
-//			displayChinese_16x16(0xB2,0x17,0x8,weekday_array,11,11);	
-			sprintf(display_string,"%d",time_m);
-			ShowString(0xB2,0x14, 0x5,display_string,12);
-			/*分*/
-			displayChinese_16x16(0xB2,0x15,0x2,weekday_array,10,10);
-			sprintf(display_string,"%d",time_s);
-			ShowString(0xB2,0x16, 0x0,display_string,12);
-			/*秒*/
-			displayChinese_16x16(0xB2,0x16,0xe,weekday_array,11,11);			
-		}
-		else if(time>36000)
-		{
-			sprintf(display_string,"%d",time_h);
-			ShowString(0xB2,0x13, 0x0,display_string,12);
-			/*时*/
-			displayChinese_16x16(0xB2,0x13,0xd,weekday_array,9,9);
-			sprintf(display_string,"%d",time_m);
-			ShowString(0xB2,0x14, 0xa,display_string,12);
-			/*分*/
-			displayChinese_16x16(0xB2,0x15,0x8,weekday_array,10,10);
-			sprintf(display_string,"%d",time_s);
-			ShowString(0xB2,0x16, 0x5,display_string,12);
-			/*秒*/
-			displayChinese_16x16(0xB2,0x17,0x3,weekday_array,11,11);
-		}
+
+		sprintf(display_string,"%02d",time_h);
+		ShowString(0xB2,0x13, 0x2,display_string,12);
+		
+		/*时*/
+		displayChinese_16x16(0xB2,0x14,0x0,weekday_array,9,9);
+		
+		sprintf(display_string,"%02d",time_m);
+		ShowString(0xB2,0x14, 0xd,display_string,12);
+		
+		/*分*/
+		displayChinese_16x16(0xB2,0x15,0xa,weekday_array,10,10);
+		
+		sprintf(display_string,"%02d",time_s);
+		ShowString(0xB2,0x16, 0x7,display_string,12);
+		
+		/*秒*/
+		displayChinese_16x16(0xB2,0x17,0x5,weekday_array,11,11);
+
 
     }
     else
