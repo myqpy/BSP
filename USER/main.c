@@ -14,7 +14,7 @@
 #include "can.h"
 #include "gpio.h"
 #include <string.h>
-
+#include "adc.h"
 
 int main(void)
 {
@@ -25,6 +25,7 @@ int main(void)
 	int drive_time=0;
     u8 printer_cmd[200];
     u8 canbuf[8];
+	u16 volatageAD=0;
 	int h,m,s;
 	
 	struct struct_rk_info *rk_info;
@@ -44,13 +45,15 @@ int main(void)
     USART3_Init(115200);//3399通信串口
     TIM3_ETR(impulse_ratio,0);//脉冲捕获计数器，统计里程
     TIM6_Int_Init(10000,7199);//脉冲计数器，一秒钟
-	Tim5_Int_Init(10000 - 1, 7199);
+	Tim5_Int_Init(9, 7199);	//定时计数器，一毫秒
     LcdInitial();//显示屏
     AT24CXX_Init();//IIC初始化，读IC卡
-    printer_init(115200);//打印机
+//    printer_init(115200);//打印机
     CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,CAN_Mode_LoopBack);//CAN初始化环回模式,波特率500Kbps
     InPut_Init();//外部开关量
-    RTC_Init(2023,4,18,9,37,55);	  			//RTC初始化
+	Adc_Init();
+    RTC_Init(2023,4,23,15,54,50);	  			//RTC初始化
+//	RTC_Set(2023,4,23,16,39,10);
 //    while(flag)
 //    {
 //        if(USART3_RX_STA&0X8000)    //接收到数据
@@ -72,18 +75,21 @@ int main(void)
 
     while(1)
     {
-        MENU_processing(rk_info, drive_time);
+        MENU_processing(rk_info, drive_time,car_info.velocity);
+//		volatageAD = GPIO_ReadInputData(GPIOF,GPIO_Pin_8);
         if(time!=calendar.sec)
         {
             time=calendar.sec;
 			
-
+			printf("%d \r\n",volatageAD);
 			drive_time++;		
 			h=drive_time/3600;
 			m=drive_time%3600/60;
 			s=drive_time%60;
 			printf("%d \r\n",drive_time);
 			printf("%d %d %d \r\n \r\n",h,m,s);
+			printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year,calendar.w_month,calendar.w_date,calendar.hour,calendar.min,calendar.sec);
+
 //          car_info.mileage = car_info.mileage + 1;
 //          car_info.velocity = car_info.velocity + 1;
 //			if(car_info.velocity>66)

@@ -302,10 +302,11 @@ void displayChinese_16x16(unsigned char page,unsigned char CaddrH,unsigned char 
 
 void showMainMenu(int time, int velocity,struct struct_rk_info *rk_info)
 {
-//    printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year,calendar.w_month,calendar.w_date,calendar.hour,calendar.min,calendar.sec);
+//	printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year,calendar.w_month,calendar.w_date,calendar.hour,calendar.min,calendar.sec);
 
 
     weekday = WeekYearday(calendar.w_year,calendar.w_month,calendar.w_date);
+	if(weekday == 0) weekday = 7;
 
 
 	if(rk_info->EC20Status == 1)
@@ -350,7 +351,7 @@ void showMainMenu(int time, int velocity,struct struct_rk_info *rk_info)
 		displayIcon(0xB0,0x13, 0x0,icon_empty);
 	}
     
-	if(car_info.isCharged == 1)
+	if(car_info.isCharged == 0)
 	{
 		displayIcon(0xB0,0x14, 0x0,icon_charged);
 	}
@@ -389,10 +390,10 @@ void showMainMenu(int time, int velocity,struct struct_rk_info *rk_info)
     }
     else
     {
-        displayEmpty(0xB4,0x12, 0x0);
+        displayChinese_16x16(0xB4,0x13, 0x0, empty, 0,1);
     }
 
-    if(time>1)
+    if(time>=14400)
     {
 		/*Á¬Ðø¼ÝÊ»*/
         displayChinese_16x16(0xB2,0x10, 0x0,overTimeDriveRecord,3,6);

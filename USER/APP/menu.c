@@ -5,6 +5,7 @@
 #include "delay.h"
 #include "ST7567a.h"
 #include "terminal_parameter.h"
+#include "printer.h"
 #include <stdio.h>
 
 
@@ -28,9 +29,9 @@ unsigned char page3_row_max = 0xB4;
 //unsigned char page3_subPage_row_min = 0xB0;
 //unsigned char page3_subPage_row = 0xB0;
 //unsigned char page3_subPage_row_max = 0xB2;
-u8 time_1s=0;
+u16 time_1ms=0;
+u16 confirmed_pressed=0;
 u8 key_text=0;
-u8 time_key_press=0;
 char printString[100];
 
 //void key_process(void)}
@@ -38,18 +39,19 @@ char printString[100];
 //
 //}
 
-void MENU_processing(struct struct_rk_info *rk_info, int time_second)
+void MENU_processing(struct struct_rk_info *rk_info, int time_second,int velocity)
 {
-//	printf("%02x \r\n",time_1s);
-    delay_ms(5);
-    key_text=KEY_Scan(0);		//得到键值
 
-    if(key_text!=0)time_1s = 0;
-    if(time_1s>=10)
+    key_text=KEY_Scan(1);		//得到键值
+
+    if(key_text!=0)time_1ms = 0;
+    if(time_1ms>=10000)
     {
+        TIM_Cmd(TIM5,DISABLE);
         LCD_Clear();
         page=0;
-        time_1s = 0;
+        time_1ms = 0;
+		confirmed_pressed  = 0;
     }
 
     if(page<=0)
@@ -80,20 +82,31 @@ void MENU_processing(struct struct_rk_info *rk_info, int time_second)
 //            LCD_Clear();
 //            break;
         case KEY_menu_PRES:
+			TIM_Cmd(TIM5,DISABLE);
+            TIM_Cmd(TIM5,ENABLE);
             page=page+1;
             if(page>=page_max) page=page_max;
             if(page<=page_min) page=page_min;
             LCD_Clear();
             break;
         case KEY_confirmed_PRES:
-            time_key_press = 0;
+			TIM_Cmd(TIM5,DISABLE);
+            TIM_Cmd(TIM5,ENABLE);
+			printf("confirmed_pressed = %d \r\n",confirmed_pressed);
 
-            LCD_Clear();
+			if(confirmed_pressed >= 3000)
+            {
+                printf("printing!!!!!!!!! \r\n");
+//				printer_info_init();
+				confirmed_pressed  = 0;
+                TIM_Cmd(TIM5,DISABLE);
+            }
+
             break;
 
         }
 
-        showMainMenu(time_second,122, rk_info);
+        showMainMenu(time_second,velocity, rk_info);
 
         if(page_status!=page) LCD_Clear();
     }
@@ -104,30 +117,30 @@ void MENU_processing(struct struct_rk_info *rk_info, int time_second)
         {
         case KEY_UpArrow_PRES:
             page1_row-=2;
-            if(page1_row>=page1_row_max) page1_row=page1_row_max;            
-            if(page1_row<=page1_row_min) page1_row=page1_row_min;           
+            if(page1_row>=page1_row_max) page1_row=page1_row_max;
+            if(page1_row<=page1_row_min) page1_row=page1_row_min;
             LCD_Clear();
             break;
-		
+
         case KEY_DownArrow_PRES:
             page1_row+=2;
-            if(page1_row>=page1_row_max) page1_row=page1_row_max;            
-            if(page1_row<=page1_row_min) page1_row=page1_row_min;            
+            if(page1_row>=page1_row_max) page1_row=page1_row_max;
+            if(page1_row<=page1_row_min) page1_row=page1_row_min;
             LCD_Clear();
             break;
-		
+
         case KEY_menu_PRES:
             page--;
             page1_row = 0xB0;
-            if(page>=page_max) page=page_max;            
-            if(page<=page_min)page=page_min;            
+            if(page>=page_max) page=page_max;
+            if(page<=page_min)page=page_min;
             LCD_Clear();
             break;
-		
+
         case KEY_confirmed_PRES:
             page++;
-            if(page>=page_max) page=page_max;            
-            if(page<=page_min) page=page_min;            
+            if(page>=page_max) page=page_max;
+            if(page<=page_min) page=page_min;
             LCD_Clear();
             break;
         }
@@ -140,7 +153,7 @@ void MENU_processing(struct struct_rk_info *rk_info, int time_second)
         ShowString(page1_row,0x10, 0x0,printString,12);
 
         if(page_status!=page) LCD_Clear();
-        
+
     }
     else if(page==2)
     {
@@ -149,30 +162,30 @@ void MENU_processing(struct struct_rk_info *rk_info, int time_second)
         {
         case KEY_UpArrow_PRES:
             page2_row-=2;
-            if(page2_row>=page2_row_max) page2_row=page2_row_max;            
-            if(page2_row<=page2_row_min) page2_row=page2_row_min;            
+            if(page2_row>=page2_row_max) page2_row=page2_row_max;
+            if(page2_row<=page2_row_min) page2_row=page2_row_min;
             LCD_Clear();
             break;
-		
+
         case KEY_DownArrow_PRES:
             page2_row+=2;
-            if(page2_row>=page2_row_max) page2_row=page2_row_max;           
-            if(page2_row<=page2_row_min) page2_row=page2_row_min;            
+            if(page2_row>=page2_row_max) page2_row=page2_row_max;
+            if(page2_row<=page2_row_min) page2_row=page2_row_min;
             LCD_Clear();
             break;
-		
+
         case KEY_menu_PRES:
             page--;
             page2_row = 0xB0;
-            if(page>=page_max) page=page_max;            
-            if(page<=page_min) page=page_min;            
+            if(page>=page_max) page=page_max;
+            if(page<=page_min) page=page_min;
             LCD_Clear();
             break;
-		
+
         case KEY_confirmed_PRES:
             page++;
-            if(page>=page_max) page=page_max;            
-            if(page<=page_min) page=page_min;            
+            if(page>=page_max) page=page_max;
+            if(page<=page_min) page=page_min;
             LCD_Clear();
             break;
         }
@@ -195,7 +208,7 @@ void MENU_processing(struct struct_rk_info *rk_info, int time_second)
             displayChinese_16x16(0xB3,0x14,0x5,overTimeDriveRecord,5,8);
         }
 
-        if(page_status!=page) LCD_Clear();    
+        if(page_status!=page) LCD_Clear();
     }
 
     else if(page==3)
@@ -205,31 +218,31 @@ void MENU_processing(struct struct_rk_info *rk_info, int time_second)
         {
         case KEY_UpArrow_PRES:
             page3_row-=2;
-            if(page3_row>=page3_row_max) page3_row=page3_row_max;            
-            if(page3_row<=page3_row_min) page3_row=page3_row_min;            
+            if(page3_row>=page3_row_max) page3_row=page3_row_max;
+            if(page3_row<=page3_row_min) page3_row=page3_row_min;
             LCD_Clear();
             break;
-		
+
         case KEY_DownArrow_PRES:
             page3_row+=2;
-            if(page3_row>=page3_row_max) page3_row=page3_row_max;        
-            if(page3_row<=page3_row_min) page3_row=page3_row_min;           
+            if(page3_row>=page3_row_max) page3_row=page3_row_max;
+            if(page3_row<=page3_row_min) page3_row=page3_row_min;
             LCD_Clear();
             break;
-		
+
         case KEY_menu_PRES:
             page--;
             page3_row = 0xB0;
-            if(page>=page_max) page=page_max;            
-            if(page<=page_min) page=page_min;            
+            if(page>=page_max) page=page_max;
+            if(page<=page_min) page=page_min;
             LCD_Clear();
             break;
-		
+
         case KEY_confirmed_PRES:
             page++;
             page3_row = 0xB0;
-            if(page>=page_max) page=page_max;            
-            if(page<=page_min) page=page_min;            
+            if(page>=page_max) page=page_max;
+            if(page<=page_min) page=page_min;
             LCD_Clear();
             break;
         }
@@ -302,7 +315,7 @@ void MENU_processing(struct struct_rk_info *rk_info, int time_second)
         if(page1_row==0xB2) page--;
 
         if(page_status!=page)LCD_Clear();
-        
+
     }
 }
 
@@ -312,9 +325,15 @@ void TIM5_IRQHandler(void)
 {
     if (TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源
     {
-        TIM_ClearITPendingBit(TIM5, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源
-        time_1s+=1;
-		time_key_press+=1;
+        TIM_ClearITPendingBit(TIM5, TIM_IT_Update);  //清除TIMx的中断待处理位:TIM 中断源
+        time_1ms++;
+        if(page==0)
+        {
+            if(key_text == KEY_confirmed_PRES)
+            {
+                confirmed_pressed++;
+            }
+        }
     }
 }
 

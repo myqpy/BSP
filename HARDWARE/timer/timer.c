@@ -147,6 +147,5 @@ void Tim5_Int_Init(u16 arr,u16 psc)
 	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 3;
 	NVIC_Init(&NVIC_InitStruct);
 	
-	TIM_Cmd(TIM5,ENABLE);
 }
 
