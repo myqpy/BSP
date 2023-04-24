@@ -25,8 +25,8 @@ int main(void)
 	int drive_time=0;
     u8 printer_cmd[200];
     u8 canbuf[8];
-	u16 volatageAD=0;
-	int h,m,s;
+	float volatageAD=0;
+//	int h,m,s;
 	
 	struct struct_rk_info *rk_info;
     time_t *time_info = (time_t*)USART3_RX_BUF;
@@ -62,12 +62,12 @@ int main(void)
 //            if(USART3_RX_BUF[0] == 0xFE)
 //            {
 //                printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",time_info->w_year, time_info->w_month, time_info->w_date,time_info->hour,time_info->min,time_info->sec);
-//                RTC_Init(time_info->w_year, time_info->w_month, time_info->w_date, time_info->hour, time_info->min, time_info->sec);	//RTC初始化
+//                RTC_Set(time_info->w_year, time_info->w_month, time_info->w_date, time_info->hour, time_info->min, time_info->sec);	//RTC初始化
 //                flag = 0;
 ////				memset(USART3_TX_BUF,0,sizeof(USART3_TX_BUF));
-//                USART3_TX_BUF[0] = 0xfe;
+////                USART3_TX_BUF[0] = 0xfe;
 //                //USART3_TX_BUF[1] = 0xfe;
-//                Usart_SendStr_length(USART3, USART3_TX_BUF, 1);
+////                Usart_SendStr_length(USART3, USART3_TX_BUF, 1);
 //            }
 //            USART3_RX_STA = 0;
 //        }
@@ -76,19 +76,19 @@ int main(void)
     while(1)
     {
         MENU_processing(rk_info, drive_time,car_info.velocity);
-//		volatageAD = GPIO_ReadInputData(GPIOF,GPIO_Pin_8);
+		
+		volatageAD = (float) (Get_Adc_Average(ADC_Channel_6,10) * 3.3 /4096) ; 
         if(time!=calendar.sec)
         {
             time=calendar.sec;
-			
-			printf("%d \r\n",volatageAD);
-			drive_time++;		
-			h=drive_time/3600;
-			m=drive_time%3600/60;
-			s=drive_time%60;
-			printf("%d \r\n",drive_time);
-			printf("%d %d %d \r\n \r\n",h,m,s);
-			printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year,calendar.w_month,calendar.w_date,calendar.hour,calendar.min,calendar.sec);
+			drive_time++;
+
+//			h=drive_time/3600;
+//			m=drive_time%3600/60;
+//			s=drive_time%60;
+//			printf("%d \r\n",drive_time);
+//			printf("%d %d %d \r\n \r\n",h,m,s);
+//			printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year,calendar.w_month,calendar.w_date,calendar.hour,calendar.min,calendar.sec);
 
 //          car_info.mileage = car_info.mileage + 1;
 //          car_info.velocity = car_info.velocity + 1;
@@ -126,15 +126,31 @@ int main(void)
 //			memset(USART3_RX_BUF,0,sizeof(USART3_RX_BUF));
         }
 
-//		if(USART3_RX_STA&0X8000)    //接收到数据
-//        {
-//            USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
-//            for(i = 0; i<USART3_RX_STA; i++)
-//            {
-//                printf("%c",USART3_RX_BUF[i]);
-//            }
-//            USART3_RX_STA = 0;
-//        }
+		
+		if(USART3_RX_STA&0X8000)    //接收到数据
+        {
+            USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
+            if(USART3_RX_BUF[0] == 0xFE)
+            {
+                printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",time_info->w_year, time_info->w_month, time_info->w_date,time_info->hour,time_info->min,time_info->sec);
+                RTC_Set(time_info->w_year, time_info->w_month, time_info->w_date, time_info->hour, time_info->min, time_info->sec);	//RTC初始化
+//                flag = 0;
+//				memset(USART3_TX_BUF,0,sizeof(USART3_TX_BUF));
+//                USART3_TX_BUF[0] = 0xfe;
+                //USART3_TX_BUF[1] = 0xfe;
+//                Usart_SendStr_length(USART3, USART3_TX_BUF, 1);
+            }
+            USART3_RX_STA = 0;
+        }
+		if(USART3_RX_STA&0X8000)    //接收到数据
+        {
+            USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
+            for(i = 0; i<USART3_RX_STA; i++)
+            {
+                printf("%c",USART3_RX_BUF[i]);
+            }
+            USART3_RX_STA = 0;
+        }
 
         if(Can_Receive_Msg(canbuf))//接收到有数据
         {

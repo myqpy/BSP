@@ -21,7 +21,7 @@ void InPut_Init(void) //IO初始化
 { 
  	GPIO_InitTypeDef GPIO_InitStructure;
 
- 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE | RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOF,ENABLE);//使能PORTE时钟
+ 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE | RCC_APB2Periph_GPIOD ,ENABLE);//使能PORTE时钟
 
 	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_5|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_4;//GPIO0-GPIO2
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; //设置成上拉输入
@@ -33,11 +33,7 @@ void InPut_Init(void) //IO初始化
  	GPIO_Init(GPIOD, &GPIO_InitStructure);//初始化GPIOE2,3,4
 	
 	
-	//PF-8 init
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN; 		 
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		 
-	GPIO_Init(GPIOF, &GPIO_InitStructure);
+
 }
 
 //GPIO处理函数，返回四个GPIO输入的状态值
