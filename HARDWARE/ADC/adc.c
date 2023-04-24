@@ -21,9 +21,9 @@
 void  Adc_Init(void)
 { 	
 	ADC_InitTypeDef ADC_InitStructure; 
-	GPIO_InitTypeDef GPIO_InitStructure;
+//	GPIO_InitTypeDef GPIO_InitStructure;
 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC3| RCC_APB2Periph_GPIOF, ENABLE );	  //使能ADC1通道时钟
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC3, ENABLE );	  //使能ADC1通道时钟
  
 
 	RCC_ADCCLKConfig(RCC_PCLK2_Div6);   //设置ADC分频因子6 72M/6=12,ADC最大时间不能超过14M
@@ -33,11 +33,7 @@ void  Adc_Init(void)
 //	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;		//模拟输入引脚
 //	GPIO_Init(GPIOA, &GPIO_InitStructure);	
 	
-	//PF-8 init
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN; 		 
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		 
-	GPIO_Init(GPIOF, &GPIO_InitStructure);
+
 
 	ADC_DeInit(ADC3);  //复位ADC1,将外设 ADC1 的全部寄存器重设为缺省值
 

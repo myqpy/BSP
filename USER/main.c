@@ -18,17 +18,17 @@
 
 int main(void)
 {
-	
-    u8 i=0; 
-	u8 time=0;
-	u8 flag = 1;
-	int drive_time=0;
+
+    u8 i=0;
+    u8 time=0;
+    u8 flag = 1;
+    int drive_time=0;
     u8 printer_cmd[200];
     u8 canbuf[8];
-	float volatageAD=0;
+    float volatageAD=0;
 //	int h,m,s;
-	
-	struct struct_rk_info *rk_info;
+
+    struct struct_rk_info *rk_info;
     time_t *time_info = (time_t*)USART3_RX_BUF;
     u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
 
@@ -45,13 +45,13 @@ int main(void)
     USART3_Init(115200);//3399通信串口
     TIM3_ETR(impulse_ratio,0);//脉冲捕获计数器，统计里程
     TIM6_Int_Init(10000,7199);//脉冲计数器，一秒钟
-	Tim5_Int_Init(9, 7199);	//定时计数器，一毫秒
+    Tim5_Int_Init(9, 7199);	//定时计数器，一毫秒
     LcdInitial();//显示屏
     AT24CXX_Init();//IIC初始化，读IC卡
 //    printer_init(115200);//打印机
     CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,CAN_Mode_LoopBack);//CAN初始化环回模式,波特率500Kbps
     InPut_Init();//外部开关量
-	Adc_Init();
+    Adc_Init();
     RTC_Init(2023,4,23,15,54,50);	  			//RTC初始化
 //	RTC_Set(2023,4,23,16,39,10);
 //    while(flag)
@@ -73,16 +73,29 @@ int main(void)
 //        }
 //    }
 
+
+//	GPIO_SetBits(GPIOF, GPIO_Pin_7);
+    
     while(1)
     {
         MENU_processing(rk_info, drive_time,car_info.velocity);
-		
-		volatageAD = (float) (Get_Adc_Average(ADC_Channel_6,10) * 3.3 /4096) ; 
+
+        volatageAD = (float) (Get_Adc_Average(ADC_Channel_6,10) * 3.3 /4096) ;
+
+        if(volatageAD <= 1.7)
+        {
+            GPIO_SetBits(GPIOF, GPIO_Pin_7);
+        }
+		if(volatageAD > 1.7)
+        {
+            GPIO_ResetBits(GPIOF, GPIO_Pin_7);
+        }
+
         if(time!=calendar.sec)
         {
             time=calendar.sec;
-			drive_time++;
-
+            drive_time++;
+//			printf("volatageAD:%f \r\n",volatageAD);
 //			h=drive_time/3600;
 //			m=drive_time%3600/60;
 //			s=drive_time%60;
@@ -117,40 +130,39 @@ int main(void)
 
             }
 
-//            for(i = 0; i<USART3_RX_STA; i++)
-//            {
-//                printf("%02x ",USART3_RX_BUF[i]);
-//            }
-//			printf("\r\n");
+            for(i = 0; i<USART3_RX_STA; i++)
+            {
+                printf("%02x ",USART3_RX_BUF[i]);
+            }
+			printf("\r\n");
             USART3_RX_STA = 0;
-//			memset(USART3_RX_BUF,0,sizeof(USART3_RX_BUF));
         }
 
-		
-		if(USART3_RX_STA&0X8000)    //接收到数据
+
+        if(USART3_RX_STA&0X8000)    //接收到数据
         {
             USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
             if(USART3_RX_BUF[0] == 0xFE)
             {
                 printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",time_info->w_year, time_info->w_month, time_info->w_date,time_info->hour,time_info->min,time_info->sec);
                 RTC_Set(time_info->w_year, time_info->w_month, time_info->w_date, time_info->hour, time_info->min, time_info->sec);	//RTC初始化
-//                flag = 0;
-//				memset(USART3_TX_BUF,0,sizeof(USART3_TX_BUF));
-//                USART3_TX_BUF[0] = 0xfe;
-                //USART3_TX_BUF[1] = 0xfe;
-//                Usart_SendStr_length(USART3, USART3_TX_BUF, 1);
             }
-            USART3_RX_STA = 0;
-        }
-		if(USART3_RX_STA&0X8000)    //接收到数据
-        {
-            USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
             for(i = 0; i<USART3_RX_STA; i++)
             {
-                printf("%c",USART3_RX_BUF[i]);
+                printf("%02x ",USART3_RX_BUF[i]);
             }
+			printf("\r\n");
             USART3_RX_STA = 0;
         }
+//        if(USART3_RX_STA&0X8000)    //接收到数据
+//        {
+//            USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
+//            for(i = 0; i<USART3_RX_STA; i++)
+//            {
+//                printf("%c",USART3_RX_BUF[i]);
+//            }
+//            USART3_RX_STA = 0;
+//        }
 
         if(Can_Receive_Msg(canbuf))//接收到有数据
         {
