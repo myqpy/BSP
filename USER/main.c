@@ -127,14 +127,15 @@ int main(void)
 //				printf("rk_info->cameraStatus:%02x\r\n", rk_info->cameraStatus);
 //				printf("rk_info->velocityStatus:%02x\r\n", rk_info->velocityStatus);
 //				printf("rk_info->BDStatus:%02x\r\n", rk_info->BDStatus);
+				for(i = 0; i<USART3_RX_STA; i++)
+				{
+					printf("%02x ",USART3_RX_BUF[i]);
+				}
+				printf("\r\n");
 
             }
 
-            for(i = 0; i<USART3_RX_STA; i++)
-            {
-                printf("%02x ",USART3_RX_BUF[i]);
-            }
-			printf("\r\n");
+
             USART3_RX_STA = 0;
         }
 
@@ -146,12 +147,14 @@ int main(void)
             {
                 printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",time_info->w_year, time_info->w_month, time_info->w_date,time_info->hour,time_info->min,time_info->sec);
                 RTC_Set(time_info->w_year, time_info->w_month, time_info->w_date, time_info->hour, time_info->min, time_info->sec);	//RTC初始化
-            }
-            for(i = 0; i<USART3_RX_STA; i++)
-            {
-                printf("%02x ",USART3_RX_BUF[i]);
-            }
-			printf("\r\n");
+				for(i = 0; i<USART3_RX_STA; i++)
+				{
+					printf("%02x ",USART3_RX_BUF[i]);
+				}
+				printf("\r\n");
+			}
+
+			
             USART3_RX_STA = 0;
         }
 //        if(USART3_RX_STA&0X8000)    //接收到数据

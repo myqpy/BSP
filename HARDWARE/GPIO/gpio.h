@@ -31,8 +31,8 @@
 #define KEY_confirmed_PRES	1		//KEY0  
 #define KEY_DownArrow_PRES	2		//KEY1 
 #define KEY_UpArrow_PRES	3		//KEY2  
-#define KEY_menu_PRES	4		//KEY3  
-
+#define KEY_menu_PRES	4			//KEY3  
+#define KEY_up_down_PRES 5			//key ↑ + ↓
 
 void InPut_Init(void);//IO初始化
 u8 GPIO_Scan(void);  	//按键扫描函数	

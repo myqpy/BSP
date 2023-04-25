@@ -66,6 +66,8 @@ u8 KEY_Scan(u8 mode)
 		
         if(KEY0==0)return KEY_confirmed_PRES;
 		
+		else if ((KEY1==0)&&(KEY2==0)) return KEY_up_down_PRES;
+			
 		else if(KEY2==0)return KEY_UpArrow_PRES;
 		
         else if(KEY1==0)return KEY_DownArrow_PRES;

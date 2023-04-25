@@ -30,7 +30,8 @@ unsigned char page3_row_max = 0xB4;
 //unsigned char page3_subPage_row = 0xB0;
 //unsigned char page3_subPage_row_max = 0xB2;
 u16 time_1ms=0;
-u16 confirmed_pressed=0, up_pressed=0, down_pressed=0;
+u16 confirmed_pressed=0;
+u16 up_down_pressed=0;
 u8 key_text=0;
 char printString[100];
 
@@ -52,8 +53,7 @@ void MENU_processing(struct struct_rk_info *rk_info, int time_second,int velocit
         page=0;
         time_1ms = 0;
         confirmed_pressed  = 0;
-		up_pressed=0;
-		down_pressed=0;
+		up_down_pressed=0;
     }
 
     if(page<=0)
@@ -61,30 +61,41 @@ void MENU_processing(struct struct_rk_info *rk_info, int time_second,int velocit
         page_status=page;
         switch(key_text)
         {
-        case KEY_UpArrow_PRES:
-			printf("up_pressed = %d\r\n",up_pressed);
-            TIM_Cmd(TIM5,DISABLE);
+		case KEY_up_down_PRES:
+			            TIM_Cmd(TIM5,DISABLE);
             TIM_Cmd(TIM5,ENABLE);
-			if(up_pressed >= 3000)
-            {
-                printf("printing!!!!!!!!! \r\n");
+			printf("up_down_pressed = %d\r\n",up_down_pressed);
+			if(up_down_pressed>=3000)
+			{
+				printf("SOS!!!!!!!!! \r\n");
+				up_down_pressed = 0;
+				TIM_Cmd(TIM5,DISABLE);
+			}
+			break;
+//        case KEY_UpArrow_PRES:
+//			printf("up_pressed = %d\r\n",up_pressed);
+//            TIM_Cmd(TIM5,DISABLE);
+//            TIM_Cmd(TIM5,ENABLE);
+//			if(up_pressed >= 3000)
+//            {
+//                printf("printing!!!!!!!!! \r\n");
 //				printer_info_init();
-                confirmed_pressed  = 0;
-                TIM_Cmd(TIM5,DISABLE);
-            }
-            break;
-        case KEY_DownArrow_PRES:
-			printf("down_pressed = %d\r\n ",down_pressed);
-            TIM_Cmd(TIM5,DISABLE);
-            TIM_Cmd(TIM5,ENABLE);
-			if(down_pressed >= 3000)
-            {
-                printf("printing!!!!!!!!! \r\n");
-//				printer_info_init();
-                confirmed_pressed  = 0;
-                TIM_Cmd(TIM5,DISABLE);
-            }
-            break;
+//                confirmed_pressed  = 0;
+//                TIM_Cmd(TIM5,DISABLE);
+//            }
+//            break;
+//        case KEY_DownArrow_PRES:
+//			printf("down_pressed = %d\r\n ",down_pressed);
+//            TIM_Cmd(TIM5,DISABLE);
+//            TIM_Cmd(TIM5,ENABLE);
+//			if(down_pressed >= 3000)
+//            {
+//                printf("printing!!!!!!!!! \r\n");
+////				printer_info_init();
+//                confirmed_pressed  = 0;
+//                TIM_Cmd(TIM5,DISABLE);
+//            }
+//            break;
         case KEY_menu_PRES:
             TIM_Cmd(TIM5,DISABLE);
             TIM_Cmd(TIM5,ENABLE);
@@ -111,10 +122,7 @@ void MENU_processing(struct struct_rk_info *rk_info, int time_second,int velocit
 
         }
 		
-		if(up_pressed>=3000&&down_pressed>=3000)
-		{
-			printf("SOS!!!!!!!!! \r\n");
-		}
+
         showMainMenu(time_second,velocity, rk_info);
 
         if(page_status!=page) LCD_Clear();
@@ -342,13 +350,9 @@ void TIM5_IRQHandler(void)
             {
                 confirmed_pressed++;
             }
-            else if(key_text == KEY_UpArrow_PRES)
+            if(key_text == KEY_up_down_PRES)
             {
-                up_pressed++;
-            }
-            else if(key_text == KEY_DownArrow_PRES)
-            {
-                down_pressed++;
+                up_down_pressed++;
             }
         }
     }
