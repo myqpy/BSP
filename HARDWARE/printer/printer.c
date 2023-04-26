@@ -2,11 +2,14 @@
 #include "stdio.h"
 #include "string.h"
 u8 USART4_RX_BUF[USART4_REC_LEN];
-unsigned char out_line[] = {0x1b,0x66,0x01,0x02};//输出两个空行
-unsigned char reg_num_china[] = {0xBB,0xFA,0xB6,0xAF,0xB3,0xB5,0xBA,0xC5,0xC5,0xC6,0xA3,0xBA};//"机动车号牌：汉字编码"
+
 u16 USART4_RX_STA=0;       //接收状态标记
 
 uint8_t flag=0;
+
+
+
+
 
 void UART4_send_byte(uint8_t byte)
 {
@@ -17,20 +20,21 @@ void UART4_send_byte(uint8_t byte)
 //发送多字节数据
 void printer_send_cmd(uint8_t *Buffer, uint16_t Length)
 {
-    uint8_t i=0;
+    char i=0;
     while(i<Length)
     {
         UART4_send_byte(Buffer[i++]);
     }
 }
-void printer_init(u32 bound) {
+
+void UART4_init(u32 bound) {
     //GPIO端口设置
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART4, ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	
     //USART4_TX
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -101,17 +105,6 @@ uint8_t CHeck(uint8_t *data)
     }
     else
         return 0;
-}
-void printer_info_init(u8 *cmd, u8 *reg_num)
-{
-    printer_info_t *send_cmd = (printer_info_t*)cmd;
-    memcpy(send_cmd->reg_num_chinese, reg_num_china, sizeof(reg_num_china));
-    memset(send_cmd->reg_num, 0x0d, 19);
-    memcpy(send_cmd->reg_num, reg_num, 19);
-}
-void print_empty_line()
-{
-    printer_send_cmd(out_line, sizeof(out_line));
 }
 
 

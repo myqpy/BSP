@@ -4,21 +4,67 @@
 #include "sys.h"
 #include "stdlib.h"
 
+//#pragma pack(push)
+//#pragma pack(1) // 结构体1字节对齐	
+//typedef struct TerminalParameters_str
+//{
+//    unsigned int impulse_ratio;//脉冲系数，车辆每前进1公里收到的脉冲数
+//    unsigned int mileage;
+//} TerminalParameters_t;
+//#pragma pack() // 恢复默认字节对齐
+
+
+
 #pragma pack(push)
 #pragma pack(1) // 结构体1字节对齐	
-typedef struct TerminalParameters_str
+typedef struct Struct_ARM_time_info
 {
-    unsigned int impulse_ratio;//脉冲系数，车辆每前进1公里收到的脉冲数
-    unsigned int mileage;
-} TerminalParameters_t;
+    unsigned char header;
+    unsigned char hour;
+    unsigned char min;
+    unsigned char sec;
+    //公历日月年周
+    unsigned short int w_year;
+    unsigned char  w_month;
+    unsigned char  w_date;
+} ARM_time_info;
 #pragma pack() // 恢复默认字节对齐
 
 
 #pragma pack(push)
 #pragma pack(1) // 结构体1字节对齐	
-typedef struct car_info_str
+typedef struct Struct_ARM_selfCheck_info
 {
-    unsigned char op;
+	unsigned char 	header;
+	unsigned char 	EC20Status;
+	unsigned char	EC20SignalStrength;
+	unsigned char 	BDStatus;
+	unsigned char 	SDStatus;
+	unsigned char 	cameraStatus;
+    unsigned char 	velocityStatus;
+}ARM_selfCheck_info;
+#pragma pack() // 恢复默认字节对齐
+
+
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
+typedef struct Struct_ARM_vehicle_info
+{
+	unsigned char 	header;
+	unsigned char	car_plate_num[16];
+	unsigned char	speedLimit;
+	unsigned char	pulseRatio;
+	
+}ARM_vehicle_info;
+#pragma pack() // 恢复默认字节对齐
+
+
+
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
+typedef struct Struct_MCU_car_info
+{
+    unsigned char header;
     unsigned int mileage;
     unsigned int velocity;
     unsigned char driver_num[18];//机动车驾驶证号码
@@ -29,38 +75,22 @@ typedef struct car_info_str
     unsigned char low_beam;//近光灯
     unsigned char hign_beam;//远光灯
 	unsigned char isCharged; //外部供电or电池供电
-} car_info_t;
-#pragma pack() // 恢复默认字节对齐
-
-#pragma pack(push)
-#pragma pack(1) // 结构体1字节对齐	
-typedef struct car_time_str
-{
-    unsigned char op;
-    unsigned char hour;
-    unsigned char min;
-    unsigned char sec;
-    //公历日月年周
-    unsigned short int w_year;
-    unsigned char  w_month;
-    unsigned char  w_date;
-} time_t;
+} MCU_car_info;
 #pragma pack() // 恢复默认字节对齐
 
 
-#pragma pack(push)
-#pragma pack(1) // 结构体1字节对齐	
-struct struct_rk_info
-{
-	unsigned char 	op;
-	unsigned char 	EC20Status;
-	unsigned char	EC20SignalStrength;
-	unsigned char 	BDStatus;
-	unsigned char 	SDStatus;
-	unsigned char 	cameraStatus;
-    unsigned char 	velocityStatus;
-};
-#pragma pack() // 恢复默认字节对齐
+
+//#pragma pack(push)
+//#pragma pack(1) // 结构体1字节对齐	
+//struct Struct_MCU_ICcard_info
+//{
+//	unsigned char	header;
+//	
+//	
+//	
+//}MCU_ICcard_info;
+//#pragma pack() // 恢复默认字节对齐
+
 
 #endif // JT808_TERMINAL_PARAMETER_H_
 

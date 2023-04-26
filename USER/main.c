@@ -23,17 +23,17 @@ int main(void)
     u8 time=0;
     u8 flag = 1;
     int drive_time=0;
-    u8 printer_cmd[200];
+
     u8 canbuf[8];
     float volatageAD=0;
 //	int h,m,s;
 
-    struct struct_rk_info *rk_info;
-    time_t *time_info = (time_t*)USART3_RX_BUF;
+    ARM_selfCheck_info *rk_selfCheck_info = (ARM_selfCheck_info*)USART3_RX_BUF;
+    ARM_time_info *time_info = (ARM_time_info*)USART3_RX_BUF;
     u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
 
     impulse_ratio = 570;
-    car_info.op = 0xfe;
+    car_info.header = 0xfe;
 
     delay_init();	    	 //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置中断优先级分组为组2：2位抢占优先级，2位响应优先级
@@ -48,7 +48,10 @@ int main(void)
     Tim5_Int_Init(9, 7199);	//定时计数器，一毫秒
     LcdInitial();//显示屏
     AT24CXX_Init();//IIC初始化，读IC卡
-//    printer_init(115200);//打印机
+    UART4_init(115200);//打印机
+	
+//	GPIO_ResetBits(GPIOC, GPIO_Pin_13); //关显示屏背光
+	
     CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,CAN_Mode_LoopBack);//CAN初始化环回模式,波特率500Kbps
     InPut_Init();//外部开关量
     Adc_Init();
@@ -73,12 +76,9 @@ int main(void)
 //        }
 //    }
 
-
-//	GPIO_SetBits(GPIOF, GPIO_Pin_7);
-    
     while(1)
     {
-        MENU_processing(rk_info, drive_time,car_info.velocity);
+        MENU_processing(rk_selfCheck_info, drive_time,car_info.velocity);
 
         volatageAD = (float) (Get_Adc_Average(ADC_Channel_6,10) * 3.3 /4096) ;
 
@@ -86,7 +86,7 @@ int main(void)
         {
             GPIO_SetBits(GPIOF, GPIO_Pin_7);
         }
-		if(volatageAD > 1.7)
+        if(volatageAD > 1.7)
         {
             GPIO_ResetBits(GPIOF, GPIO_Pin_7);
         }
@@ -111,15 +111,18 @@ int main(void)
 //			}
 //			car_info.status = GPIO_Scan();
 //			car_info.brake;
-            Usart_SendStr_length(USART3, (uint8_t*)&car_info, sizeof(car_info_t));
+            Usart_SendStr_length(USART3, (uint8_t*)&car_info, sizeof(ARM_vehicle_info));
 
         }
+
+
+
         if(USART3_RX_STA&0X8000)    //接收到数据
         {
             USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
             if(USART3_RX_BUF[0] == 0xEE)
             {
-                memcpy(rk_info,USART3_RX_BUF, USART3_RX_STA);
+                memcpy(rk_selfCheck_info,USART3_RX_BUF, USART3_RX_STA);
 //				printf("rk_info->op:%02x\r\n", rk_info->op);
 //				printf("rk_info->SDStatus:%02x\r\n", rk_info->SDStatus);
 //				printf("rk_info->EC20Status:%02x\r\n", rk_info->EC20Status);
@@ -127,12 +130,24 @@ int main(void)
 //				printf("rk_info->cameraStatus:%02x\r\n", rk_info->cameraStatus);
 //				printf("rk_info->velocityStatus:%02x\r\n", rk_info->velocityStatus);
 //				printf("rk_info->BDStatus:%02x\r\n", rk_info->BDStatus);
-				for(i = 0; i<USART3_RX_STA; i++)
-				{
-					printf("%02x ",USART3_RX_BUF[i]);
-				}
-				printf("\r\n");
+			
+                for(i = 0; i<USART3_RX_STA; i++)
+                {
+                    printf("%02x ",USART3_RX_BUF[i]);
+                }
+                printf("\r\n");
 
+            }
+			
+			else if(USART3_RX_BUF[0] == 0xFE)
+            {
+                printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",time_info->w_year, time_info->w_month, time_info->w_date,time_info->hour,time_info->min,time_info->sec);
+                RTC_Set(time_info->w_year, time_info->w_month, time_info->w_date, time_info->hour, time_info->min, time_info->sec);	//RTC初始化
+                for(i = 0; i<USART3_RX_STA; i++)
+                {
+                    printf("%02x ",USART3_RX_BUF[i]);
+                }
+                printf("\r\n");
             }
 
 
@@ -140,23 +155,7 @@ int main(void)
         }
 
 
-        if(USART3_RX_STA&0X8000)    //接收到数据
-        {
-            USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
-            if(USART3_RX_BUF[0] == 0xFE)
-            {
-                printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",time_info->w_year, time_info->w_month, time_info->w_date,time_info->hour,time_info->min,time_info->sec);
-                RTC_Set(time_info->w_year, time_info->w_month, time_info->w_date, time_info->hour, time_info->min, time_info->sec);	//RTC初始化
-				for(i = 0; i<USART3_RX_STA; i++)
-				{
-					printf("%02x ",USART3_RX_BUF[i]);
-				}
-				printf("\r\n");
-			}
 
-			
-            USART3_RX_STA = 0;
-        }
 //        if(USART3_RX_STA&0X8000)    //接收到数据
 //        {
 //            USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量

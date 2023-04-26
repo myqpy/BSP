@@ -1,12 +1,14 @@
-
+#include "printercmd.h"
 #include "menu.h"
 #include "displayLCD.h"
 #include "gpio.h"
 #include "delay.h"
 #include "ST7567a.h"
-#include "terminal_parameter.h"
+
 #include "printer.h"
 #include <stdio.h>
+#include <string.h>
+#include "rtc.h"
 
 
 int page = 0;
@@ -34,13 +36,10 @@ u16 confirmed_pressed=0;
 u16 up_down_pressed=0;
 u8 key_text=0;
 char printString[100];
+extern u8 printer_cmd[200];
+ARM_vehicle_info rk_vehicle_info;
 
-//void key_process(void)}
-//{
-//
-//}
-
-void MENU_processing(struct struct_rk_info *rk_info, int time_second,int velocity)
+void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int velocity)
 {
 
     key_text=KEY_Scan(1);		//得到键值
@@ -62,7 +61,7 @@ void MENU_processing(struct struct_rk_info *rk_info, int time_second,int velocit
         switch(key_text)
         {
 		case KEY_up_down_PRES:
-			            TIM_Cmd(TIM5,DISABLE);
+			TIM_Cmd(TIM5,DISABLE);
             TIM_Cmd(TIM5,ENABLE);
 			printf("up_down_pressed = %d\r\n",up_down_pressed);
 			if(up_down_pressed>=3000)
@@ -113,7 +112,62 @@ void MENU_processing(struct struct_rk_info *rk_info, int time_second,int velocit
             if(confirmed_pressed >= 3000)
             {
                 printf("printing!!!!!!!!! \r\n");
-//				printer_info_init();
+//				memset(rk_vehicle_info->car_plate_num,0,sizeof(*rk_vehicle_info->car_plate_num));
+				print_empty_line();
+				memset(printer_cmd ,0,sizeof(printer_cmd));
+				memcpy(printer_cmd,"机动车号牌号码：", sizeof("机动车号牌号码："));
+				Printer_printString(printer_cmd);
+				
+				memset(rk_vehicle_info.car_plate_num,0,16);
+				memcpy(rk_vehicle_info.car_plate_num,"豫A88888",8);
+				Printer_printString(rk_vehicle_info.car_plate_num);
+				
+				print_empty_line();
+				memset(printer_cmd ,0,sizeof(printer_cmd));
+				memcpy(printer_cmd,"机动车号牌分类：", sizeof("机动车号牌分类："));
+				Printer_printString(printer_cmd);
+				
+				memset(printer_cmd ,0,sizeof(printer_cmd));
+				memcpy(printer_cmd,"黄色", sizeof("黄色"));
+				Printer_printString(printer_cmd);
+				
+				print_empty_line();
+				memset(printer_cmd ,0,sizeof(printer_cmd));
+				memcpy(printer_cmd,"机动车驾驶证号码：", sizeof("机动车驾驶证号码："));
+				Printer_printString(printer_cmd);
+				
+				print_empty_line();
+				memset(printer_cmd ,0,sizeof(printer_cmd));
+				memcpy(printer_cmd,"410105199607150035", sizeof("410105199607150035"));
+				Printer_printString(printer_cmd);
+				
+				print_empty_line();
+				memset(printer_cmd ,0,sizeof(printer_cmd));
+				memcpy(printer_cmd,"速度状态：", sizeof("速度状态："));
+				Printer_printString(printer_cmd);
+				
+				memset(printer_cmd ,0,sizeof(printer_cmd));
+				memcpy(printer_cmd,"正常", sizeof("正常"));
+				Printer_printString(printer_cmd);
+				
+				print_empty_line();
+				memset(printer_cmd ,0,sizeof(printer_cmd));
+				memcpy(printer_cmd,"打印时间", sizeof("打印时间"));
+				Printer_printString(printer_cmd);
+				
+				memset(printer_cmd ,0,sizeof(printer_cmd));
+				sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year, calendar.w_month, calendar.w_date, calendar.hour,calendar.min,calendar.sec);	
+				Printer_printString(printer_cmd);
+				
+				print_empty_line();
+				memset(printer_cmd ,0,sizeof(printer_cmd));
+				memcpy(printer_cmd,"两个日历天内超时驾驶记录：", sizeof("两个日历天内超时驾驶记录："));
+				Printer_printString(printer_cmd);
+				
+				print_empty_line();
+				print_empty_line();
+				print_empty_line();
+				print_empty_line();
                 confirmed_pressed  = 0;
                 TIM_Cmd(TIM5,DISABLE);
             }
@@ -123,7 +177,7 @@ void MENU_processing(struct struct_rk_info *rk_info, int time_second,int velocit
         }
 		
 
-        showMainMenu(time_second,velocity, rk_info);
+        showMainMenu(time_second,velocity, rk_selfCheck_info);
 
         if(page_status!=page) LCD_Clear();
     }

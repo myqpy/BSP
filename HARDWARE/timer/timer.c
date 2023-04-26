@@ -5,7 +5,7 @@ uint16_t pulse_counter_2 = 0;
 uint16_t pulse_counter_1 = 0;
 uint32_t velocity = 0;
 uint32_t impulse_ratio = 0;
-car_info_t car_info;
+MCU_car_info car_info;
 void TIM3_ETR(u16 arr,u16 psc)
 {
 //  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;

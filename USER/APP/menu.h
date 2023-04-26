@@ -1,10 +1,11 @@
 #include "sys.h"
+#include "terminal_parameter.h"
 	    
 
 
-extern struct struct_rk_info *rk_info;
+//extern ARM_selfCheck_info rk_selfCheck_info;
 
-void MENU_processing(struct struct_rk_info *rk_info, int time_second, int velocity);
+void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second, int velocity);
 
 
 

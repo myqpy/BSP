@@ -600,6 +600,11 @@
               <FileType>1</FileType>
               <FilePath>.\APP\menu.c</FilePath>
             </File>
+            <File>
+              <FileName>printercmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\printercmd.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

@@ -242,7 +242,7 @@ unsigned char car_IO_status[][24]= {
 int weekday = 0;
 int time_h=0,time_m=0,time_s=0;
 char display_string[100];
-extern car_info_t car_info;
+extern MCU_car_info car_info;
 
 void LCD_Clear(void)
 {
@@ -305,7 +305,7 @@ void displayChinese_16x16(unsigned char page,unsigned char CaddrH,unsigned char 
 	}
 }
 
-void showMainMenu(int time, int velocity,struct struct_rk_info *rk_info)
+void showMainMenu(int time, int velocity,ARM_selfCheck_info *rk_selfCheck_info)
 {
 //	printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year,calendar.w_month,calendar.w_date,calendar.hour,calendar.min,calendar.sec);
 
@@ -314,12 +314,12 @@ void showMainMenu(int time, int velocity,struct struct_rk_info *rk_info)
 	if(weekday == 0) weekday = 7;
 
 
-	if(rk_info->EC20Status == 1)
+	if(rk_selfCheck_info->EC20Status == 1)
 	{
-		if((int)rk_info->EC20SignalStrength >=75) 												displayIcon(0xB0,0x10, 0x0,icon_4G_3bars);
-		if((int)(rk_info->EC20SignalStrength <75) && (int)(rk_info->EC20SignalStrength >=50)) 	displayIcon(0xB0,0x10, 0x0,icon_4G_2bars);
-		if((int)(rk_info->EC20SignalStrength <50) && (int)(rk_info->EC20SignalStrength >=25)) 	displayIcon(0xB0,0x10, 0x0,icon_4G_1bar);
-		if((int)(rk_info->EC20SignalStrength <25)) 												displayIcon(0xB0,0x10, 0x0,icon_4G_nobar);
+		if((int)rk_selfCheck_info->EC20SignalStrength >=75) 														displayIcon(0xB0,0x10, 0x0,icon_4G_3bars);
+		if((int)(rk_selfCheck_info->EC20SignalStrength <75) && (int)(rk_selfCheck_info->EC20SignalStrength >=50)) 	displayIcon(0xB0,0x10, 0x0,icon_4G_2bars);
+		if((int)(rk_selfCheck_info->EC20SignalStrength <50) && (int)(rk_selfCheck_info->EC20SignalStrength >=25)) 	displayIcon(0xB0,0x10, 0x0,icon_4G_1bar);
+		if((int)(rk_selfCheck_info->EC20SignalStrength <25)) 														displayIcon(0xB0,0x10, 0x0,icon_4G_nobar);
 	}
 	else
 	{
@@ -327,7 +327,7 @@ void showMainMenu(int time, int velocity,struct struct_rk_info *rk_info)
 	}
     
 	
-	if(rk_info->BDStatus == 1)
+	if(rk_selfCheck_info->BDStatus == 1)
 	{
 		displayIcon(0xB0,0x11, 0x0,icon_beidou);
 	}
@@ -350,7 +350,7 @@ void showMainMenu(int time, int velocity,struct struct_rk_info *rk_info)
 		displayIcon(0xB0,0x12, 0x0,icon_empty);
 	}
     
-	if(rk_info->SDStatus == 1)
+	if(rk_selfCheck_info->SDStatus == 1)
 	{
 		displayIcon(0xB0,0x13, 0x0,icon_SD);
 	}
@@ -368,7 +368,7 @@ void showMainMenu(int time, int velocity,struct struct_rk_info *rk_info)
 		displayIcon(0xB0,0x14, 0x0,icon_battery);
 	}
 	
-	if(rk_info->cameraStatus == 1)
+	if(rk_selfCheck_info->cameraStatus == 1)
 	{
 		displayIcon(0xB0,0x15, 0x0,icon_camera);
 	}
@@ -376,7 +376,7 @@ void showMainMenu(int time, int velocity,struct struct_rk_info *rk_info)
 	{
 		displayIcon(0xB0,0x15, 0x0,icon_empty);
 	}
-	if(rk_info->velocityStatus == 1)
+	if(rk_selfCheck_info->velocityStatus == 1)
 	{
 		displayIcon(0xB0,0x16, 0x0,icon_abnormalSpeed);
 	}

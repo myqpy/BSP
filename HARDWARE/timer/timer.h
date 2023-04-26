@@ -19,7 +19,7 @@ extern	uint16_t pulse_counter_2;
 extern	uint16_t pulse_counter_1;
 extern	uint32_t velocity;
 extern 	uint32_t impulse_ratio;
-extern	car_info_t car_info;
+extern	MCU_car_info car_info;
 void TIM3_ETR(u16 arr,u16 psc);
 void TIM6_Int_Init(u16 arr,u16 psc);
 void Tim5_Int_Init(u16 arr,u16 psc);

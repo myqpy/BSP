@@ -14,7 +14,7 @@ extern unsigned char car_plate_province[][24];
 extern unsigned char car_IO_status[][24];
 
 void LCD_Clear(void);
-void showMainMenu(int time, int velocity,struct struct_rk_info *rk_info);
+void showMainMenu(int time, int velocity,ARM_selfCheck_info *rk_selfCheck_info);
 void displayEmpty(unsigned char page,unsigned char CaddrH,unsigned char CaddrL);
 void displayChinese_16x16(unsigned char page,unsigned char CaddrH,unsigned char CaddrL,unsigned char arr[][24],unsigned char startWord, unsigned char endWord);
 
