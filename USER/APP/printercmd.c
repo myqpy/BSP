@@ -1,5 +1,4 @@
 #include "printercmd.h"
-#include "terminal_parameter.h"
 #include "printer.h"
 #include <string.h>
 #include "usart.h"
@@ -7,6 +6,7 @@
 
 unsigned char out_line[] = {0x1b,0x66,0x01,0x01};//输出两个空行
 u8 printer_cmd[200];
+u8 print_temp[200];
 
 //unsigned char set_chinese[] = {0x1c,0x26};
 //unsigned char CarPlateNum[] = {0xBB,0xFA, 0xB6,0xAF, 0xB3,0xB5, 0xBA,0xC5, 0xC5,0xC6, 0xBA,0xC5, 0xC2,0xEB, 0xA3,0xBA};//《机动车号牌号码：》    汉字编码
@@ -139,4 +139,108 @@ void Printer_printString(uint8_t* printString)
 void print_empty_line()
 {
     printer_send_cmd(out_line, sizeof(out_line));
+}
+
+
+void print_overTime_record_Header(ARM_vehicle_info rk_vehicle_info)
+{
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,"机动车号牌号码：", sizeof("机动车号牌号码："));
+	Printer_printString(printer_cmd);
+
+	memset(rk_vehicle_info.car_plate_num,0,16);
+	memcpy(rk_vehicle_info.car_plate_num,"豫A88888",8);
+	Printer_printString(rk_vehicle_info.car_plate_num);
+
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,"机动车号牌分类：", sizeof("机动车号牌分类："));
+	Printer_printString(printer_cmd);
+
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,"黄色", sizeof("黄色"));
+	Printer_printString(printer_cmd);
+
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,"机动车驾驶证号码：", sizeof("机动车驾驶证号码："));
+	Printer_printString(printer_cmd);
+
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,"410105199607150035", sizeof("410105199607150035"));
+	Printer_printString(printer_cmd);
+
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,"速度状态：", sizeof("速度状态："));
+	Printer_printString(printer_cmd);
+
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,"正常", sizeof("正常"));
+	Printer_printString(printer_cmd);
+
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,"打印时间", sizeof("打印时间"));
+	Printer_printString(printer_cmd);
+
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year, calendar.w_month, calendar.w_date, calendar.hour,calendar.min,calendar.sec);	
+	Printer_printString(printer_cmd);
+
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,"两个日历天内超时驾驶记录：", sizeof("两个日历天内超时驾驶记录："));
+	Printer_printString(printer_cmd);
+
+	
+	print_empty_line();
+	print_empty_line();
+	print_empty_line();
+	print_empty_line();
+}
+
+void print_overTime_record_Body(ARM_OvertimeDriveRecord_info OvertimeDriveRecord_info, u8 recordNum)
+{
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,"记录", sizeof("记录"));
+	
+	sprintf(print_temp,"%c：",recordNum);
+	strncpy(printer_cmd, print_temp, sizeof(print_temp));
+	Printer_printString(printer_cmd);
+	
+	
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,"机动车驾驶证号码：", sizeof("机动车驾驶证号码："));
+	Printer_printString(printer_cmd);
+	
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,OvertimeDriveRecord_info.DriverLicenseNum, sizeof(OvertimeDriveRecord_info.DriverLicenseNum));
+	Printer_printString(printer_cmd);
+	
+	
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,"连续驾驶开始时间：", sizeof("连续驾驶开始时间："));
+	Printer_printString(printer_cmd);
+	
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d \r\n",OvertimeDriveRecord_info.startTime.w_year, OvertimeDriveRecord_info.startTime.w_month, OvertimeDriveRecord_info.startTime.w_date, OvertimeDriveRecord_info.startTime.hour,OvertimeDriveRecord_info.startTime.min,OvertimeDriveRecord_info.startTime.sec);
+	Printer_printString(printer_cmd);
+	
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	memcpy(printer_cmd,"连续驾驶结束时间：", sizeof("连续驾驶结束时间："));
+	Printer_printString(printer_cmd);	
+	
+	print_empty_line();
+	memset(printer_cmd ,0,sizeof(printer_cmd));
+	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d \r\n",OvertimeDriveRecord_info.endTime.w_year, OvertimeDriveRecord_info.endTime.w_month, OvertimeDriveRecord_info.endTime.w_date, OvertimeDriveRecord_info.endTime.hour,OvertimeDriveRecord_info.endTime.min,OvertimeDriveRecord_info.endTime.sec);
+	Printer_printString(printer_cmd);	
 }

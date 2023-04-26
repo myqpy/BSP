@@ -605,6 +605,11 @@
               <FileType>1</FileType>
               <FilePath>.\APP\printercmd.c</FilePath>
             </File>
+            <File>
+              <FileName>OverTimeRecord.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\OverTimeRecord.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

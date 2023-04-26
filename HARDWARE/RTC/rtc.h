@@ -6,6 +6,7 @@
 //2010/6/6
 
 //时间结构体
+#include "sys.h"
 typedef struct 
 {
 	vu8 hour;

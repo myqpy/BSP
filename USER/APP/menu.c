@@ -112,62 +112,7 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
             if(confirmed_pressed >= 3000)
             {
                 printf("printing!!!!!!!!! \r\n");
-//				memset(rk_vehicle_info->car_plate_num,0,sizeof(*rk_vehicle_info->car_plate_num));
-				print_empty_line();
-				memset(printer_cmd ,0,sizeof(printer_cmd));
-				memcpy(printer_cmd,"机动车号牌号码：", sizeof("机动车号牌号码："));
-				Printer_printString(printer_cmd);
-				
-				memset(rk_vehicle_info.car_plate_num,0,16);
-				memcpy(rk_vehicle_info.car_plate_num,"豫A88888",8);
-				Printer_printString(rk_vehicle_info.car_plate_num);
-				
-				print_empty_line();
-				memset(printer_cmd ,0,sizeof(printer_cmd));
-				memcpy(printer_cmd,"机动车号牌分类：", sizeof("机动车号牌分类："));
-				Printer_printString(printer_cmd);
-				
-				memset(printer_cmd ,0,sizeof(printer_cmd));
-				memcpy(printer_cmd,"黄色", sizeof("黄色"));
-				Printer_printString(printer_cmd);
-				
-				print_empty_line();
-				memset(printer_cmd ,0,sizeof(printer_cmd));
-				memcpy(printer_cmd,"机动车驾驶证号码：", sizeof("机动车驾驶证号码："));
-				Printer_printString(printer_cmd);
-				
-				print_empty_line();
-				memset(printer_cmd ,0,sizeof(printer_cmd));
-				memcpy(printer_cmd,"410105199607150035", sizeof("410105199607150035"));
-				Printer_printString(printer_cmd);
-				
-				print_empty_line();
-				memset(printer_cmd ,0,sizeof(printer_cmd));
-				memcpy(printer_cmd,"速度状态：", sizeof("速度状态："));
-				Printer_printString(printer_cmd);
-				
-				memset(printer_cmd ,0,sizeof(printer_cmd));
-				memcpy(printer_cmd,"正常", sizeof("正常"));
-				Printer_printString(printer_cmd);
-				
-				print_empty_line();
-				memset(printer_cmd ,0,sizeof(printer_cmd));
-				memcpy(printer_cmd,"打印时间", sizeof("打印时间"));
-				Printer_printString(printer_cmd);
-				
-				memset(printer_cmd ,0,sizeof(printer_cmd));
-				sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year, calendar.w_month, calendar.w_date, calendar.hour,calendar.min,calendar.sec);	
-				Printer_printString(printer_cmd);
-				
-				print_empty_line();
-				memset(printer_cmd ,0,sizeof(printer_cmd));
-				memcpy(printer_cmd,"两个日历天内超时驾驶记录：", sizeof("两个日历天内超时驾驶记录："));
-				Printer_printString(printer_cmd);
-				
-				print_empty_line();
-				print_empty_line();
-				print_empty_line();
-				print_empty_line();
+				print_overTime_record_Header(rk_vehicle_info);
                 confirmed_pressed  = 0;
                 TIM_Cmd(TIM5,DISABLE);
             }

@@ -3,7 +3,7 @@
 
 #include "sys.h"
 #include "stdlib.h"
-
+#include "rtc.h" 
 //#pragma pack(push)
 //#pragma pack(1) // 结构体1字节对齐	
 //typedef struct TerminalParameters_str
@@ -52,12 +52,48 @@ typedef struct Struct_ARM_vehicle_info
 {
 	unsigned char 	header;
 	unsigned char	car_plate_num[16];
+	unsigned char	car_plate_color;
 	unsigned char	speedLimit;
 	unsigned char	pulseRatio;
 	
 }ARM_vehicle_info;
 #pragma pack() // 恢复默认字节对齐
 
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
+typedef struct Struct_ARM_OvertimeDriveTime
+{
+	vu8 hour;
+	vu8 min;
+	vu8 sec;			
+	//公历日月年周
+	vu16 w_year;
+	vu8  w_month;
+	vu8  w_date;
+}ARM_OvertimeDriveTime;	
+#pragma pack() // 恢复默认字节对齐
+
+
+
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
+typedef struct Struct_ARM_OvertimeDriveRecord
+{
+	unsigned char	DriverLicenseNum[18];
+	ARM_OvertimeDriveTime	startTime;
+	ARM_OvertimeDriveTime	endTime;
+} ARM_OvertimeDriveRecord_info;
+#pragma pack() // 恢复默认字节对齐
+
+
+//#pragma pack(push)
+//#pragma pack(1) // 结构体1字节对齐	
+//typedef struct Struct_ARM_OvertimeDriveNum
+//{
+//	unsigned char OvertimeDriveNum;
+//	
+//} ARM_OvertimeDriveNum;
+//#pragma pack() // 恢复默认字节对齐
 
 
 #pragma pack(push)
@@ -80,16 +116,20 @@ typedef struct Struct_MCU_car_info
 
 
 
-//#pragma pack(push)
-//#pragma pack(1) // 结构体1字节对齐	
-//struct Struct_MCU_ICcard_info
-//{
-//	unsigned char	header;
-//	
-//	
-//	
-//}MCU_ICcard_info;
-//#pragma pack() // 恢复默认字节对齐
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
+typedef struct Struct_MCU_ICcard_info
+{
+	unsigned int	Reserved;
+	unsigned char	DriverLicenseNum[18];
+	unsigned char	DriverLicenseValid_Year;
+	unsigned char	DriverLicenseValid_Month;
+	unsigned char	DriverLicenseValid_Date;
+	unsigned char	EmployQualifCertifiNum[18];
+	unsigned char	StandardExtensionReservation[56];
+	unsigned char	BCCchecksum;
+}MCU_ICcard_info;
+#pragma pack() // 恢复默认字节对齐
 
 
 #endif // JT808_TERMINAL_PARAMETER_H_

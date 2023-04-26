@@ -1,5 +1,5 @@
 #include "sys.h"
-
+#include "terminal_parameter.h"
 
 
 #pragma pack(push)
@@ -13,6 +13,7 @@ typedef struct{
 #pragma pack()
 
 extern unsigned char out_line[];
+extern ARM_OvertimeDriveRecord_info OvertimeDriveRecord_info;
 
 
 //extern unsigned char set_chinese[];
@@ -62,7 +63,8 @@ extern unsigned char out_line[];
 void Printer_printString(uint8_t* printString);
 void print_empty_line(void);
 void printChinese(void);
-
+void print_overTime_record_Header(ARM_vehicle_info rk_vehicle_info);
+void print_overTime_record_Body(ARM_OvertimeDriveRecord_info OvertimeDriveRecord_info, u8 recordNum);
 
 //void printer_info_init(u8 *cmd, u8 *reg_num);
 

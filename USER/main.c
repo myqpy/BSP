@@ -6,6 +6,7 @@
 #include "menu.h"
 #include "rtc.h"
 #include "ST7567a.h"
+#include "printercmd.h"
 #include "timer.h"
 #include "24cxx.h"
 #include "printer.h"
@@ -15,23 +16,28 @@
 #include "gpio.h"
 #include <string.h>
 #include "adc.h"
+#include "OverTimeRecord.h"
 
 int main(void)
 {
 
     u8 i=0;
     u8 time=0;
-    u8 flag = 1;
+    u8 OvertimeDriveNum = 0;
+	
     int drive_time=0;
-
+    extern u8 printer_cmd[200];
     u8 canbuf[8];
     float volatageAD=0;
 //	int h,m,s;
-
+//	unsigned char *OvertimeDrive_ptr=NULL;
     ARM_selfCheck_info *rk_selfCheck_info = (ARM_selfCheck_info*)USART3_RX_BUF;
     ARM_time_info *time_info = (ARM_time_info*)USART3_RX_BUF;
-    u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
-
+//	ARM_vehicle_info rk_vehicle_info; 
+	extern ARM_OvertimeDriveRecord_info OvertimeDriveRecord_info;
+//    u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
+//	u8 flag = 1;
+	uint8_t pos = 0;
     impulse_ratio = 570;
     car_info.header = 0xfe;
 
@@ -49,9 +55,9 @@ int main(void)
     LcdInitial();//显示屏
     AT24CXX_Init();//IIC初始化，读IC卡
     UART4_init(115200);//打印机
-	
+
 //	GPIO_ResetBits(GPIOC, GPIO_Pin_13); //关显示屏背光
-	
+
     CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,CAN_Mode_LoopBack);//CAN初始化环回模式,波特率500Kbps
     InPut_Init();//外部开关量
     Adc_Init();
@@ -122,7 +128,7 @@ int main(void)
             USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
             if(USART3_RX_BUF[0] == 0xEE)
             {
-                memcpy(rk_selfCheck_info,USART3_RX_BUF, USART3_RX_STA);
+//                memcpy(rk_selfCheck_info,USART3_RX_BUF, USART3_RX_STA);
 //				printf("rk_info->op:%02x\r\n", rk_info->op);
 //				printf("rk_info->SDStatus:%02x\r\n", rk_info->SDStatus);
 //				printf("rk_info->EC20Status:%02x\r\n", rk_info->EC20Status);
@@ -130,7 +136,7 @@ int main(void)
 //				printf("rk_info->cameraStatus:%02x\r\n", rk_info->cameraStatus);
 //				printf("rk_info->velocityStatus:%02x\r\n", rk_info->velocityStatus);
 //				printf("rk_info->BDStatus:%02x\r\n", rk_info->BDStatus);
-			
+
                 for(i = 0; i<USART3_RX_STA; i++)
                 {
                     printf("%02x ",USART3_RX_BUF[i]);
@@ -138,8 +144,8 @@ int main(void)
                 printf("\r\n");
 
             }
-			
-			else if(USART3_RX_BUF[0] == 0xFE)
+
+            else if(USART3_RX_BUF[0] == 0xFE)
             {
                 printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",time_info->w_year, time_info->w_month, time_info->w_date,time_info->hour,time_info->min,time_info->sec);
                 RTC_Set(time_info->w_year, time_info->w_month, time_info->w_date, time_info->hour, time_info->min, time_info->sec);	//RTC初始化
@@ -148,6 +154,73 @@ int main(void)
                     printf("%02x ",USART3_RX_BUF[i]);
                 }
                 printf("\r\n");
+            }
+
+
+            else if(USART3_RX_BUF[0] == 0xEF)
+            {
+//                OvertimeDriveNum = USART3_RX_BUF[1];
+////				OvertimeDrive_ptr = (unsigned char *)malloc(sizeof(unsigned char)*(OvertimeDriveNum*35));
+//				pos++;
+//				for(i=0; i<OvertimeDriveNum; i++)
+//				{
+////					pos = handle_overTimeRecord(i,pos);
+//					for(j=0;j<18;j++)
+//					{
+//						USART3_RX_BUF[pos] = OvertimeDriveRecord_info.DriverLicenseNum[j];
+//						pos++;
+//					}
+//					
+//					OvertimeDriveRecord_info.startTime.hour = USART3_RX_BUF[pos];
+//					pos++;
+//					OvertimeDriveRecord_info.startTime.min = USART3_RX_BUF[pos];
+//					pos++;
+//					OvertimeDriveRecord_info.startTime.sec = USART3_RX_BUF[pos];
+//					pos++;
+//					OvertimeDriveRecord_info.startTime.w_year = USART3_RX_BUF[pos] + USART3_RX_BUF[pos+1];
+//					pos+=2;
+//					OvertimeDriveRecord_info.startTime.w_month = USART3_RX_BUF[pos];
+//					pos++;
+//					OvertimeDriveRecord_info.startTime.w_date = USART3_RX_BUF[pos];
+//					pos++;
+//					
+//					OvertimeDriveRecord_info.endTime.hour = USART3_RX_BUF[pos];
+//					pos++;
+//					OvertimeDriveRecord_info.endTime.min = USART3_RX_BUF[pos];
+//					pos++;
+//					OvertimeDriveRecord_info.endTime.sec = USART3_RX_BUF[pos];
+//					pos++;
+//					OvertimeDriveRecord_info.endTime.w_year = USART3_RX_BUF[pos] + USART3_RX_BUF[pos+1];
+//					pos+=2;
+//					OvertimeDriveRecord_info.endTime.w_month = USART3_RX_BUF[pos];
+//					pos++;
+//					OvertimeDriveRecord_info.endTime.w_date = USART3_RX_BUF[pos];
+//					pos++;
+//				}
+				
+				OvertimeDriveNum = USART3_RX_BUF[1];
+				pos++;
+				for(i = 0; i<OvertimeDriveNum; i++)
+				{
+					pos = handle_overTimeRecord(USART3_RX_BUF, pos);
+//					memset(printer_cmd ,0,sizeof(printer_cmd));
+//					memcpy(printer_cmd,(u8 *)&rk_vehicle_info, sizeof(rk_vehicle_info));
+//					Printer_printString(printer_cmd);
+					print_overTime_record_Body(OvertimeDriveRecord_info, i);
+					for(i = 0; i<sizeof(printer_cmd); i++)
+					{
+						printf("%02x ",printer_cmd[i]);
+					}
+					printf("\r\n");
+				}
+				 
+				
+				
+//                for(i = 0; i<USART3_RX_STA; i++)
+//                {
+//                    printf("%02x ",USART3_RX_BUF[i]);
+//                }
+//                printf("\r\n");
             }
 
 

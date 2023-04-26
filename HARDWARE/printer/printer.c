@@ -7,10 +7,6 @@ u16 USART4_RX_STA=0;       //接收状态标记
 
 uint8_t flag=0;
 
-
-
-
-
 void UART4_send_byte(uint8_t byte)
 {
     while(USART_GetFlagStatus(UART4,USART_FLAG_TC)==RESET);//等待发送完成
