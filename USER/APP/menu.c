@@ -4,7 +4,7 @@
 #include "gpio.h"
 #include "delay.h"
 #include "ST7567a.h"
-
+#include "client_manager.h"
 #include "printer.h"
 #include <stdio.h>
 #include <string.h>
@@ -18,7 +18,7 @@ int page_status = 0;
 
 unsigned char page1_row_min = 0xB0;
 unsigned char page1_row = 0xB0;
-unsigned char page1_row_max = 0xB2;
+unsigned char page1_row_max = 0xB4;
 
 unsigned char page2_row_min = 0xB0;
 unsigned char page2_row = 0xB0;
@@ -67,6 +67,7 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
 			if(up_down_pressed>=3000)
 			{
 				printf("SOS!!!!!!!!! \r\n");
+				statusReport(kSOS, 1);
 				up_down_pressed = 0;
 				TIM_Cmd(TIM5,DISABLE);
 			}
@@ -165,8 +166,11 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
         /*³¬Ê±¼ÝÊ»¼ÇÂ¼*/
         displayChinese_16x16(0xB2,0x12,0x0,overTimeDriveRecord,1,2);
         displayChinese_16x16(0xB2,0x13,0x8,overTimeDriveRecord,5,8);
+		/*¸ü¸ÄÔØ»õ×´Ì¬*/
+		displayChinese_16x16(0xB4,0x12,0x0,changeLoadingStatus,0,5);
         sprintf(printString,"-->");
         ShowString(page1_row,0x10, 0x0,printString,12);
+		
 
         if(page_status!=page) LCD_Clear();
 
@@ -215,6 +219,7 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
             displayChinese_16x16(0xB2,0x12,0x0,vehicle_driver_info,3,7);
             sprintf(printString,"-->");
             ShowString(page2_row,0x10, 0x0,printString,12);
+			
         }
 
         if(page1_row==0xB2)
@@ -222,6 +227,20 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
             /*ÎÞ³¬Ê±¼ÝÊ»¼ÇÂ¼*/
             displayChinese_16x16(0xB3,0x12,0x0,overTimeDriveRecord,0,2);
             displayChinese_16x16(0xB3,0x14,0x5,overTimeDriveRecord,5,8);
+        }
+		
+		if(page1_row==0xB4)
+        {
+            /*ÂúÔØ*/
+            displayChinese_16x16(0xB0,0x12,0x0,changeLoadingStatus,6,6);
+			displayChinese_16x16(0xB0,0x12,0xc,changeLoadingStatus,2,2);
+			
+			/*¿ÕÔØ*/
+            displayChinese_16x16(0xB2,0x12,0x0,changeLoadingStatus,7,7);
+			displayChinese_16x16(0xB2,0x12,0xc,changeLoadingStatus,2,2);
+			
+			sprintf(printString,"-->");
+			ShowString(page2_row,0x10, 0x0,printString,12);
         }
 
         if(page_status!=page) LCD_Clear();
@@ -329,6 +348,13 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
         }
 
         if(page1_row==0xB2) page--;
+		
+		if(page1_row==0xB4) 
+		{
+			page--;
+			if(page2_row==0xB0) statusReport(kLoadingStatus, 1);
+			if(page2_row==0xB2)	statusReport(kLoadingStatus, 0);
+		}
 
         if(page_status!=page)LCD_Clear();
 

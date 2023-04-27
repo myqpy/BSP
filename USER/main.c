@@ -11,6 +11,7 @@
 #include "24cxx.h"
 #include "printer.h"
 #include "terminal_parameter.h"
+#include "client_manager.h"
 #include "usart3.h"
 #include "can.h"
 #include "gpio.h"
@@ -33,7 +34,7 @@ int main(void)
 //	unsigned char *OvertimeDrive_ptr=NULL;
     ARM_selfCheck_info *rk_selfCheck_info = (ARM_selfCheck_info*)USART3_RX_BUF;
     ARM_time_info *time_info = (ARM_time_info*)USART3_RX_BUF;
-//	ARM_vehicle_info rk_vehicle_info; 
+	ARM_vehicle_info rk_vehicle_info; 
 	extern ARM_OvertimeDriveRecord_info OvertimeDriveRecord_info;
 //    u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
 //	u8 flag = 1;
@@ -56,12 +57,12 @@ int main(void)
     AT24CXX_Init();//IIC初始化，读IC卡
     UART4_init(115200);//打印机
 
-//	GPIO_ResetBits(GPIOC, GPIO_Pin_13); //关显示屏背光
+	GPIO_ResetBits(GPIOC, GPIO_Pin_13); //关显示屏背光
 
     CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,CAN_Mode_LoopBack);//CAN初始化环回模式,波特率500Kbps
     InPut_Init();//外部开关量
     Adc_Init();
-    RTC_Init(2023,4,23,15,54,50);	  			//RTC初始化
+    RTC_Init(2000,1,1,0,0,0);	  			//RTC初始化
 //	RTC_Set(2023,4,23,16,39,10);
 //    while(flag)
 //    {
@@ -86,16 +87,16 @@ int main(void)
     {
         MENU_processing(rk_selfCheck_info, drive_time,car_info.velocity);
 
-        volatageAD = (float) (Get_Adc_Average(ADC_Channel_6,10) * 3.3 /4096) ;
+//        volatageAD = (float) (Get_Adc_Average(ADC_Channel_6,10) * 3.3 /4096) ;
 
-        if(volatageAD <= 1.7)
-        {
-            GPIO_SetBits(GPIOF, GPIO_Pin_7);
-        }
-        if(volatageAD > 1.7)
-        {
-            GPIO_ResetBits(GPIOF, GPIO_Pin_7);
-        }
+//        if(volatageAD <= 1.7)
+//        {
+//            GPIO_SetBits(GPIOF, GPIO_Pin_7);
+//        }
+//        if(volatageAD > 1.7)
+//        {
+//            GPIO_ResetBits(GPIOF, GPIO_Pin_7);
+//        }
 
         if(time!=calendar.sec)
         {
@@ -109,14 +110,11 @@ int main(void)
 //			printf("%d %d %d \r\n \r\n",h,m,s);
 //			printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year,calendar.w_month,calendar.w_date,calendar.hour,calendar.min,calendar.sec);
 
-//          car_info.mileage = car_info.mileage + 1;
-//          car_info.velocity = car_info.velocity + 1;
-//			if(car_info.velocity>66)
-//			{
-//				car_info.velocity = 0;
-//			}
+			if(drive_time >= 14400) statusReport(kOverTime, 1);
+			if(car_info.velocity>rk_vehicle_info.speedLimit) statusReport(kOverSpeed, 1);
 //			car_info.status = GPIO_Scan();
 //			car_info.brake;
+			
             Usart_SendStr_length(USART3, (uint8_t*)&car_info, sizeof(ARM_vehicle_info));
 
         }
@@ -158,46 +156,7 @@ int main(void)
 
 
             else if(USART3_RX_BUF[0] == 0xEF)
-            {
-//                OvertimeDriveNum = USART3_RX_BUF[1];
-////				OvertimeDrive_ptr = (unsigned char *)malloc(sizeof(unsigned char)*(OvertimeDriveNum*35));
-//				pos++;
-//				for(i=0; i<OvertimeDriveNum; i++)
-//				{
-////					pos = handle_overTimeRecord(i,pos);
-//					for(j=0;j<18;j++)
-//					{
-//						USART3_RX_BUF[pos] = OvertimeDriveRecord_info.DriverLicenseNum[j];
-//						pos++;
-//					}
-//					
-//					OvertimeDriveRecord_info.startTime.hour = USART3_RX_BUF[pos];
-//					pos++;
-//					OvertimeDriveRecord_info.startTime.min = USART3_RX_BUF[pos];
-//					pos++;
-//					OvertimeDriveRecord_info.startTime.sec = USART3_RX_BUF[pos];
-//					pos++;
-//					OvertimeDriveRecord_info.startTime.w_year = USART3_RX_BUF[pos] + USART3_RX_BUF[pos+1];
-//					pos+=2;
-//					OvertimeDriveRecord_info.startTime.w_month = USART3_RX_BUF[pos];
-//					pos++;
-//					OvertimeDriveRecord_info.startTime.w_date = USART3_RX_BUF[pos];
-//					pos++;
-//					
-//					OvertimeDriveRecord_info.endTime.hour = USART3_RX_BUF[pos];
-//					pos++;
-//					OvertimeDriveRecord_info.endTime.min = USART3_RX_BUF[pos];
-//					pos++;
-//					OvertimeDriveRecord_info.endTime.sec = USART3_RX_BUF[pos];
-//					pos++;
-//					OvertimeDriveRecord_info.endTime.w_year = USART3_RX_BUF[pos] + USART3_RX_BUF[pos+1];
-//					pos+=2;
-//					OvertimeDriveRecord_info.endTime.w_month = USART3_RX_BUF[pos];
-//					pos++;
-//					OvertimeDriveRecord_info.endTime.w_date = USART3_RX_BUF[pos];
-//					pos++;
-//				}
-				
+            {	
 				OvertimeDriveNum = USART3_RX_BUF[1];
 				pos++;
 				for(i = 0; i<OvertimeDriveNum; i++)

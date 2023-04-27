@@ -610,6 +610,11 @@
               <FileType>1</FileType>
               <FilePath>.\APP\OverTimeRecord.c</FilePath>
             </File>
+            <File>
+              <FileName>client_manager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\client_manager.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

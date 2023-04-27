@@ -13,7 +13,15 @@
 //} TerminalParameters_t;
 //#pragma pack() // 恢复默认字节对齐
 
-
+enum EN_StatusBit
+{
+	kLoadingStatus 	= 	0x0,	// 载货状态	1 满载 0 空载
+	kSOS			= 	0x1,	// 人工报警	1 报警
+	kOverSpeed	 	=	0x2,	// 超速提醒 	1 报警
+	kLowVoltage		= 	0x3,	// 电瓶欠压	1 报警
+	kOverTime		=	0x4,	// 超时驾驶	1 报警
+	kICcard			=	0x5,	// 人员登录 	1 登录 0 登出
+};
 
 #pragma pack(push)
 #pragma pack(1) // 结构体1字节对齐	
@@ -51,10 +59,10 @@ typedef struct Struct_ARM_selfCheck_info
 typedef struct Struct_ARM_vehicle_info
 {
 	unsigned char 	header;
-	unsigned char	car_plate_num[16];
-	unsigned char	car_plate_color;
-	unsigned char	speedLimit;
-	unsigned char	pulseRatio;
+	unsigned char	car_plate_num[16];	//机动车号牌号码
+	unsigned char	car_plate_color;	//机动车号牌颜色
+	unsigned char	speedLimit;			//速度阈值
+	unsigned char	pulseRatio;			//脉冲系数
 	
 }ARM_vehicle_info;
 #pragma pack() // 恢复默认字节对齐
@@ -130,6 +138,8 @@ typedef struct Struct_MCU_ICcard_info
 	unsigned char	BCCchecksum;
 }MCU_ICcard_info;
 #pragma pack() // 恢复默认字节对齐
+
+
 
 
 #endif // JT808_TERMINAL_PARAMETER_H_

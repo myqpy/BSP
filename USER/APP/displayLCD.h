@@ -12,6 +12,7 @@ extern unsigned char Chinese_car_plate[][24];
 extern unsigned char pulseRatio[][24];
 extern unsigned char car_plate_province[][24];
 extern unsigned char car_IO_status[][24];
+extern unsigned char changeLoadingStatus[][24];
 
 void LCD_Clear(void);
 void showMainMenu(int time, int velocity,ARM_selfCheck_info *rk_selfCheck_info);
