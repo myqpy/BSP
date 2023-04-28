@@ -57,7 +57,7 @@ int main(void)
     AT24CXX_Init();//IIC初始化，读IC卡
     UART4_init(115200);//打印机
 
-	GPIO_ResetBits(GPIOC, GPIO_Pin_13); //关显示屏背光
+//	GPIO_ResetBits(GPIOC, GPIO_Pin_13); //关显示屏背光
 
     CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,CAN_Mode_LoopBack);//CAN初始化环回模式,波特率500Kbps
     InPut_Init();//外部开关量
@@ -87,16 +87,12 @@ int main(void)
     {
         MENU_processing(rk_selfCheck_info, drive_time,car_info.velocity);
 
-//        volatageAD = (float) (Get_Adc_Average(ADC_Channel_6,10) * 3.3 /4096) ;
+        volatageAD = (float) (Get_Adc_Average(ADC_Channel_6,10) * 3.3 /4096) ;
 
-//        if(volatageAD <= 1.7)
-//        {
-//            GPIO_SetBits(GPIOF, GPIO_Pin_7);
-//        }
-//        if(volatageAD > 1.7)
-//        {
-//            GPIO_ResetBits(GPIOF, GPIO_Pin_7);
-//        }
+        if(volatageAD <= 1.7)
+        {
+			system_reboot();
+        }
 
         if(time!=calendar.sec)
         {

@@ -6,6 +6,13 @@
 
 u8 statusCmd[3];
 
+void system_reboot(void)
+{
+	__set_FAULTMASK(1); 
+	NVIC_SystemReset();
+}
+
+
 void statusReport(unsigned char statusBit, unsigned char statusValue)
 {
 	statusCmd[0]= 0xDD;
