@@ -139,7 +139,30 @@ typedef struct Struct_MCU_ICcard_info
 }MCU_ICcard_info;
 #pragma pack() // 恢复默认字节对齐
 
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
+typedef struct Struct_MCU_Location_info
+{
+  // 报警标志 4B
+  int alarm;
+  // 状态位定义 4B
+  int status;
+  // 纬度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
+  unsigned int latitude;
+  // 经度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
+  unsigned int longitude;
+  // 海拔高度, 单位为米(m) 2B
+  unsigned short altitude;
+  // 速度 1/10km/h 2B
+  unsigned short speed;
+  // 方向 0-359,正北为0, 顺时针 2B
+  unsigned short bearing;
+  // 时间, "YYMMDDhhmmss"(GMT+8时间, 本标准之后涉及的时间均采用此时区).12B
+  // std::string time;
+  unsigned char time[13];
+}MCU_Location_info;
 
+#pragma pack() // 恢复默认字节对齐
 
 
 #endif // JT808_TERMINAL_PARAMETER_H_

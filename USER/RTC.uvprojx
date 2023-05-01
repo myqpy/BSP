@@ -455,6 +455,11 @@
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\ADC\adc.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_internal_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\internal_flash\bsp_internal_flash.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

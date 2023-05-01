@@ -21,3 +21,8 @@ void statusReport(unsigned char statusBit, unsigned char statusValue)
 
 	Usart_SendStr_length(USART3, statusCmd, 3);
 }
+
+//void GPS_FLASH_WRITE(void)
+//{
+//	FLASH_WriteByte(FLASH_ADDR, (uint8_t*)&parameter_.parse.terminal_parameters, sizeof(parameter_.parse.terminal_parameters));
+//}

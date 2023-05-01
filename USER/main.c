@@ -1,23 +1,30 @@
+/*********SYSTEM headers***********/
 #include "delay.h"
-#include "displayLCD.h"
 #include "sys.h"
-#include "usart.h"
-#include "usmart.h"
-#include "menu.h"
+#include <string.h>
+
+/*********BSP headers***********/
 #include "rtc.h"
 #include "ST7567a.h"
-#include "printercmd.h"
-#include "timer.h"
+#include "usart.h"
+#include "usmart.h"
 #include "24cxx.h"
+#include "adc.h"
+#include "can.h"
+#include "gpio.h"
+#include "usart3.h"
+#include "timer.h"
+#include "bsp_internal_flash.h"   
+
+/*********APP headers***********/
+#include "displayLCD.h"
+#include "menu.h"
+#include "printercmd.h"
 #include "printer.h"
 #include "terminal_parameter.h"
 #include "client_manager.h"
-#include "usart3.h"
-#include "can.h"
-#include "gpio.h"
-#include <string.h>
-#include "adc.h"
 #include "OverTimeRecord.h"
+
 
 int main(void)
 {
@@ -34,6 +41,7 @@ int main(void)
 //	unsigned char *OvertimeDrive_ptr=NULL;
     ARM_selfCheck_info *rk_selfCheck_info = (ARM_selfCheck_info*)USART3_RX_BUF;
     ARM_time_info *time_info = (ARM_time_info*)USART3_RX_BUF;
+	MCU_Location_info *location_info = (MCU_Location_info*) USART3_RX_BUF;
 	ARM_vehicle_info rk_vehicle_info; 
 	extern ARM_OvertimeDriveRecord_info OvertimeDriveRecord_info;
 //    u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
@@ -91,6 +99,7 @@ int main(void)
 
         if(volatageAD <= 1.7)
         {
+			FLASH_WriteByte(FLASH_GPS_ADDR, (uint8_t*)&location_info, sizeof(location_info));
 			system_reboot();
         }
 
@@ -122,7 +131,7 @@ int main(void)
             USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
             if(USART3_RX_BUF[0] == 0xEE)
             {
-//                memcpy(rk_selfCheck_info,USART3_RX_BUF, USART3_RX_STA);
+//              memcpy(rk_selfCheck_info,USART3_RX_BUF, USART3_RX_STA);
 //				printf("rk_info->op:%02x\r\n", rk_info->op);
 //				printf("rk_info->SDStatus:%02x\r\n", rk_info->SDStatus);
 //				printf("rk_info->EC20Status:%02x\r\n", rk_info->EC20Status);
@@ -147,6 +156,34 @@ int main(void)
                 {
                     printf("%02x ",USART3_RX_BUF[i]);
                 }
+                printf("\r\n");
+            }
+			
+			else if(USART3_RX_BUF[0] == 0xDD)
+            {
+				
+				// 报警标志 4B
+				printf("alarm %d",location_info->alarm);
+				// 状态位定义 4B
+				printf("status %d",location_info->status);
+				// 纬度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
+				printf("latitude %d",location_info->latitude);
+				// 经度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
+				printf("longitude %d",location_info->longitude);
+				// 海拔高度, 单位为米(m) 2B
+				printf("altitude %d",location_info->altitude);
+				// 速度 1/10km/h 2B
+				printf("speed %d",location_info->speed);
+				// 方向 0-359,正北为0, 顺时针 2B
+				printf("bearing %d",location_info->bearing);
+				// 时间, "YYMMDDhhmmss"(GMT+8时间, 本标准之后涉及的时间均采用此时区).12B
+				// std::string time;
+				printf("time %s",location_info->time);
+				
+//                for(i = 0; i<USART3_RX_STA; i++)
+//                {
+//                    printf("%02x ",USART3_RX_BUF[i]);
+//                }
                 printf("\r\n");
             }
 
