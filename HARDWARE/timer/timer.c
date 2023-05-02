@@ -41,7 +41,7 @@ void TIM3_ETR(u16 arr,u16 psc)
     GPIO_Init(GPIOD, &GPIO_InitStructure);
     GPIO_ResetBits(GPIOD,GPIO_Pin_2);  
 
-	//初始化定时器 TIM3   
+	//初始化定时器 TIM3 
     TIM_TimeBaseStructure.TIM_Period = arr; //设定计数器自动重装值 
     TIM_TimeBaseStructure.TIM_Prescaler =psc;     //预分频器 
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0x0;
@@ -67,7 +67,7 @@ void TIM3_IRQHandler(void)
 {
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
 	{
-		TIM_ClearITPendingBit(TIM3, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
+		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);  //清除TIMx的中断待处理位:TIM 中断源 
 		distance+=1;
 		car_info.mileage = distance;
 	}

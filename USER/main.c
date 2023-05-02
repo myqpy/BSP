@@ -32,7 +32,6 @@ int main(void)
     u8 i=0;
     u8 time=0;
     u8 OvertimeDriveNum = 0;
-	
     int drive_time=0;
     extern u8 printer_cmd[200];
     u8 canbuf[8];
@@ -42,9 +41,10 @@ int main(void)
     ARM_selfCheck_info *rk_selfCheck_info = (ARM_selfCheck_info*)USART3_RX_BUF;
     ARM_time_info *time_info = (ARM_time_info*)USART3_RX_BUF;
 	MCU_Location_info *location_info = (MCU_Location_info*) USART3_RX_BUF;
-	ARM_vehicle_info rk_vehicle_info; 
+	ARM_vehicle_info rk_vehicle_info;
+	MCU_ICcard_info ICcard_info;
 	extern ARM_OvertimeDriveRecord_info OvertimeDriveRecord_info;
-//    u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
+    u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
 //	u8 flag = 1;
 	uint8_t pos = 0;
     impulse_ratio = 570;
@@ -67,10 +67,11 @@ int main(void)
 
 //	GPIO_ResetBits(GPIOC, GPIO_Pin_13); //关显示屏背光
 
-    CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,CAN_Mode_LoopBack);//CAN初始化环回模式,波特率500Kbps
+    CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,mode);//CAN初始化环回模式,波特率500Kbps
     InPut_Init();//外部开关量
     Adc_Init();
     RTC_Init(2000,1,1,0,0,0);	  			//RTC初始化
+	ICcardRead(ICcard_info);
 //	RTC_Set(2023,4,23,16,39,10);
 //    while(flag)
 //    {
@@ -99,6 +100,7 @@ int main(void)
 
         if(volatageAD <= 1.7)
         {
+			statusReport(kLowVoltage, 1);
 			FLASH_WriteByte(FLASH_GPS_ADDR, (uint8_t*)&location_info, sizeof(location_info));
 			system_reboot();
         }

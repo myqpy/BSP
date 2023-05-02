@@ -1,0 +1,37 @@
+#include "sys.h"
+#include "24cxx.h" 
+#include "usart.h"	  
+#include "string.h"
+
+#define FLASH_ICcard_ADDR (uint32_t)0x08035000
+
+int main(void)
+{	
+	    delay_init();	    	 //延时函数初始化
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+	driver_info_t driver_info;
+	uart_init(115200);
+	AT24CXX_Init();
+	
+//	memset((u8*)&driver_info,0,sizeof(driver_info));
+//	memcpy(driver_info.driver_num,"410105199607150035",sizeof("410105199607150035"));
+//	driver_info.year = 0x23;
+//	driver_info.month = 0x5;
+//	driver_info.day = 0x2;
+	
+//	AT24CXX_Write(0,(u8*)&driver_info,sizeof(driver_info));
+	
+	AT24CXX_Read(0,(u8*)&driver_info,sizeof(driver_info));
+	
+	printf("start");
+	printf("driver_info.driver_num: %s",driver_info.driver_num);
+	printf("driver_info.year: 0x%02x",driver_info.year);
+	printf("driver_info.month: 0x%02x",driver_info.month);
+	printf("driver_info.day: 0x%02x",driver_info.day);
+
+	
+	
+	
+	return 0;
+}
+
