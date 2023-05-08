@@ -13,15 +13,15 @@ int main(void)
 	delay_init();	    	 //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 	uart_init(115200);
-	AT24CXX_Init();
+//	AT24CXX_Init();
 	
-	memset((u8*)&driver_info,0,sizeof(driver_info));
-	memcpy(driver_info.driver_num,"410105199607150035",strlen("410105199607150035"));
-	driver_info.year = HexToBcd(0x33);
-	driver_info.month = HexToBcd(0x12);
-	driver_info.day = HexToBcd(0x12);
-	driver_info.XOR_word = BccCheckSum((u8*)&driver_info, sizeof(driver_info));
-	AT24CXX_Write(0,(u8*)&driver_info,sizeof(driver_info));
+//	memset((u8*)&driver_info,0,sizeof(driver_info));
+//	memcpy(driver_info.driver_num,"410105199607150035",strlen("410105199607150035"));
+//	driver_info.year = HexToBcd(0x33);
+//	driver_info.month = HexToBcd(0x12);
+//	driver_info.day = HexToBcd(0x12);
+//	driver_info.XOR_word = BccCheckSum((u8*)&driver_info, sizeof(driver_info));
+//	AT24CXX_Write(0,(u8*)&driver_info,sizeof(driver_info));
 	
 //	AT24CXX_Read(0,(u8*)&driver_info,sizeof(driver_info));
 //	

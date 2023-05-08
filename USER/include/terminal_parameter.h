@@ -13,6 +13,26 @@
 //} TerminalParameters_t;
 //#pragma pack() // 恢复默认字节对齐
 
+enum packagerCMD
+{
+	kMCUGeneralResponse = 0x01,
+	kMCUStatusReport,
+	kMCUAlarmReport,
+	kAcquireOTReport,
+};
+
+enum parserCMD
+{
+	kARMGeneralResponse = 0x51,
+	kArmOTrecord,
+	kTimeCorrect,
+	kSelfCheck,
+	kCarInfo,
+	kForbidTime,
+	kLocation,
+	kOTwarning,
+};
+
 enum EN_StatusBit
 {
 	kLoadingStatus 	= 	0x0,	// 载货状态	1 满载 0 空载
@@ -23,27 +43,27 @@ enum EN_StatusBit
 	kICcard			=	0x5,	// 人员登录 	1 登录 0 登出
 };
 
-#pragma pack(push)
-#pragma pack(1) // 结构体1字节对齐	
-typedef struct Struct_ARM_time_info
-{
-    unsigned char header;
-    unsigned char hour;
-    unsigned char min;
-    unsigned char sec;
-    //公历日月年周
-    unsigned short int w_year;
-    unsigned char  w_month;
-    unsigned char  w_date;
-} ARM_time_info;
-#pragma pack() // 恢复默认字节对齐
+//#pragma pack(push)
+//#pragma pack(1) // 结构体1字节对齐	
+//typedef struct Struct_ARM_time_info
+//{
+////    unsigned char header;
+//    unsigned char hour;
+//    unsigned char min;
+//    unsigned char sec;
+//    //公历日月年周
+//    unsigned short int w_year;
+//    unsigned char  w_month;
+//    unsigned char  w_date;
+//} ARM_time_info;
+//#pragma pack() // 恢复默认字节对齐
 
 
 #pragma pack(push)
 #pragma pack(1) // 结构体1字节对齐	
 typedef struct Struct_ARM_selfCheck_info
 {
-	unsigned char 	header;
+//	unsigned char 	header;
 	unsigned char 	EC20Status;
 	unsigned char	EC20SignalStrength;
 	unsigned char 	BDStatus;
@@ -58,18 +78,32 @@ typedef struct Struct_ARM_selfCheck_info
 #pragma pack(1) // 结构体1字节对齐	
 typedef struct Struct_ARM_vehicle_info
 {
-	unsigned char 	header;
-	unsigned char	car_plate_num[16];	//机动车号牌号码
+//	unsigned char 	header;
+	unsigned char	car_plate_num[12];	//机动车号牌号码
 	unsigned char	car_plate_color;	//机动车号牌颜色
 	unsigned char	speedLimit;			//速度阈值
 	unsigned char	pulseRatio;			//脉冲系数
-	
 }ARM_vehicle_info;
 #pragma pack() // 恢复默认字节对齐
 
+//#pragma pack(push)
+//#pragma pack(1) // 结构体1字节对齐	
+//typedef struct Struct_ARM_OvertimeDriveTime
+//{
+//	vu8 hour;
+//	vu8 min;
+//	vu8 sec;			
+//	//公历日月年周
+//	vu16 w_year;
+//	vu8  w_month;
+//	vu8  w_date;
+//}ARM_OvertimeDriveTime;	
+//#pragma pack() // 恢复默认字节对齐
+
+
 #pragma pack(push)
 #pragma pack(1) // 结构体1字节对齐	
-typedef struct Struct_ARM_OvertimeDriveTime
+typedef struct Struct_TimeInfo
 {
 	vu8 hour;
 	vu8 min;
@@ -78,37 +112,70 @@ typedef struct Struct_ARM_OvertimeDriveTime
 	vu16 w_year;
 	vu8  w_month;
 	vu8  w_date;
-}ARM_OvertimeDriveTime;	
+}TimeInfo;	
 #pragma pack() // 恢复默认字节对齐
-
-
 
 #pragma pack(push)
 #pragma pack(1) // 结构体1字节对齐	
 typedef struct Struct_ARM_OvertimeDriveRecord
 {
+	unsigned char	OTnumber;
 	unsigned char	DriverLicenseNum[18];
-	ARM_OvertimeDriveTime	startTime;
-	ARM_OvertimeDriveTime	endTime;
-} ARM_OvertimeDriveRecord_info;
+	TimeInfo	startTime;
+	TimeInfo	endTime;
+} ARM_OvertimeDriveRecord;
 #pragma pack() // 恢复默认字节对齐
 
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
+typedef struct Struct_ARM_Location_info
+{
+  // 报警标志 4B
+  int alarm;
+  // 状态位定义 4B
+  int status;
+  // 纬度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
+  unsigned int latitude;
+  // 经度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
+  unsigned int longitude;
+  // 海拔高度, 单位为米(m) 2B
+  unsigned short altitude;
+  // 速度 1/10km/h 2B
+  unsigned short speed;
+  // 方向 0-359,正北为0, 顺时针 2B
+  unsigned short bearing;
+  // 时间, "YYMMDDhhmmss"(GMT+8时间, 本标准之后涉及的时间均采用此时区).12B
+  // std::string time;
+  unsigned char time[13];
+}ARM_Location_info;
 
-//#pragma pack(push)
-//#pragma pack(1) // 结构体1字节对齐	
-//typedef struct Struct_ARM_OvertimeDriveNum
-//{
-//	unsigned char OvertimeDriveNum;
-//	
-//} ARM_OvertimeDriveNum;
-//#pragma pack() // 恢复默认字节对齐
+
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
+typedef struct Struct_MCU_Packager
+{
+	unsigned char	msg_id;
+	unsigned short 	msg_flow_num;
+	unsigned char	msg_length;
+	
+	struct
+	{
+		unsigned char	msg_id_receive;
+		unsigned short 	msg_flow_num_receive;
+		unsigned char	bccCheck_receive;
+		unsigned char	forbidTime;
+		unsigned char 	OTwarning;
+	}parse;
+	
+} MCU_Packager;
+#pragma pack() // 恢复默认字节对齐
 
 
 #pragma pack(push)
 #pragma pack(1) // 结构体1字节对齐	
 typedef struct Struct_MCU_car_info
 {
-    unsigned char header;
+//    unsigned char header;
     unsigned int mileage;
     unsigned int velocity;
     unsigned char driver_num[18];//机动车驾驶证号码
@@ -139,30 +206,34 @@ typedef struct Struct_MCU_ICcard_info
 }MCU_ICcard_info;
 #pragma pack() // 恢复默认字节对齐
 
-#pragma pack(push)
-#pragma pack(1) // 结构体1字节对齐	
-typedef struct Struct_MCU_Location_info
-{
-  // 报警标志 4B
-  int alarm;
-  // 状态位定义 4B
-  int status;
-  // 纬度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
-  unsigned int latitude;
-  // 经度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
-  unsigned int longitude;
-  // 海拔高度, 单位为米(m) 2B
-  unsigned short altitude;
-  // 速度 1/10km/h 2B
-  unsigned short speed;
-  // 方向 0-359,正北为0, 顺时针 2B
-  unsigned short bearing;
-  // 时间, "YYMMDDhhmmss"(GMT+8时间, 本标准之后涉及的时间均采用此时区).12B
-  // std::string time;
-  unsigned char time[13];
-}MCU_Location_info;
+
 
 #pragma pack() // 恢复默认字节对齐
+
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
+typedef struct Struct_MCU_Parameters
+{
+	MCU_Packager	packager;
+	MCU_ICcard_info ICcard_info;
+	MCU_car_info	mcu_car_info;
+	struct
+	{
+		TimeInfo 				time_info;
+		ARM_selfCheck_info		selfCheck_info;
+		ARM_vehicle_info		rk_vehicle_info;
+		ARM_OvertimeDriveRecord	OvertimeDriveRecord;
+		ARM_Location_info		Location_info;			
+	}parse;
+	
+}MCU_Parameters;
+
+#pragma pack() // 恢复默认字节对齐
+
+
+
+
+
 
 
 #endif // JT808_TERMINAL_PARAMETER_H_

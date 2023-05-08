@@ -13,7 +13,8 @@ typedef struct{
 #pragma pack()
 
 extern unsigned char out_line[];
-extern ARM_OvertimeDriveRecord_info OvertimeDriveRecord_info;
+//extern ARM_OvertimeDriveRecord_info OvertimeDriveRecord_info;
+//extern MCU_Parameters para;
 
 
 //extern unsigned char set_chinese[];
@@ -63,8 +64,8 @@ extern ARM_OvertimeDriveRecord_info OvertimeDriveRecord_info;
 void Printer_printString(uint8_t* printString);
 void print_empty_line(void);
 void printChinese(void);
-void print_overTime_record_Header(ARM_vehicle_info rk_vehicle_info);
-void print_overTime_record_Body(ARM_OvertimeDriveRecord_info OvertimeDriveRecord_info, u8 recordNum);
+void print_overTime_record_Header(MCU_Parameters *para);
+void print_overTime_record_Body(MCU_Parameters *para, u8 recordNum);
 
 //void printer_info_init(u8 *cmd, u8 *reg_num);
 

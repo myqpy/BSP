@@ -616,11 +616,6 @@
               <FilePath>.\APP\printercmd.c</FilePath>
             </File>
             <File>
-              <FileName>OverTimeRecord.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\APP\OverTimeRecord.c</FilePath>
-            </File>
-            <File>
               <FileName>client_manager.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\APP\client_manager.c</FilePath>
@@ -629,6 +624,21 @@
               <FileName>bcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\APP\bcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>util.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\util.c</FilePath>
+            </File>
+            <File>
+              <FileName>packager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\packager.c</FilePath>
+            </File>
+            <File>
+              <FileName>parser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\parser.c</FilePath>
             </File>
           </Files>
         </Group>

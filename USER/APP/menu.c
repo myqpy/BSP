@@ -1,4 +1,5 @@
 #include "printercmd.h"
+#include "packager.h"
 #include "menu.h"
 #include "displayLCD.h"
 #include "gpio.h"
@@ -37,7 +38,8 @@ u16 up_down_pressed=0;
 u8 key_text=0;
 char printString[100];
 extern u8 printer_cmd[200];
-ARM_vehicle_info rk_vehicle_info;
+//ARM_vehicle_info rk_vehicle_info;
+extern MCU_Parameters para;
 
 void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int velocity)
 {
@@ -67,7 +69,7 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
 			if(up_down_pressed>=3000)
 			{
 				printf("SOS!!!!!!!!! \r\n");
-				statusReport(kSOS, 1);
+				packagingSOSMessage(kSOS, 1);
 				up_down_pressed = 0;
 				TIM_Cmd(TIM5,DISABLE);
 			}
@@ -113,7 +115,7 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
             if(confirmed_pressed >= 3000)
             {
                 printf("printing!!!!!!!!! \r\n");
-				print_overTime_record_Header(rk_vehicle_info);
+				print_overTime_record_Header(&para);
                 confirmed_pressed  = 0;
                 TIM_Cmd(TIM5,DISABLE);
             }
@@ -352,8 +354,8 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
 		if(page1_row==0xB4) 
 		{
 			page--;
-			if(page2_row==0xB0) statusReport(kLoadingStatus, 1);
-			if(page2_row==0xB2)	statusReport(kLoadingStatus, 0);
+			if(page2_row==0xB0) packagingSOSMessage(kLoadingStatus, 1);
+			if(page2_row==0xB2)	packagingSOSMessage(kLoadingStatus, 0);
 		}
 
         if(page_status!=page)LCD_Clear();
