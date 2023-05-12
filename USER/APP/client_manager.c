@@ -8,13 +8,8 @@
 #include "util.h"
 #include "packager.h"
 
-
-u8 MsgIdCmd[5];
-//u8 statusCmd[3];
-
 MCU_Parameters para;
 
-//unsigned int RealBufferSendSize = 0;
 
 void system_reboot(void)
 {
@@ -22,10 +17,7 @@ void system_reboot(void)
 	NVIC_SystemReset();
 }
 
-
-
-
-int packagingMessage(unsigned int msg_id)
+int packagingMessage(unsigned char msg_id)
 {
 
     //查找当前msgID是否存在于待打包消息ID数组中
@@ -42,34 +34,6 @@ int packagingMessage(unsigned int msg_id)
         return -1;
     }
 	
-	
-	
-	para.packager.msg_flow_num++; // 每正确生成一条命令, 消息流水号增加1.
-    return 0;
-}
-
-int packagingSOSMessage(unsigned char statusbit, unsigned char value)
-{
-
-    para.packager.msg_id = 0x03; // 设置消息ID.
-    if (McuSOSPackage(&para,statusbit,value) < 0)
-    {
-        printf("[jt808FramePackage]: FAILED !!!\r\n");
-        return -1;
-    }
-	para.packager.msg_flow_num++; // 每正确生成一条命令, 消息流水号增加1.
-    return 0;
-}
-
-int packagingOTMessage(unsigned char Page)
-{
-
-    para.packager.msg_id = 0x04; // 设置消息ID.
-    if (McuOTPackage(&para,Page) < 0)
-    {
-        printf("[jt808FramePackage]: FAILED !!!\r\n");
-        return -1;
-    }
 	para.packager.msg_flow_num++; // 每正确生成一条命令, 消息流水号增加1.
     return 0;
 }
@@ -77,45 +41,42 @@ int packagingOTMessage(unsigned char Page)
 
 
 
-
-//void statusReport(unsigned char statusBit, unsigned char statusValue)
-//{
-//	statusCmd[0]= 0xDD;
-//	statusCmd[1]= statusBit;
-//	statusCmd[2]= statusValue;
-
-//	Usart_SendStr_length(USART3, statusCmd, 3);
-//}
-
-//void GPS_FLASH_WRITE(void)
-//{
-//	FLASH_WriteByte(FLASH_ADDR, (uint8_t*)&parameter_.parse.terminal_parameters, sizeof(parameter_.parse.terminal_parameters));
-//}
-
-
-void ICcardRead(MCU_ICcard_info *driver_info)
+void ICcardRead()
 {
-	AT24CXX_Read(0,(u8*)&driver_info,sizeof(driver_info));
+	AT24CXX_Read(0,(u8*)&para.ICcard_info,sizeof(para.ICcard_info));
 	
-	printf("driver_info.driver_num: %s \r\n",(driver_info->DriverLicenseNum));
-	printf("driver_info.year: 0x%02x \r\n",BcdToHex(driver_info->DriverLicenseValid_Year));
-	printf("driver_info.month: 0x%02x \r\n",BcdToHex(driver_info->DriverLicenseValid_Month));
-	printf("driver_info.day: 0x%02x \r\n",BcdToHex(driver_info->DriverLicenseValid_Date));
-	printf("driver_info.XOR_word: 0x%02x \r\n",driver_info->BCCchecksum);
+	printf("driver_info.driver_num: %s \r\n",(para.ICcard_info.DriverLicenseNum));
+	printf("driver_info.year: 0x%02x \r\n",BcdToHex(para.ICcard_info.DriverLicenseValid_Year));
+	printf("driver_info.month: 0x%02x \r\n",BcdToHex(para.ICcard_info.DriverLicenseValid_Month));
+	printf("driver_info.day: 0x%02x \r\n",BcdToHex(para.ICcard_info.DriverLicenseValid_Date));
+	printf("driver_info.XOR_word: 0x%02x \r\n",para.ICcard_info.BCCchecksum);
+}
+
+void ICcardWrite(uint8_t writeOrNah)
+{
+	if (writeOrNah ==1)
+	{
+		printf("ICcardWrite!!!! \r\n");
+		memset((u8*)&para.ICcard_info,0,sizeof(para.ICcard_info));
+		memcpy(para.ICcard_info.DriverLicenseNum,"410105199607150035",sizeof("410105199607150035"));
+		para.ICcard_info.DriverLicenseValid_Year = HexToBcd(0x33);
+		para.ICcard_info.DriverLicenseValid_Month = HexToBcd(0x12);
+		para.ICcard_info.DriverLicenseValid_Date = HexToBcd(0x12);
+		para.ICcard_info.BCCchecksum = BccCheckSum((u8*)&para.ICcard_info, sizeof(para.ICcard_info));
+		AT24CXX_Write(0,(u8*)&para.ICcard_info,sizeof(para.ICcard_info));
+	}
+}
+
+void update_status(unsigned char statusbit, unsigned char value)
+{
+	para.packager.statusBit = statusbit;
+	para.packager.statusValue = value;
 }
 
 
-
-int findMsgIDFromTerminalPackagerCMD(unsigned int msg_id)
+int sendMessage(unsigned char msg_id)
 {
-    int result = 0;
-    int i;
-    for (i = 0; i < 4; ++i)
-    {
-        if (MsgIdCmd[i] == msg_id)
-        {
-            result = 1;
-        }
-    }
-    return result;
+	packagingMessage(msg_id);
+	Usart_SendStr_length(USART3, (uint8_t*)&McuPackage, RealBufferSendSize);
+    return 0;
 }

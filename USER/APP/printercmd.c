@@ -16,39 +16,7 @@ u8 print_temp[200];
 //unsigned char OverSpeedRecord[] = {0xC1,0xBD, 0xB8,0xF6, 0xC8,0xD5, 0xC0,0xFA, 0xCC,0xEC, 0xC4,0xDA, 0xB3,0xAC, 0xCA,0xB1, 0xBC,0xDD, 0xCA,0xBB, 0xBC,0xC7, 0xC2,0xBC, 0xA3,0xBA};//¡¶Á½¸öÈÕÀúÌìÄÚ³¬Ê±¼ÝÊ»¼ÇÂ¼£º¡·    ºº×Ö±àÂë
 
 //	
-//unsigned char car_plate_province_Jing[]	= {0xBE,0xA9};/*"¾©",0*/
-//unsigned char car_plate_province_Jin[]	= {0xBD,0xF2};/*"½ò",1*/
-//unsigned char car_plate_province_Hu[]	= {0xBB,0xA6};/*"»¦",2*/
-//unsigned char car_plate_province_Yu[]	= {0xD3,0xE5};/*"Óå",3*/
-//unsigned char car_plate_province_Ji[]	= {0xBC,0xAA};/*"¼ª",4*/
-//unsigned char car_plate_province_Liao[] = {0xC1,0xC9};/*"ÁÉ",5*/
-//unsigned char car_plate_province_jin[]	= {0xBD,0xFA};/*"½ú",6*/
-//unsigned char car_plate_province_ji[]	= {0xBC,0xBD};/*"¼½",7*/
-//unsigned char car_plate_province_Qing[] = {0xC7,0xE0};/*"Çà",8*/
-//unsigned char car_plate_province_Lu[]	= {0xC2,0xB3};/*"Â³",9*/
-//unsigned char car_plate_province_yu[]	= {0xD4,0xA5};/*"Ô¥",10*/
-//unsigned char car_plate_province_Su[]	= {0xCB,0xD5};/*"ËÕ",11*/
-//unsigned char car_plate_province_Wan[]	= {0xCD,0xEE};/*"Íî",12*/
-//unsigned char car_plate_province_Zhe[]	= {0xD5,0xE3};/*"Õã",13*/
-//unsigned char car_plate_province_Min[]	= {0xC3,0xF6};/*"Ãö",14*/
-//unsigned char car_plate_province_Gan[]	= {0xB8,0xD3};/*"¸Ó",15*/
-//unsigned char car_plate_province_Xiang[]= {0xCF,0xE6};/*"Ïæ",16*/
-//unsigned char car_plate_province_E[]	= {0xB6,0xF5};/*"¶õ",17*/
-//unsigned char car_plate_province_Yue[]	= {0xD4,0xC1};/*"ÔÁ",18*/
-//unsigned char car_plate_province_Qiong[]= {0xC7,0xED};/*"Çí",19*/
-//unsigned char car_plate_province_gan[]	= {0xB8,0xCA};/*"¸Ê",20*/
-//unsigned char car_plate_province_Shan[]	= {0xC9,0xC2};/*"ÉÂ",21*/
-//unsigned char car_plate_province_Qian[]	= {0xC7,0xAD};/*"Ç­",22*/
-//unsigned char car_plate_province_Dian[]	= {0xB5,0xE1};/*"µá",23*/
-//unsigned char car_plate_province_Chuan[]= {0xB4,0xA8};/*"´¨",24*/
-//unsigned char car_plate_province_Hei[]	= {0xBA,0xDA};/*"ºÚ",25*/
-//unsigned char car_plate_province_Meng[]	= {0xC3,0xC9};/*"ÃÉ",26*/
-//unsigned char car_plate_province_Xin[]	= {0xD0,0xC2};/*"ÐÂ",27*/
-//unsigned char car_plate_province_Zang[]	= {0xB2,0xD8};/*"²Ø",28*/
-//unsigned char car_plate_province_Ning[]	= {0xC4,0xFE};/*"Äþ",29*/
-//unsigned char car_plate_province_Gui[]	= {0xB9,0xF0};/*"¹ð",30*/
-//unsigned char car_plate_province_Gang[]	= {0xB8,0xDB};/*"¸Û",31*/
-//unsigned char car_plate_province_Ao[]	= {0xB0,0xC4};/*"°Ä",32*/
+
 
 //void printer_info_init(u8 *cmd, u8 *reg_num)
 //{

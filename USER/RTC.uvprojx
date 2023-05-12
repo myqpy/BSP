@@ -341,7 +341,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\RTC;..\USMART;..\HARDWARE\IIC;..\HARDWARE\24CXX;..\HARDWARE\LCD;..\HARDWARE\printer;..\HARDWARE\timer;..\HARDWARE\USART3;.\include;..\HARDWARE\CAN;..\HARDWARE\GPIO;.\APP;..\HARDWARE\ADC;..\HARDWARE\bsp_internal_flash;..\HARDWARE\internal_flash</IncludePath>
+              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\RTC;..\USMART;..\HARDWARE\IIC;..\HARDWARE\24CXX;..\HARDWARE\LCD;..\HARDWARE\printer;..\HARDWARE\timer;..\HARDWARE\USART3;.\include;..\HARDWARE\CAN;..\HARDWARE\GPIO;.\APP;..\HARDWARE\ADC;..\HARDWARE\bsp_internal_flash;..\HARDWARE\internal_flash;..\HARDWARE\IWDG</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -460,6 +460,11 @@
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\internal_flash\bsp_internal_flash.c</FilePath>
             </File>
+            <File>
+              <FileName>iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\IWDG\iwdg.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -564,6 +569,11 @@
               <FileName>stm32f10x_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\STM32F10x_FWLib\src\stm32f10x_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32F10x_FWLib\src\stm32f10x_iwdg.c</FilePath>
             </File>
           </Files>
         </Group>

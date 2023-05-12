@@ -21,16 +21,17 @@ void InPut_Init(void) //IO初始化
 { 
  	GPIO_InitTypeDef GPIO_InitStructure;
 
- 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE | RCC_APB2Periph_GPIOD ,ENABLE);//使能PORTE时钟
+ 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE ,ENABLE);
 
-	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_5|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_4;//GPIO0-GPIO2
+	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_5|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_4;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; //设置成上拉输入
-	GPIO_Init(GPIOE, &GPIO_InitStructure);//初始化GPIOE2,3,4,5
+	GPIO_Init(GPIOE, &GPIO_InitStructure);
 	
-//	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD,ENABLE);//使能PORTD时钟
-	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_3|GPIO_Pin_4;//GPIO0-GPIO4
+
+	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOD ,ENABLE);
+	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_3|GPIO_Pin_4;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; //设置成上拉输入
- 	GPIO_Init(GPIOD, &GPIO_InitStructure);//初始化GPIOE2,3,4
+ 	GPIO_Init(GPIOD, &GPIO_InitStructure);
 	
 	//PF-7 init
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;

@@ -553,7 +553,7 @@ void LcdInitial()
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
     GPIO_SetBits(GPIOC,GPIO_Pin_1|GPIO_Pin_3|GPIO_Pin_13);
-
+//	GPIO_SetBits(GPIOC,GPIO_Pin_1|GPIO_Pin_3);
 
     RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOF, ENABLE );	//Ê¹ÄÜGPIOFÊ±ÖÓ
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3;

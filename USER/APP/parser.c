@@ -4,12 +4,20 @@
 #include "util.h"
 #include "usart3.h"
 
-//MCU_Packager packager;
 u8 BufferReceive[200];
 unsigned int RealBufferReceiveSize=0;
-//unsigned int msg_len = 0;
 extern MCU_Parameters para;
 
+unsigned short kTerminalParserCMD[8] = {
+	kARMGeneralResponse,
+	kArmOTrecord,
+	kTimeCorrect,
+	kSelfCheck,
+	kCarInfo,
+	kForbidTime,
+	kLocation,
+	kOTwarning,
+};
 
 int parsingMessage(const unsigned char *in, unsigned int in_len)
 {
@@ -20,30 +28,38 @@ int parsingMessage(const unsigned char *in, unsigned int in_len)
 //        return -1;
 //    }
 //    msg_id = parameter_.parse.msg_head.msg_id;
+	
+//	memcpy(BufferReceive, in, in_len);
+//	RealBufferReceiveSize = in_len;
+	union U16ToU8Array u16converter;
+	
 	unsigned char pos = 0;
+	
+	memset(BufferReceive, 0, 200);
 	pos++;
 	memcpy(BufferReceive, in, in_len);
-	para.packager.msg_id = BufferReceive[pos];
+	para.parse.parser.msg_id = BufferReceive[pos];
 	pos++;
-	para.packager.msg_flow_num = (BufferReceive[pos]<<8) + BufferReceive[pos+1];
+	u16converter.u8array[0] = BufferReceive[pos];
+	u16converter.u8array[1] = BufferReceive[pos+1];
+	para.parse.parser.msg_flow_num = u16converter.u16val;
+//	para.packager.msg_flow_num = (BufferReceive[pos]<<8) + BufferReceive[pos+1];
 	pos+=2;
-	para.packager.msg_length = BufferReceive[pos];
+	para.parse.parser.msg_length = BufferReceive[pos];
 	pos++;
 
 	frameParse(&para);
 	
-	pos+=para.packager.msg_length;
+	pos+=para.parse.parser.msg_length;
 	
-	para.packager.parse.bccCheck_receive = BufferReceive[pos];
+	para.parse.parser.bccCheck = BufferReceive[pos];
 	
-	
-
     return 0;
 }
 
 int frameParse(MCU_Parameters *para)
 {
-	unsigned short msg_id = para->packager.msg_id;
+	unsigned short msg_id = para->parse.parser.msg_id;
 	int result = -1;
 	
 	switch (msg_id)
@@ -62,6 +78,48 @@ int frameParse(MCU_Parameters *para)
 	}
 	break;
 	
+	// +3399下发时间校准.
+	case kTimeCorrect:
+	{
+		result = handle_kTimeCorrect(para);
+	}
+	break;
+	
+	// +3399下发自检结果.
+	case kSelfCheck:
+	{
+		result = handle_kSelfCheck(para);
+	}
+	break;
+	
+	// +3399下发车辆信息.
+	case kCarInfo:
+	{
+		result = handle_kCarInfo(para);
+	}
+	break;
+	
+	// +3399下发禁行时段.
+	case kForbidTime:
+	{
+		result = handle_kForbidTime(para);
+	}
+	break;
+	
+	// +3399下发位置上报.
+	case kLocation:
+	{
+		result = handle_kLocation(para);
+	}
+	break;
+	
+	// +3399下发超时预警.
+	case kOTwarning:
+	{
+		result = handle_kOTwarning(para);
+	}
+	break;
+	
 	default:
 	break;
 	}
@@ -71,14 +129,19 @@ int frameParse(MCU_Parameters *para)
 
 int handle_kARMGeneralResponse(MCU_Parameters *para)
 {
-	para->packager.parse.msg_flow_num_receive = (BufferReceive[5]<<8) + BufferReceive[6];
-	para->packager.parse.msg_id_receive = BufferReceive[7];
+	union U16ToU8Array u16converter;
+	u16converter.u8array[0] = BufferReceive[5];
+	u16converter.u8array[1] = BufferReceive[6];
+	para->parse.parser.msg_flow_num = u16converter.u16val;
+//	para->packager.parse.msg_flow_num_receive = (BufferReceive[5]<<8) + BufferReceive[6];
+	para->parse.parser.msg_id = BufferReceive[7];
 	
 	return 0;
 }
 
 int handle_kArmOTrecord(MCU_Parameters *para)
 {
+	union U16ToU8Array u16converter;
 	unsigned int i;
 	unsigned char pos = 5;
 	para->parse.OvertimeDriveRecord.OTnumber = BufferReceive[pos];
@@ -95,7 +158,10 @@ int handle_kArmOTrecord(MCU_Parameters *para)
 	pos++;
 	para->parse.OvertimeDriveRecord.startTime.sec = BufferReceive[pos];
 	pos++;
-	para->parse.OvertimeDriveRecord.startTime.w_year = (BufferReceive[pos]<<8) + BufferReceive[pos+1];
+	u16converter.u8array[0] = BufferReceive[pos];
+	u16converter.u8array[1] = BufferReceive[pos+1];
+	para->parse.OvertimeDriveRecord.startTime.w_year = u16converter.u16val;
+//	para->parse.OvertimeDriveRecord.startTime.w_year = (BufferReceive[pos]<<8) + BufferReceive[pos+1];
 	pos+=2;
 	para->parse.OvertimeDriveRecord.startTime.w_month = BufferReceive[pos];
 	pos++;
@@ -108,7 +174,10 @@ int handle_kArmOTrecord(MCU_Parameters *para)
 	pos++;
 	para->parse.OvertimeDriveRecord.endTime.sec = BufferReceive[pos];
 	pos++;
-	para->parse.OvertimeDriveRecord.endTime.w_year = (BufferReceive[pos]<<8) + BufferReceive[pos+1];
+	u16converter.u8array[0] = BufferReceive[pos];
+	u16converter.u8array[1] = BufferReceive[pos+1];
+	para->parse.OvertimeDriveRecord.endTime.w_year = u16converter.u16val;
+//	para->parse.OvertimeDriveRecord.endTime.w_year = (BufferReceive[pos]<<8) + BufferReceive[pos+1];
 	pos+=2;
 	para->parse.OvertimeDriveRecord.endTime.w_month = BufferReceive[pos];
 	pos++;
@@ -120,6 +189,7 @@ int handle_kArmOTrecord(MCU_Parameters *para)
 
 int handle_kTimeCorrect(MCU_Parameters *para)
 {
+	union U16ToU8Array u16converter;
 	unsigned char pos = 5;
 	
 	para->parse.time_info.hour = BufferReceive[pos];
@@ -128,7 +198,10 @@ int handle_kTimeCorrect(MCU_Parameters *para)
 	pos++;
 	para->parse.time_info.sec = BufferReceive[pos];
 	pos++;
-	para->parse.time_info.w_year = (BufferReceive[pos]<<8) + BufferReceive[pos+1];
+	u16converter.u8array[0] = BufferReceive[pos];
+	u16converter.u8array[1] = BufferReceive[pos+1];
+	para->parse.time_info.w_year = u16converter.u16val;
+//	para->parse.time_info.w_year = (BufferReceive[pos]<<8) + BufferReceive[pos+1];
 	pos+=2;
 	para->parse.time_info.w_month = BufferReceive[pos];
 	pos++;
@@ -161,6 +234,7 @@ int handle_kSelfCheck(MCU_Parameters *para)
 
 int handle_kCarInfo(MCU_Parameters *para)
 {
+	union U16ToU8Array u16converter;
 	unsigned int i;
 	unsigned char pos = 5;
 	
@@ -173,40 +247,72 @@ int handle_kCarInfo(MCU_Parameters *para)
 	pos++;
 	para->parse.rk_vehicle_info.speedLimit = BufferReceive[pos];
 	pos++;
-	para->parse.rk_vehicle_info.pulseRatio = (BufferReceive[pos]<<8)+BufferReceive[pos+1];
+	u16converter.u8array[0] = BufferReceive[pos];
+	u16converter.u8array[1] = BufferReceive[pos+1];
+	para->parse.rk_vehicle_info.pulseRatio = u16converter.u16val;
+//	para->parse.rk_vehicle_info.pulseRatio = (BufferReceive[pos]<<8)+BufferReceive[pos+1];
 	pos+=2;
 	return 0;
 }
 
 int handle_kForbidTime(MCU_Parameters *para)
 {
-	para->packager.parse.forbidTime = BufferReceive[5];
+	para->parse.parser.forbidTime = BufferReceive[5];
 	return 0;
 }
 
 int handle_kLocation(MCU_Parameters *para)
 {
+	union U32ToU8Array u32converter;
+	union U16ToU8Array u16converter;
 	unsigned int i;
 	unsigned char pos = 5;
-	para->parse.Location_info.alarm = (BufferReceive[pos]<<24)+(BufferReceive[pos+1]<<16)+(BufferReceive[pos+2]<<8)+BufferReceive[pos+3];
-	pos+=4;
 	
-	para->parse.Location_info.status = (BufferReceive[pos]<<24)+(BufferReceive[pos+1]<<16)+(BufferReceive[pos+2]<<8)+BufferReceive[pos+3];
-	pos+=4;
+	for(i=0;i<4;i++)
+	{
+		u32converter.u8array[i] = BufferReceive[pos];
+		para->parse.Location_info.alarm = u32converter.u32val;
+//		para->parse.Location_info.alarm = (BufferReceive[pos]<<24)+(BufferReceive[pos+1]<<16)+(BufferReceive[pos+2]<<8)+BufferReceive[pos+3];
+		pos++;
+	}
 	
-	para->parse.Location_info.latitude = (BufferReceive[pos]<<24)+(BufferReceive[pos+1]<<16)+(BufferReceive[pos+2]<<8)+BufferReceive[pos+3];
-	pos+=4;
+	for(i=0;i<4;i++)
+	{
+		u32converter.u8array[i] = BufferReceive[pos];
+		para->parse.Location_info.status = u32converter.u32val;
+//		para->parse.Location_info.status = (BufferReceive[pos]<<24)+(BufferReceive[pos+1]<<16)+(BufferReceive[pos+2]<<8)+BufferReceive[pos+3];
+		pos++;
+	}
 	
-	para->parse.Location_info.longitude = (BufferReceive[pos]<<24)+(BufferReceive[pos+1]<<16)+(BufferReceive[pos+2]<<8)+BufferReceive[pos+3];
-	pos+=4;
+	for(i=0;i<4;i++)
+	{
+		u32converter.u8array[i] = BufferReceive[pos];
+		para->parse.Location_info.latitude = u32converter.u32val;
+//		para->parse.Location_info.latitude = (BufferReceive[pos]<<24)+(BufferReceive[pos+1]<<16)+(BufferReceive[pos+2]<<8)+BufferReceive[pos+3];
+		pos++;
+	}
 	
-	para->parse.Location_info.altitude = (BufferReceive[pos]<<8)+BufferReceive[pos+1];
+	for(i=0;i<4;i++)
+	{
+		u32converter.u8array[i] = BufferReceive[pos];
+		para->parse.Location_info.longitude = u32converter.u32val;
+//		para->parse.Location_info.longitude = (BufferReceive[pos]<<24)+(BufferReceive[pos+1]<<16)+(BufferReceive[pos+2]<<8)+BufferReceive[pos+3];
+		pos++;
+	}
+	
+	u32converter.u8array[0] = BufferReceive[pos];
+	u32converter.u8array[1] = BufferReceive[pos+1];
+	para->parse.Location_info.altitude = u32converter.u32val;
 	pos+=2;
 	
-	para->parse.Location_info.speed = (BufferReceive[pos]<<8)+BufferReceive[pos+1];
+	u32converter.u8array[0] = BufferReceive[pos];
+	u32converter.u8array[1] = BufferReceive[pos+1];
+	para->parse.Location_info.speed = u32converter.u32val;
 	pos+=2;
 	
-	para->parse.Location_info.bearing = (BufferReceive[pos]<<8)+BufferReceive[pos+1];
+	u32converter.u8array[0] = BufferReceive[pos];
+	u32converter.u8array[1] = BufferReceive[pos+1];
+	para->parse.Location_info.bearing = u32converter.u32val;
 	pos+=2;
 	
 	for(i=0;i<13;i++)	
@@ -219,6 +325,6 @@ int handle_kLocation(MCU_Parameters *para)
 
 int handle_kOTwarning(MCU_Parameters *para)
 {
-	para->packager.parse.OTwarning = BufferReceive[5];
+	para->parse.parser.OTwarning = BufferReceive[5];
 	return 0;
 }

@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "rtc.h"
+#include "24cxx.h"
 
 
 int page = 0;
@@ -32,16 +33,18 @@ unsigned char page3_row_max = 0xB4;
 //unsigned char page3_subPage_row_min = 0xB0;
 //unsigned char page3_subPage_row = 0xB0;
 //unsigned char page3_subPage_row_max = 0xB2;
+unsigned char i,j;
 u16 time_1ms=0;
 u16 confirmed_pressed=0;
 u16 up_down_pressed=0;
 u8 key_text=0;
 char printString[100];
 extern u8 printer_cmd[200];
+unsigned char plateHead;
 //ARM_vehicle_info rk_vehicle_info;
-extern MCU_Parameters para;
+//extern MCU_Parameters para;
 
-void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int velocity)
+void MENU_processing(MCU_Parameters *para)
 {
 
     key_text=KEY_Scan(1);		//得到键值
@@ -69,7 +72,9 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
 			if(up_down_pressed>=3000)
 			{
 				printf("SOS!!!!!!!!! \r\n");
-				packagingSOSMessage(kSOS, 1);
+				delay_ms(1);
+				update_status(kSOS, 1);
+				sendMessage(kMCUAlarmReport);
 				up_down_pressed = 0;
 				TIM_Cmd(TIM5,DISABLE);
 			}
@@ -115,7 +120,7 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
             if(confirmed_pressed >= 3000)
             {
                 printf("printing!!!!!!!!! \r\n");
-				print_overTime_record_Header(&para);
+				print_overTime_record_Header(para);
                 confirmed_pressed  = 0;
                 TIM_Cmd(TIM5,DISABLE);
             }
@@ -125,7 +130,7 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
         }
 		
 
-        showMainMenu(time_second,velocity, rk_selfCheck_info);
+        showMainMenu(para);
 
         if(page_status!=page) LCD_Clear();
     }
@@ -288,18 +293,45 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
             /*机动车号牌分类*/
             displayChinese_16x16(0xB0,0x10,0x0,Chinese_car_plate,0,6);
             /*机动车号牌颜色*/
-            displayChinese_16x16(0xB0,0x16,0x0,car_plate_color,1,1);
-            displayChinese_16x16(0xB0,0x16,0xd,car_plate_color,4,4);
+			para->parse.rk_vehicle_info.car_plate_color = 1;
+			switch(para->parse.rk_vehicle_info.car_plate_color)
+			{
+				case 0x1:
+					displayChinese_16x16(0xB0,0x16,0x0,car_plate_color,0,0);
+					displayChinese_16x16(0xB0,0x16,0xd,car_plate_color,4,4);
+					break;
+				case 0x2:
+					displayChinese_16x16(0xB0,0x16,0x0,car_plate_color,1,1);
+					displayChinese_16x16(0xB0,0x16,0xd,car_plate_color,4,4);
+					break;
+				case 0x3:
+					displayChinese_16x16(0xB0,0x16,0x0,car_plate_color,2,2);
+					displayChinese_16x16(0xB0,0x16,0xd,car_plate_color,4,4);
+					break;
+				case 0x4:
+					displayChinese_16x16(0xB0,0x16,0x0,car_plate_color,3,3);
+					displayChinese_16x16(0xB0,0x16,0xd,car_plate_color,4,4);
+					break;
+				default:
+					displayChinese_16x16(0xB0,0x16,0x0,car_plate_color,5,7);
+					break;
+			}
+				
+
             /*机动车号牌号码*/
             displayChinese_16x16(0xB2,0x10,0x0,Chinese_car_plate,0,4);
             displayChinese_16x16(0xB2,0x13,0xd,Chinese_car_plate,10,11);
 
-            displayChinese_16x16(0xB4,0x10,0x0,car_plate_province,10,10);
-
-            sprintf(printString,"A88888");
+			memcpy(para->parse.rk_vehicle_info.car_plate_num,"港AD88888",sizeof("京AD88888"));
+			plateHead = displayCarPlateHead(para->parse.rk_vehicle_info.car_plate_num);
+			displayChinese_16x16(0xB4,0x10,0x0,car_plate_province,plateHead,plateHead);
+			for(i=2;i<strlen(para->parse.rk_vehicle_info.car_plate_num);i++)
+			{
+				printString[i-2] = para->parse.rk_vehicle_info.car_plate_num[i];
+			}		
             ShowString(0xB4,0x11, 0x0,printString,12);
             displayChinese_16x16(0xB6,0x10,0x0,pulseRatio,0,3);
-            sprintf(printString,"6000");
+            sprintf(printString,"%d",para->parse.rk_vehicle_info.pulseRatio);
             ShowString(0xB6,0x14, 0x0,printString,12);
 
 //			sprintf(printString,"-->");
@@ -354,8 +386,9 @@ void MENU_processing(ARM_selfCheck_info *rk_selfCheck_info, int time_second,int 
 		if(page1_row==0xB4) 
 		{
 			page--;
-			if(page2_row==0xB0) packagingSOSMessage(kLoadingStatus, 1);
-			if(page2_row==0xB2)	packagingSOSMessage(kLoadingStatus, 0);
+			if(page2_row==0xB0) para->mcu_car_info.LoadingStatus = 3;
+
+			if(page2_row==0xB2)	para->mcu_car_info.LoadingStatus = 0;
 		}
 
         if(page_status!=page)LCD_Clear();

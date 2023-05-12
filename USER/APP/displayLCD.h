@@ -5,24 +5,26 @@
 
 
 
-extern unsigned char vehicle_driver_info[][24];
-extern unsigned char overTimeDriveRecord[][24];
-extern unsigned char car_plate_color[][24];
-extern unsigned char Chinese_car_plate[][24];
-extern unsigned char pulseRatio[][24];
-extern unsigned char car_plate_province[][24];
-extern unsigned char car_IO_status[][24];
-extern unsigned char changeLoadingStatus[][24];
+extern uint8_t vehicle_driver_info[][24];
+extern uint8_t overTimeDriveRecord[][24];
+extern uint8_t car_plate_color[][24];
+extern uint8_t Chinese_car_plate[][24];
+extern uint8_t pulseRatio[][24];
+extern uint8_t car_plate_province[][24];
+extern uint8_t car_IO_status[][24];
+extern uint8_t changeLoadingStatus[][24];
+extern uint8_t forbidTimeArray[][24];
 
 void LCD_Clear(void);
-void showMainMenu(int time, int velocity,ARM_selfCheck_info *rk_selfCheck_info);
-void displayEmpty(unsigned char page,unsigned char CaddrH,unsigned char CaddrL);
-void displayChinese_16x16(unsigned char page,unsigned char CaddrH,unsigned char CaddrL,unsigned char arr[][24],unsigned char startWord, unsigned char endWord);
+void showMainMenu(MCU_Parameters *para);
+void displayEmpty(uint8_t page,uint8_t CaddrH,uint8_t CaddrL);
+void displayChinese_16x16(uint8_t page,uint8_t CaddrH,uint8_t CaddrL,uint8_t arr[][24],uint8_t startWord, uint8_t endWord);
 
-void displayWeekday(unsigned char page,unsigned char CaddrH,unsigned char CaddrL,int weekday);
+void displayWeekday(uint8_t page,uint8_t CaddrH,uint8_t CaddrL,int weekday);
 
 
-void displayIcon(unsigned char page,unsigned char CaddrH,unsigned char CaddrL, unsigned char arr[2][16]);
+void displayIcon(uint8_t page,uint8_t CaddrH,uint8_t CaddrL, uint8_t arr[2][16]);
+int displayCarPlateHead(uint8_t* car_plate_num);
 
 
 int WeekYearday(int years, int months, int days);
