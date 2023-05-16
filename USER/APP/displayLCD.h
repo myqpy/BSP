@@ -14,6 +14,9 @@ extern uint8_t car_plate_province[][24];
 extern uint8_t car_IO_status[][24];
 extern uint8_t changeLoadingStatus[][24];
 extern uint8_t forbidTimeArray[][24];
+extern uint8_t nike[][16];
+extern uint8_t icon_empty[][16];
+
 
 void LCD_Clear(void);
 void showMainMenu(MCU_Parameters *para);

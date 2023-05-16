@@ -53,8 +53,9 @@ int parsingMessage(const unsigned char *in, unsigned int in_len)
 	pos+=para.parse.parser.msg_length;
 	
 	para.parse.parser.bccCheck = BufferReceive[pos];
+	pos++;
 	
-    return 0;
+    return pos;
 }
 
 int frameParse(MCU_Parameters *para)
@@ -250,6 +251,7 @@ int handle_kCarInfo(MCU_Parameters *para)
 	u16converter.u8array[0] = BufferReceive[pos];
 	u16converter.u8array[1] = BufferReceive[pos+1];
 	para->parse.rk_vehicle_info.pulseRatio = u16converter.u16val;
+	
 //	para->parse.rk_vehicle_info.pulseRatio = (BufferReceive[pos]<<8)+BufferReceive[pos+1];
 	pos+=2;
 	return 0;
@@ -320,7 +322,7 @@ int handle_kLocation(MCU_Parameters *para)
 		para->parse.Location_info.time[i] = BufferReceive[pos];
 		pos++;
 	}
-	return 0;
+	return pos;
 }
 
 int handle_kOTwarning(MCU_Parameters *para)

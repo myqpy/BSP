@@ -194,6 +194,7 @@ typedef struct Struct_MCU_car_info
 	uint8_t LoadingStatus;// 载货状态	3 满载 0 空载
 	uint8_t ICcardStatus;		// 人员登录 	1 登录 0 登出
 	uint32_t drive_time;
+	
 } MCU_car_info;
 #pragma pack() // 恢复默认字节对齐
 

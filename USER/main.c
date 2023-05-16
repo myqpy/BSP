@@ -33,15 +33,12 @@
 int main(void)
 {
 
-    uint8_t i=0;
-    uint8_t time=0;
-	uint8_t OTFlag = 0;
-	uint8_t receiveFlag = 0;
+    uint8_t i=0, time=0, OTFlag = 0, receiveFlag = 0, ACC=0, powerOffFlag;
     extern u8 printer_cmd[200];
     u8 canbuf[8];
     float volatageAD=0;
-    char ACC=0;
-    
+    uint32_t powerOffTime=0;
+	
 	
 
 //    ARM_time_info *time_info = (ARM_time_info*)USART3_RX_BUF;
@@ -51,7 +48,7 @@ int main(void)
 
     u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
 
-    para.parse.rk_vehicle_info.pulseRatio = 5700;
+//    para.parse.rk_vehicle_info.pulseRatio = 5700;
 	para.mcu_car_info.isCharged = 1;
 //	para.parse.parser.forbidTime = 1;
 	
@@ -117,26 +114,34 @@ int main(void)
         /*车辆熄火*/
         if(GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_0))
         {
+			powerOffFlag = 1;
             para.mcu_car_info.fire = 0;
-            /*开个定时器*/
-
-            /*定时一小时*/
-
-            /*熄火>=1h  -> 低功耗模式*/
-            /*熄火<1h   -> 正常模式*/
+			/*熄火达到1小时后进入低功耗模式*/
+			if(powerOffTime>3600)
+			{
+				FLASH_WriteByte(FLASH_GPS_ADDR, (uint8_t*)&para.parse.Location_info, sizeof(para.parse.Location_info));
+				system_reboot();
+			}
         }
-        else para.mcu_car_info.fire = 1;
+        else 
+		{
+			para.mcu_car_info.fire = 1;
+			powerOffTime = 0;
+			powerOffFlag = 0;
+		}
 
 
         if(time!=calendar.sec)
         {
             time=calendar.sec;
-			if(OTFlag ==1) para.mcu_car_info.drive_time++;
+			if(OTFlag == 1) para.mcu_car_info.drive_time++;
+			if(powerOffFlag == 1) powerOffTime++;
 			
 //			ACC = !GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_0);
 //			printf("ACC:%02x\r\n",ACC);
 
 //			printf("volatageAD:%f \r\n",volatageAD);
+			printf("powerOffTime:%d \r\n",powerOffTime);
 
             if(para.mcu_car_info.drive_time >= 14400)
             {
@@ -150,8 +155,14 @@ int main(void)
                 sendMessage(kMCUAlarmReport);
             }
 //			printf("time:%d\r\n",para.mcu_car_info.drive_time);
-			printf("miles:%d\r\n",para.mcu_car_info.mileage);
-			printf("speed:%d\r\n",para.mcu_car_info.velocity);
+//			for(i = 0; i<12; i++)
+//			{
+//				printf("%02x ",para.parse.rk_vehicle_info.car_plate_num[i]);
+//			}
+//			printf("\r\n");
+//			printf("pulseRatio:%d\r\n",para.parse.rk_vehicle_info.pulseRatio);
+//			printf("miles:%d\r\n",para.mcu_car_info.mileage);
+//			printf("speed:%d\r\n",para.mcu_car_info.velocity);
             sendMessage(kMCUStatusReport);
         }
 		 
@@ -161,7 +172,11 @@ int main(void)
             USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
 			if((USART3_RX_BUF[0] == 0xEE) && (USART3_RX_BUF[USART3_RX_STA - 1] == 0xEE))
             {
-				
+//				for(i = 0; i<USART3_RX_STA; i++)
+//				{
+//					printf("%02x ",USART3_RX_BUF[i]);
+//				}
+//				printf("\r\n");
                 parsingMessage(USART3_RX_BUF, USART3_RX_STA);
 				
                 switch(para.parse.parser.msg_id)
@@ -169,8 +184,8 @@ int main(void)
 				case kARMGeneralResponse:
 				{
 					printf("para.parse.parser.msg_id:0x%02x\r\n",para.parse.parser.msg_id);
-					printf("para.parse.parser.msg_id:%d\r\n",para.parse.parser.msg_flow_num);
-					printf("para.parse.parser.msg_id:0x%02x\r\n",para.parse.parser.msg_length);	
+					printf("para.parse.parser.msg_flow_num:%d\r\n",para.parse.parser.msg_flow_num);
+					printf("para.parse.parser.msg_length:0x%02x\r\n",para.parse.parser.msg_length);	
 				}
 				case kArmOTrecord:
 				{
@@ -221,10 +236,10 @@ int main(void)
 				{
 					printf("CarInfo receive!!!\r\n");
 					printf("para.parse.rk_vehicle_info.car_plate_num:%s\r\n", para.parse.rk_vehicle_info.car_plate_num);
-					printf("para.parse.rk_vehicle_info.car_plate_num:0x%02x\r\n", para.parse.rk_vehicle_info.car_plate_color);
-					printf("para.parse.rk_vehicle_info.car_plate_num:%d\r\n", para.parse.rk_vehicle_info.pulseRatio);
-					printf("para.parse.rk_vehicle_info.car_plate_num:0x%02x\r\n", para.parse.rk_vehicle_info.speedLimit);
-					
+					printf("para.parse.rk_vehicle_info.car_plate_color:0x%02x\r\n", para.parse.rk_vehicle_info.car_plate_color);
+					printf("para.parse.rk_vehicle_info.speedLimit:0x%02x\r\n", para.parse.rk_vehicle_info.speedLimit);
+					printf("para.parse.rk_vehicle_info.pulseRatio:%d\r\n", para.parse.rk_vehicle_info.pulseRatio);
+
 					sendMessage(kMCUGeneralResponse);
 				}
 				break;
@@ -238,24 +253,30 @@ int main(void)
 				
 				case kLocation:
 				{
+					for(i = 0; i<USART3_RX_STA; i++)
+					{
+						printf("%02x ",USART3_RX_BUF[i]);
+					}
+					printf("\r\n");
+					
 					printf("Location receive!!!\r\n");
 					// 报警标志 4B
-					printf("alarm %d", para.parse.Location_info.alarm);
+					printf("alarm %d\r\n", para.parse.Location_info.alarm);
 					// 状态位定义 4B
-					printf("status %d",para.parse.Location_info.status);
+					printf("status %d\r\n",para.parse.Location_info.status);
 					// 纬度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
-					printf("latitude %d",para.parse.Location_info.latitude);
+					printf("latitude %d\r\n",para.parse.Location_info.latitude);
 					// 经度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
-					printf("longitude %d",para.parse.Location_info.longitude);
+					printf("longitude %d\r\n",para.parse.Location_info.longitude);
 					// 海拔高度, 单位为米(m) 2B
-					printf("altitude %d",para.parse.Location_info.altitude);
+					printf("altitude %d\r\n",para.parse.Location_info.altitude);
 					// 速度 1/10km/h 2B
-					printf("speed %d",para.parse.Location_info.speed);
+					printf("speed %d\r\n",para.parse.Location_info.speed);
 					// 方向 0-359,正北为0, 顺时针 2B
-					printf("bearing %d",para.parse.Location_info.bearing);
+					printf("bearing %d\r\n",para.parse.Location_info.bearing);
 					// 时间, "YYMMDDhhmmss"(GMT+8时间, 本标准之后涉及的时间均采用此时区).12B
 					// std::string time;
-					printf("time %s",para.parse.Location_info.time);
+					printf("time %s\r\n",para.parse.Location_info.time);
 					
 					sendMessage(kMCUGeneralResponse);
 				}
