@@ -33,10 +33,11 @@
 int main(void)
 {
 
-    uint8_t i=0, time=0, OTFlag = 0, receiveFlag = 0, ACC=0, powerOffFlag;
+    uint8_t i=0, time=0, OTFlag = 0, receiveFlag = 0, ACC=0, powerOffFlag, carInfoFlag=0;
     extern u8 printer_cmd[200];
     u8 canbuf[8];
     float volatageAD=0;
+	
     uint32_t powerOffTime=0;
 	
 	
@@ -58,43 +59,31 @@ int main(void)
 
     printf("start up!!!!\r\n");
     usmart_dev.init(SystemCoreClock/1000000);	//初始化USMART
+	InPut_Init();//外部开关量
 
     USART3_Init(19200);//3399通信串口
-    TIM3_ETR(para.parse.rk_vehicle_info.pulseRatio/10,0);//脉冲捕获计数器，统计里程
+//	while(1)
+//	{
+//		if(para.parse.rk_vehicle_info.pulseRatio!=0)
+//		{
+//			TIM3_ETR(para.parse.rk_vehicle_info.pulseRatio/10,0);//脉冲捕获计数器，统计里程
+//			break;
+//		}
+//    }
+	
     TIM6_Int_Init(10000,7199);//脉冲计数器，一秒钟
     Tim5_Int_Init(9, 7199);	//定时计数器，一毫秒
     LcdInitial();//显示屏
+	GPIO_SetBits(GPIOC,GPIO_Pin_13); //开显示屏背光
     AT24CXX_Init();//IIC初始化，读IC卡
     UART4_init(115200);//打印机
 	ICcardWrite(0); //1写 0不写
-//	GPIO_ResetBits(GPIOC, GPIO_Pin_13); //关显示屏背光
 
     CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,mode);//CAN初始化环回模式,波特率500Kbps
-    InPut_Init();//外部开关量
+   
     Adc_Init();
     RTC_Init(2000,1,1,0,0,0);	  			//RTC初始化
 	
-    
-//	RTC_Set(2023,4,23,16,39,10);
-//    while(flag)
-//    {
-//        if(USART3_RX_STA&0X8000)    //接收到数据
-//        {
-//            USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
-//            if(USART3_RX_BUF[0] == 0xFE)
-//            {
-//                printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",time_info->w_year, time_info->w_month, time_info->w_date,time_info->hour,time_info->min,time_info->sec);
-//                RTC_Set(time_info->w_year, time_info->w_month, time_info->w_date, time_info->hour, time_info->min, time_info->sec);	//RTC初始化
-//                flag = 0;
-////				memset(USART3_TX_BUF,0,sizeof(USART3_TX_BUF));
-////                USART3_TX_BUF[0] = 0xfe;
-//                //USART3_TX_BUF[1] = 0xfe;
-////                Usart_SendStr_length(USART3, USART3_TX_BUF, 1);
-//            }
-//            USART3_RX_STA = 0;
-//        }
-//    }
-//	para.parse.rk_vehicle_info.speedLimit = 100;
     while(1)
     {
         MENU_processing(&para);
@@ -130,7 +119,7 @@ int main(void)
 			powerOffFlag = 0;
 		}
 		
-		/*车辆熄火*/
+		/*车辆制动*/
 		if(GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_1)) para.mcu_car_info.brake = 0;
 		else	para.mcu_car_info.brake = 1;
 		
@@ -172,7 +161,7 @@ int main(void)
 //				printf("%02x ",para.parse.rk_vehicle_info.car_plate_num[i]);
 //			}
 //			printf("\r\n");
-//			printf("pulseRatio:%d\r\n",para.parse.rk_vehicle_info.pulseRatio);
+			printf("pulseRatio:%d\r\n",para.parse.rk_vehicle_info.pulseRatio);
 //			printf("miles:%d\r\n",para.mcu_car_info.mileage);
 			printf("speed:%d\r\n",para.mcu_car_info.velocity);
             sendMessage(kMCUStatusReport);
@@ -247,6 +236,11 @@ int main(void)
 				case kCarInfo:
 				{
 					printf("CarInfo receive!!!\r\n");
+					if(carInfoFlag==0)
+					{
+						TIM3_ETR(para.parse.rk_vehicle_info.pulseRatio/10,0);//脉冲捕获计数器，统计里程
+						carInfoFlag = 1;
+					}
 //					printf("para.parse.rk_vehicle_info.car_plate_num:%s\r\n", para.parse.rk_vehicle_info.car_plate_num);
 //					printf("para.parse.rk_vehicle_info.car_plate_color:0x%02x\r\n", para.parse.rk_vehicle_info.car_plate_color);
 //					printf("para.parse.rk_vehicle_info.speedLimit:0x%02x\r\n", para.parse.rk_vehicle_info.speedLimit);

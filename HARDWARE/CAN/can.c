@@ -30,25 +30,25 @@
 //    其他,初始化失败; 
 u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 { 
-	GPIO_InitTypeDef 		GPIO_InitStructure; 
+//	GPIO_InitTypeDef 		GPIO_InitStructure; 
 	CAN_InitTypeDef        	CAN_InitStructure;
 	CAN_FilterInitTypeDef  	CAN_FilterInitStructure;
 #if CAN_RX0_INT_ENABLE 
 	NVIC_InitTypeDef  		NVIC_InitStructure;
 #endif
 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);//使能PORTA时钟	                   											 
+//	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);//使能PORTA时钟	                   											 
 
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE);//使能CAN1时钟	
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;	//复用推挽
-	GPIO_Init(GPIOA, &GPIO_InitStructure);			//初始化IO
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;	//复用推挽
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);			//初始化IO
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;	//上拉输入
-	GPIO_Init(GPIOA, &GPIO_InitStructure);			//初始化IO
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;	//上拉输入
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);			//初始化IO
 
 	//CAN单元设置
 	CAN_InitStructure.CAN_TTCM=DISABLE;			//非时间触发通信模式  

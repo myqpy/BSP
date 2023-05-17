@@ -16,19 +16,19 @@
 //初始化IIC
 void IIC_Init(void)
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
-    RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOB, ENABLE );	//使能GPIOB时钟
+//    GPIO_InitTypeDef GPIO_InitStructure;
+//    RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOB, ENABLE );	//使能GPIOB时钟
 
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_7;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP ;   //推挽输出
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-    GPIO_SetBits(GPIOB,GPIO_Pin_6|GPIO_Pin_7); 	//PB6,PB7 输出高
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_7;
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP ;   //推挽输出
+//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//    GPIO_Init(GPIOB, &GPIO_InitStructure);
+//    GPIO_SetBits(GPIOB,GPIO_Pin_6|GPIO_Pin_7); 	//PB6,PB7 输出高
 
-    RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOB, ENABLE );	//使能GPIOB时钟
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;   //上拉输入
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
+//    RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOB, ENABLE );	//使能GPIOB时钟
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;   //上拉输入
+//    GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
 //产生IIC起始信号
 void IIC_Start(void)

@@ -8,17 +8,12 @@ extern MCU_Parameters para;
 
 void TIM3_ETR(u16 arr,u16 psc)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
+//	GPIO_InitTypeDef GPIO_InitStructure;
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);   
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);  
-    
-    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_2;  
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;   
-    GPIO_Init(GPIOD, &GPIO_InitStructure);
-    GPIO_ResetBits(GPIOD,GPIO_Pin_2);  
+
 
 	//初始化定时器 TIM3 
     TIM_TimeBaseStructure.TIM_Period = arr; //设定计数器自动重装值 
