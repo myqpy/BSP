@@ -344,6 +344,9 @@ void MENU_processing(MCU_Parameters *para)
 			/*近光灯*/
             displayChinese_16x16(0xB0,0x10,0x0,car_IO_status,7,8);
             displayChinese_16x16(0xB0,0x11,0x8,car_IO_status,13,13);
+			if(para->mcu_car_info.low_beam == 1) displayIcon(0xB0,0x14, 0x0,nike);
+			else displayIcon(0xB0,0x14, 0x0,icon_empty);
+			
             /*右转向灯*/
             displayChinese_16x16(0xB2,0x10,0x0,car_IO_status,9,9);
             displayChinese_16x16(0xB2,0x10,0xc,car_IO_status,11,12);
@@ -351,8 +354,14 @@ void MENU_processing(MCU_Parameters *para)
             /*左转向灯*/
             displayChinese_16x16(0xB4,0x10,0x0,car_IO_status,10,12);
             displayChinese_16x16(0xB4,0x12,0x5,car_IO_status,13,13);
+			if(para->mcu_car_info.left == 1) displayIcon(0xB4,0x14, 0x0,nike);
+			else displayIcon(0xB4,0x14, 0x0,icon_empty);
+			
+			
             /*制动*/
             displayChinese_16x16(0xB6,0x10,0x0,car_IO_status,14,15);
+			if(para->mcu_car_info.brake == 1) displayIcon(0xB6,0x14, 0x0,nike);
+			else displayIcon(0xB6,0x14, 0x0,icon_empty);
         }
         if(page1_row==0xB0 && page2_row==0xB0 && page3_row==0xB4)
         {
@@ -360,6 +369,8 @@ void MENU_processing(MCU_Parameters *para)
             /*远光灯*/
             displayChinese_16x16(0xB0,0x10,0x0,car_IO_status,5,6);
             displayChinese_16x16(0xB0,0x11,0x8,car_IO_status,13,13);
+
+			
             /*点火*/
             displayChinese_16x16(0xB2,0x10,0x0,car_IO_status,16,17);
 			if(para->mcu_car_info.fire == 1) displayIcon(0xB2,0x14, 0x0,nike);

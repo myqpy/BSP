@@ -129,6 +129,18 @@ int main(void)
 			powerOffTime = 0;
 			powerOffFlag = 0;
 		}
+		
+		/*车辆熄火*/
+		if(GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_1)) para.mcu_car_info.brake = 0;
+		else	para.mcu_car_info.brake = 1;
+		
+		/*车辆左转*/
+		if(GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_3)) para.mcu_car_info.left = 0;
+		else	para.mcu_car_info.left = 1;
+		
+		/*近光灯*/
+		if(GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_4)) para.mcu_car_info.low_beam = 0;
+		else	para.mcu_car_info.low_beam = 1;
 
 
         if(time!=calendar.sec)
@@ -162,7 +174,7 @@ int main(void)
 //			printf("\r\n");
 //			printf("pulseRatio:%d\r\n",para.parse.rk_vehicle_info.pulseRatio);
 //			printf("miles:%d\r\n",para.mcu_car_info.mileage);
-//			printf("speed:%d\r\n",para.mcu_car_info.velocity);
+			printf("speed:%d\r\n",para.mcu_car_info.velocity);
             sendMessage(kMCUStatusReport);
         }
 		 
@@ -235,10 +247,10 @@ int main(void)
 				case kCarInfo:
 				{
 					printf("CarInfo receive!!!\r\n");
-					printf("para.parse.rk_vehicle_info.car_plate_num:%s\r\n", para.parse.rk_vehicle_info.car_plate_num);
-					printf("para.parse.rk_vehicle_info.car_plate_color:0x%02x\r\n", para.parse.rk_vehicle_info.car_plate_color);
-					printf("para.parse.rk_vehicle_info.speedLimit:0x%02x\r\n", para.parse.rk_vehicle_info.speedLimit);
-					printf("para.parse.rk_vehicle_info.pulseRatio:%d\r\n", para.parse.rk_vehicle_info.pulseRatio);
+//					printf("para.parse.rk_vehicle_info.car_plate_num:%s\r\n", para.parse.rk_vehicle_info.car_plate_num);
+//					printf("para.parse.rk_vehicle_info.car_plate_color:0x%02x\r\n", para.parse.rk_vehicle_info.car_plate_color);
+//					printf("para.parse.rk_vehicle_info.speedLimit:0x%02x\r\n", para.parse.rk_vehicle_info.speedLimit);
+//					printf("para.parse.rk_vehicle_info.pulseRatio:%d\r\n", para.parse.rk_vehicle_info.pulseRatio);
 
 					sendMessage(kMCUGeneralResponse);
 				}
@@ -265,11 +277,11 @@ int main(void)
 //					// 状态位定义 4B
 //					printf("status %d\r\n",para.parse.Location_info.status);
 					// 纬度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
-					printf("latitude %d\r\n",para.parse.Location_info.latitude);
-					// 经度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
-					printf("longitude %d\r\n",para.parse.Location_info.longitude);
-					// 海拔高度, 单位为米(m) 2B
-					printf("altitude %d\r\n",para.parse.Location_info.altitude);
+//					printf("latitude %d\r\n",para.parse.Location_info.latitude);
+//					// 经度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
+//					printf("longitude %d\r\n",para.parse.Location_info.longitude);
+//					// 海拔高度, 单位为米(m) 2B
+//					printf("altitude %d\r\n",para.parse.Location_info.altitude);
 //					// 速度 1/10km/h 2B
 //					printf("speed %d\r\n",para.parse.Location_info.speed);
 //					// 方向 0-359,正北为0, 顺时针 2B

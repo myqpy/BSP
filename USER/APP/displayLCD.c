@@ -525,14 +525,7 @@ void showMainMenu(MCU_Parameters *para)
 //	displayChinese_16x16(0xB4,0x13,0x0,abnormal_speed,0,4);
 	sprintf(display_string,"%03d",para->mcu_car_info.velocity);
 	ShowString(0xB4,0x15, 0x0,display_string,12);
-//	if(para->mcu_car_info.velocity<100)
-//	{
-//		ShowString(0xB4,0x15, 0x8,display_string,12);
-//	}
-//    else
-//	{
-//		ShowString(0xB4,0x15, 0x0,display_string,12);
-//	}
+
     sprintf(display_string,"km/h");
     ShowString(0xB4,0x16, 0x04,display_string,12);
     sprintf(display_string,"%04d-%02d-%02d,%02d:%02d:%02d",calendar.w_year,calendar.w_month,calendar.w_date,calendar.hour,calendar.min,calendar.sec);
