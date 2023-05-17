@@ -253,30 +253,27 @@ int main(void)
 				
 				case kLocation:
 				{
-					for(i = 0; i<USART3_RX_STA; i++)
-					{
-						printf("%02x ",USART3_RX_BUF[i]);
-					}
-					printf("\r\n");
-					
-					printf("Location receive!!!\r\n");
-					// 报警标志 4B
-					printf("alarm %d\r\n", para.parse.Location_info.alarm);
-					// 状态位定义 4B
-					printf("status %d\r\n",para.parse.Location_info.status);
+//					for(i = 0; i<USART3_RX_STA; i++)
+//					{
+//						printf("%02x ",USART3_RX_BUF[i]);
+//					}
+//					printf("\r\n");
+//					
+//					printf("Location receive!!!\r\n");
+//					// 报警标志 4B
+//					printf("alarm %d\r\n", para.parse.Location_info.alarm);
+//					// 状态位定义 4B
+//					printf("status %d\r\n",para.parse.Location_info.status);
 					// 纬度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
 					printf("latitude %d\r\n",para.parse.Location_info.latitude);
 					// 经度(以度为单位的纬度值乘以10的6次方, 精确到百万分之一度) 4B
 					printf("longitude %d\r\n",para.parse.Location_info.longitude);
 					// 海拔高度, 单位为米(m) 2B
 					printf("altitude %d\r\n",para.parse.Location_info.altitude);
-					// 速度 1/10km/h 2B
-					printf("speed %d\r\n",para.parse.Location_info.speed);
-					// 方向 0-359,正北为0, 顺时针 2B
-					printf("bearing %d\r\n",para.parse.Location_info.bearing);
-					// 时间, "YYMMDDhhmmss"(GMT+8时间, 本标准之后涉及的时间均采用此时区).12B
-					// std::string time;
-					printf("time %s\r\n",para.parse.Location_info.time);
+//					// 速度 1/10km/h 2B
+//					printf("speed %d\r\n",para.parse.Location_info.speed);
+//					// 方向 0-359,正北为0, 顺时针 2B
+//					printf("bearing %d\r\n",para.parse.Location_info.bearing);
 					
 					sendMessage(kMCUGeneralResponse);
 				}
