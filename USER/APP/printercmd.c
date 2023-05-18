@@ -116,8 +116,6 @@ void print_overTime_record_Header(MCU_Parameters *para)
 	memcpy(printer_cmd,"机动车号牌号码：", sizeof("机动车号牌号码："));
 	Printer_printString(printer_cmd);
 
-//	memset(rk_vehicle_info->car_plate_num,0,12);
-//	memcpy(rk_vehicle_info->car_plate_num,"豫A88888",8);
 	Printer_printString(para->parse.rk_vehicle_info.car_plate_num);
 
 	print_empty_line();
@@ -161,7 +159,7 @@ void print_overTime_record_Header(MCU_Parameters *para)
 	Printer_printString(printer_cmd);
 
 	memset(printer_cmd ,0,sizeof(printer_cmd));
-	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year, calendar.w_month, calendar.w_date, calendar.hour,calendar.min,calendar.sec);	
+	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d",calendar.w_year, calendar.w_month, calendar.w_date, calendar.hour,calendar.min,calendar.sec);	
 	Printer_printString(printer_cmd);
 
 	print_empty_line();
@@ -205,7 +203,7 @@ void print_overTime_record_Body(MCU_Parameters *para, u8 recordNum)
 	
 	print_empty_line();
 	memset(printer_cmd ,0,sizeof(printer_cmd));
-	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d \r\n",para->parse.OvertimeDriveRecord.startTime.year, para->parse.OvertimeDriveRecord.startTime.month, para->parse.OvertimeDriveRecord.startTime.date, para->parse.OvertimeDriveRecord.startTime.h,para->parse.OvertimeDriveRecord.startTime.m,para->parse.OvertimeDriveRecord.startTime.s);
+	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d",para->parse.OvertimeDriveRecord.startTime.year, para->parse.OvertimeDriveRecord.startTime.month, para->parse.OvertimeDriveRecord.startTime.date, para->parse.OvertimeDriveRecord.startTime.h,para->parse.OvertimeDriveRecord.startTime.m,para->parse.OvertimeDriveRecord.startTime.s);
 	Printer_printString(printer_cmd);
 	
 	print_empty_line();
@@ -215,6 +213,8 @@ void print_overTime_record_Body(MCU_Parameters *para, u8 recordNum)
 	
 	print_empty_line();
 	memset(printer_cmd ,0,sizeof(printer_cmd));
-	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d \r\n",para->parse.OvertimeDriveRecord.endTime.year, para->parse.OvertimeDriveRecord.endTime.month, para->parse.OvertimeDriveRecord.endTime.date, para->parse.OvertimeDriveRecord.endTime.h,para->parse.OvertimeDriveRecord.endTime.m,para->parse.OvertimeDriveRecord.endTime.s);
+	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d",para->parse.OvertimeDriveRecord.endTime.year, para->parse.OvertimeDriveRecord.endTime.month, para->parse.OvertimeDriveRecord.endTime.date, para->parse.OvertimeDriveRecord.endTime.h,para->parse.OvertimeDriveRecord.endTime.m,para->parse.OvertimeDriveRecord.endTime.s);
 	Printer_printString(printer_cmd);	
+	print_empty_line();
+	print_empty_line();
 }
