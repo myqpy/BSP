@@ -34,11 +34,11 @@ unsigned char page3_row_max = 0xB4;
 //unsigned char page3_subPage_row = 0xB0;
 //unsigned char page3_subPage_row_max = 0xB2;
 unsigned char i,j;
-u8 time_now = 0;
 u16 time_1ms=0;
 u16 confirmed_pressed=0;
 u16 up_down_pressed=0;
 u8 key_text=0;
+//u8 OTnumber=1;
 u8 OTnumberNow = 0;
 char printString[100];
 char carPlateString[20];
@@ -124,28 +124,9 @@ void MENU_processing(MCU_Parameters *para)
             if(confirmed_pressed >= 3000)
             {
                 printf("printing!!!!!!!!! \r\n");
-//				print_overTime_record_Header(para);
-//				while(printOTnumber<=100)
-//				{
-//					printOTnumber++;
-//					para->packager.OTpageNum = printOTnumber;
-//					if(time_now!=calendar.sec)
-//					{
-//						time_now = calendar.sec;
-//						sendMessage(kAcquireOTReport);
-//						if(para->parse.OvertimeDriveRecord.OTnumber!=0xFF) 
-//						{
-////							print_overTime_record_Body(para,printOTnumber);
-//							printf("%s\r\n",para->parse.OvertimeDriveRecord.DriverLicenseNum);
-//							printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",para->parse.OvertimeDriveRecord.startTime.year, para->parse.OvertimeDriveRecord.startTime.month, para->parse.OvertimeDriveRecord.startTime.date, para->parse.OvertimeDriveRecord.startTime.h,para->parse.OvertimeDriveRecord.startTime.m,para->parse.OvertimeDriveRecord.startTime.s);
-//							printf("%04d-%02d-%02d,%02d:%02d:%02d \r\n",para->parse.OvertimeDriveRecord.endTime.year, para->parse.OvertimeDriveRecord.endTime.month, para->parse.OvertimeDriveRecord.endTime.date, para->parse.OvertimeDriveRecord.endTime.h,para->parse.OvertimeDriveRecord.endTime.m,para->parse.OvertimeDriveRecord.endTime.s);
-//						}
-//						else break;
-//					}
-//				}
+				print_overTime_record_Header(para);
                 confirmed_pressed  = 0;
                 TIM_Cmd(TIM5,DISABLE);
-//				printOTnumber = 0;
             }
 
             break;
@@ -273,7 +254,6 @@ void MENU_processing(MCU_Parameters *para)
         {
 			if(OTnumberNow!= para->packager.OTpageNum)
 			{
-				printf("para->packager.OTpageNum:%d\r\n",para->packager.OTpageNum);
 				sendMessage(kAcquireOTReport);  
 				OTnumberNow = para->packager.OTpageNum;
 			}
