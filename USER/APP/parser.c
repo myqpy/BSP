@@ -1,4 +1,4 @@
-
+#include "bcd.h"
 #include "parser.h"
 #include "client_manager.h"
 #include "util.h"
@@ -153,36 +153,32 @@ int handle_kArmOTrecord(MCU_Parameters *para)
 		pos++;
 	}
 	
-	para->parse.OvertimeDriveRecord.startTime.hour = BufferReceive[pos];
+	para->parse.OvertimeDriveRecord.startTime.year = BcdToHex(BufferReceive[pos]);
 	pos++;
-	para->parse.OvertimeDriveRecord.startTime.min = BufferReceive[pos];
+	para->parse.OvertimeDriveRecord.startTime.month = BcdToHex(BufferReceive[pos]);
 	pos++;
-	para->parse.OvertimeDriveRecord.startTime.sec = BufferReceive[pos];
+	para->parse.OvertimeDriveRecord.startTime.date = BcdToHex(BufferReceive[pos]);
 	pos++;
-	u16converter.u8array[0] = BufferReceive[pos];
-	u16converter.u8array[1] = BufferReceive[pos+1];
-	para->parse.OvertimeDriveRecord.startTime.w_year = u16converter.u16val;
-//	para->parse.OvertimeDriveRecord.startTime.w_year = (BufferReceive[pos]<<8) + BufferReceive[pos+1];
-	pos+=2;
-	para->parse.OvertimeDriveRecord.startTime.w_month = BufferReceive[pos];
+	para->parse.OvertimeDriveRecord.startTime.h = BcdToHex(BufferReceive[pos]);
 	pos++;
-	para->parse.OvertimeDriveRecord.startTime.w_date = BufferReceive[pos];
+	para->parse.OvertimeDriveRecord.startTime.m = BcdToHex(BufferReceive[pos]);
+	pos++;
+	para->parse.OvertimeDriveRecord.startTime.s = BcdToHex(BufferReceive[pos]);
 	pos++;
 
-	para->parse.OvertimeDriveRecord.endTime.hour = BufferReceive[pos];
+	
+	
+	para->parse.OvertimeDriveRecord.endTime.year = BcdToHex(BufferReceive[pos]);
 	pos++;
-	para->parse.OvertimeDriveRecord.endTime.min = BufferReceive[pos];
+	para->parse.OvertimeDriveRecord.endTime.month = BcdToHex(BufferReceive[pos]);
 	pos++;
-	para->parse.OvertimeDriveRecord.endTime.sec = BufferReceive[pos];
+	para->parse.OvertimeDriveRecord.endTime.date = BcdToHex(BufferReceive[pos]);
 	pos++;
-	u16converter.u8array[0] = BufferReceive[pos];
-	u16converter.u8array[1] = BufferReceive[pos+1];
-	para->parse.OvertimeDriveRecord.endTime.w_year = u16converter.u16val;
-//	para->parse.OvertimeDriveRecord.endTime.w_year = (BufferReceive[pos]<<8) + BufferReceive[pos+1];
-	pos+=2;
-	para->parse.OvertimeDriveRecord.endTime.w_month = BufferReceive[pos];
+	para->parse.OvertimeDriveRecord.endTime.h = BcdToHex(BufferReceive[pos]);
 	pos++;
-	para->parse.OvertimeDriveRecord.endTime.w_date = BufferReceive[pos];
+	para->parse.OvertimeDriveRecord.endTime.m = BcdToHex(BufferReceive[pos]);
+	pos++;
+	para->parse.OvertimeDriveRecord.endTime.s = BcdToHex(BufferReceive[pos]);
 	pos++;
 	
 	return 0;

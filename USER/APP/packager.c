@@ -198,6 +198,8 @@ int handle_AcquireOTReport(MCU_Parameters *para)
 {
 	msg_len=0;
 	bufferSendPushByte(para->packager.OTpageNum);
+	printf("OT request send!, page = %03x\r\n",McuPackage[5]);
+	msg_len++;
 	return msg_len;
 }
 

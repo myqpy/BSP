@@ -16,6 +16,8 @@ extern uint8_t changeLoadingStatus[][24];
 extern uint8_t forbidTimeArray[][24];
 extern uint8_t nike[][16];
 extern uint8_t icon_empty[][16];
+extern uint8_t OTBeginEndTime[][24];
+extern uint8_t more[][24];
 
 
 void LCD_Clear(void);

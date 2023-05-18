@@ -48,7 +48,7 @@ int main(void)
     extern MCU_Parameters para;
 
     u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
-
+	para.packager.OTpageNum = 1;
 //    para.parse.rk_vehicle_info.pulseRatio = 5700;
 	para.mcu_car_info.isCharged = 1;
 //	para.parse.parser.forbidTime = 1;
@@ -142,7 +142,7 @@ int main(void)
 //			printf("ACC:%02x\r\n",ACC);
 
 //			printf("volatageAD:%f \r\n",volatageAD);
-			printf("powerOffTime:%d \r\n",powerOffTime);
+//			printf("powerOffTime:%d \r\n",powerOffTime);
 
             if(para.mcu_car_info.drive_time >= 14400)
             {
@@ -161,9 +161,9 @@ int main(void)
 //				printf("%02x ",para.parse.rk_vehicle_info.car_plate_num[i]);
 //			}
 //			printf("\r\n");
-			printf("pulseRatio:%d\r\n",para.parse.rk_vehicle_info.pulseRatio);
+//			printf("pulseRatio:%d\r\n",para.parse.rk_vehicle_info.pulseRatio);
 //			printf("miles:%d\r\n",para.mcu_car_info.mileage);
-			printf("speed:%d\r\n",para.mcu_car_info.velocity);
+//			printf("speed:%d\r\n",para.mcu_car_info.velocity);
             sendMessage(kMCUStatusReport);
         }
 		 
@@ -190,24 +190,24 @@ int main(void)
 				}
 				case kArmOTrecord:
 				{
-//						for(i = 0; i<OvertimeDriveNum; i++)
+//					for(i = 0; i<OvertimeDriveNum; i++)
+//					{
+//						pos = handle_overTimeRecord(USART3_RX_BUF, pos);
+//	//					memset(printer_cmd ,0,sizeof(printer_cmd));
+//	//					memcpy(printer_cmd,(u8 *)&rk_vehicle_info, sizeof(rk_vehicle_info));
+//	//					Printer_printString(printer_cmd);
+//						print_overTime_record_Body(OvertimeDriveRecord_info, i);
+//						for(i = 0; i<sizeof(printer_cmd); i++)
 //						{
-//							pos = handle_overTimeRecord(USART3_RX_BUF, pos);
-//		//					memset(printer_cmd ,0,sizeof(printer_cmd));
-//		//					memcpy(printer_cmd,(u8 *)&rk_vehicle_info, sizeof(rk_vehicle_info));
-//		//					Printer_printString(printer_cmd);
-//							print_overTime_record_Body(OvertimeDriveRecord_info, i);
-//							for(i = 0; i<sizeof(printer_cmd); i++)
-//							{
-//								printf("%02x ",printer_cmd[i]);
-//							}
-//							printf("\r\n");
+//							printf("%02x ",printer_cmd[i]);
 //						}
+//						printf("\r\n");
+//					}
 
 				}
                 case kTimeCorrect:
                 {
-					printf("TimeCorrect receive!!!\r\n");
+//					printf("TimeCorrect receive!!!\r\n");
 					sendMessage(kMCUGeneralResponse);
 					if(receiveFlag == 0)
 					{
@@ -222,7 +222,7 @@ int main(void)
 				break;
 				case kSelfCheck:
 				{
-					printf("SelfCheck receive!!!\r\n");
+//					printf("SelfCheck receive!!!\r\n");
 //					printf("rk_info->SDStatus:%02x\r\n", para.parse.selfCheck_info.SDStatus);
 //					printf("rk_info->EC20Status:%02x\r\n",para.parse.selfCheck_info.EC20Status);
 //					printf("rk_info->EC20SignalStrength:%02x\r\n", para.parse.selfCheck_info.EC20SignalStrength);

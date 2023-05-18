@@ -38,9 +38,12 @@ u16 time_1ms=0;
 u16 confirmed_pressed=0;
 u16 up_down_pressed=0;
 u8 key_text=0;
+//u8 OTnumber=1;
+u8 OTnumberNow = 0;
 char printString[100];
 char carPlateString[20];
 unsigned char plateHead;
+uint8_t noOTflag=0;
 
 void MENU_processing(MCU_Parameters *para)
 {
@@ -56,6 +59,9 @@ void MENU_processing(MCU_Parameters *para)
         time_1ms = 0;
         confirmed_pressed  = 0;
 		up_down_pressed=0;
+		if(noOTflag!=0) noOTflag=0;
+		if(OTnumberNow!=0) OTnumberNow=0;
+		if(para->packager.OTpageNum!=1) para->packager.OTpageNum=1;
     }
 
     if(page<=0)
@@ -129,8 +135,12 @@ void MENU_processing(MCU_Parameters *para)
 		
 
         showMainMenu(para);
-
+		if(OTnumberNow!=0) OTnumberNow=0;
+		if(para->packager.OTpageNum!=1) para->packager.OTpageNum=1;
         if(page_status!=page) LCD_Clear();
+		if(noOTflag!=0) noOTflag=0;
+		
+		
     }
     else if(page==1)
     {
@@ -190,6 +200,12 @@ void MENU_processing(MCU_Parameters *para)
             page2_row-=2;
             if(page2_row>=page2_row_max) page2_row=page2_row_max;
             if(page2_row<=page2_row_min) page2_row=page2_row_min;
+			if(page1_row==0xB2)
+			{
+				para->packager.OTpageNum --;
+				if(para->packager.OTpageNum <= 1) para->packager.OTpageNum = 1;
+			}
+			if(noOTflag!=0) noOTflag=0;
             LCD_Clear();
             break;
 
@@ -197,6 +213,12 @@ void MENU_processing(MCU_Parameters *para)
             page2_row+=2;
             if(page2_row>=page2_row_max) page2_row=page2_row_max;
             if(page2_row<=page2_row_min) page2_row=page2_row_min;
+			if(page1_row==0xB2)
+			{
+				if(para->parse.OvertimeDriveRecord.OTnumber!=0xFF) para->packager.OTpageNum ++;
+				if(para->packager.OTpageNum >= 100) para->packager.OTpageNum = 100;
+			}
+			if(noOTflag!=0) noOTflag=0;
             LCD_Clear();
             break;
 
@@ -230,9 +252,46 @@ void MENU_processing(MCU_Parameters *para)
 
         if(page1_row==0xB2)
         {
-            /*无超时驾驶记录*/
-            displayChinese_16x16(0xB3,0x12,0x0,overTimeDriveRecord,0,2);
-            displayChinese_16x16(0xB3,0x14,0x5,overTimeDriveRecord,5,8);
+			if(OTnumberNow!= para->packager.OTpageNum)
+			{
+				sendMessage(kAcquireOTReport);  
+				OTnumberNow = para->packager.OTpageNum;
+			}
+
+			if(para->parse.OvertimeDriveRecord.OTnumber != 0xFF)
+			{
+			/*超时驾驶记录*/
+            displayChinese_16x16(0xB0,0x10,0x0,overTimeDriveRecord,1,2);
+            displayChinese_16x16(0xB0,0x12,0x0,overTimeDriveRecord,5,8);
+			sprintf(printString,"%03d",para->packager.OTpageNum);
+			ShowString(0xB0,0x16, 0x0,printString,12);
+			memset(printString,0,200);
+			memcpy(printString,para->parse.OvertimeDriveRecord.DriverLicenseNum,18);
+			ShowString(0xB2,0x10, 0x0,printString,12);
+			/*开始*/
+			displayChinese_16x16(0xB4,0x10,0x0,OTBeginEndTime,4,5);
+			sprintf(printString,"%02d.%02d.%02d %02d:%02d",para->parse.OvertimeDriveRecord.startTime.year,para->parse.OvertimeDriveRecord.startTime.month,para->parse.OvertimeDriveRecord.startTime.date,para->parse.OvertimeDriveRecord.startTime.h,para->parse.OvertimeDriveRecord.startTime.m);
+			ShowString(0xB4,0x11, 0xc,printString,12);
+			/*结束*/
+			displayChinese_16x16(0xB6,0x10,0x0,OTBeginEndTime,8,9);
+			sprintf(printString,"%02d.%02d.%02d %02d:%02d",para->parse.OvertimeDriveRecord.endTime.year,para->parse.OvertimeDriveRecord.endTime.month,para->parse.OvertimeDriveRecord.endTime.date,para->parse.OvertimeDriveRecord.endTime.h,para->parse.OvertimeDriveRecord.endTime.m);
+			ShowString(0xB6,0x11, 0xc,printString,12);
+			}
+			
+			else
+			{
+				if(noOTflag==0)
+				{
+					LCD_Clear();
+					noOTflag=1;
+				}
+				/*无更多超时驾驶记录*/
+//				displayChinese_16x16(0xB3,0x11,0x0,overTimeDriveRecord,0,0);
+//				displayChinese_16x16(0xB3,0x11,0xc,more,0,1);
+//				displayChinese_16x16(0xB3,0x13,0x4,overTimeDriveRecord,1,2);
+//				displayChinese_16x16(0xB3,0x14,0xc,overTimeDriveRecord,5,8);
+			}
+			
         }
 		
 		if(page1_row==0xB4)
@@ -321,7 +380,6 @@ void MENU_processing(MCU_Parameters *para)
             displayChinese_16x16(0xB2,0x10,0x0,Chinese_car_plate,0,4);
             displayChinese_16x16(0xB2,0x13,0xd,Chinese_car_plate,10,11);
 
-//			memcpy(para->parse.rk_vehicle_info.car_plate_num,"港AD88888",sizeof("京AD88888"));
 			memset(carPlateString,0,20);
 			plateHead = displayCarPlateHead(para->parse.rk_vehicle_info.car_plate_num);
 			displayChinese_16x16(0xB4,0x10,0x0,car_plate_province,plateHead,plateHead);

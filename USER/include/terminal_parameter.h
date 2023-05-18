@@ -117,12 +117,26 @@ typedef struct Struct_TimeInfo
 
 #pragma pack(push)
 #pragma pack(1) // 结构体1字节对齐	
+typedef struct BCD_TimeInfo
+{
+    uint8_t year;
+	uint8_t month;
+	uint8_t date;
+	uint8_t h;
+	uint8_t m;
+	uint8_t	s;
+} bcd_timeinfo;
+#pragma pack() // 恢复默认字节对齐
+
+
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
 typedef struct Struct_ARM_OvertimeDriveRecord
 {
     uint8_t	OTnumber;
     uint8_t	DriverLicenseNum[18];
-    TimeInfo	startTime;
-    TimeInfo	endTime;
+    bcd_timeinfo	startTime;
+    bcd_timeinfo	endTime;
 } ARM_OvertimeDriveRecord;
 #pragma pack() // 恢复默认字节对齐
 
@@ -234,6 +248,7 @@ typedef struct Struct_MCU_Parameters
         ARM_OvertimeDriveRecord	OvertimeDriveRecord;
         ARM_Location_info		Location_info;
 		MCU_Parser				parser;
+		bcd_timeinfo			bcdtime;
     } parse;
 
 } MCU_Parameters;

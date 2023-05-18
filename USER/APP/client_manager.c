@@ -76,7 +76,13 @@ void update_status(unsigned char statusbit, unsigned char value)
 
 int sendMessage(unsigned char msg_id)
 {
+	uint8_t i;
 	packagingMessage(msg_id);
+//	for(i=0;i<RealBufferSendSize;i++)
+//	{
+//		printf("%02x ",McuPackage[i]);
+//    }
+//	printf("\r\n");
 	Usart_SendStr_length(USART3, (uint8_t*)&McuPackage, RealBufferSendSize);
-    return 0;
+	return 0;
 }
