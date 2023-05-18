@@ -121,10 +121,10 @@ void MENU_processing(MCU_Parameters *para)
 
             printf("confirmed_pressed = %d \r\n",confirmed_pressed);
 
-//            if(confirmed_pressed >= 3000)
-//            {
-//                printf("printing!!!!!!!!! \r\n");
-////				print_overTime_record_Header(para);
+            if(confirmed_pressed >= 3000)
+            {
+                printf("printing!!!!!!!!! \r\n");
+//				print_overTime_record_Header(para);
 //				while(printOTnumber<=100)
 //				{
 //					printOTnumber++;
@@ -143,10 +143,10 @@ void MENU_processing(MCU_Parameters *para)
 //						else break;
 //					}
 //				}
-//                confirmed_pressed  = 0;
-//                TIM_Cmd(TIM5,DISABLE);
+                confirmed_pressed  = 0;
+                TIM_Cmd(TIM5,DISABLE);
 //				printOTnumber = 0;
-//            }
+            }
 
             break;
 
