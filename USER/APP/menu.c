@@ -68,6 +68,8 @@ void MENU_processing(MCU_Parameters *para)
     if(page<=0)
     {
 		page0_process(para);	//Ö÷²Ëµ¥
+		showMainMenu(para);
+		if(page_status!=page) LCD_Clear();
     }
     else if(page==1)
     {
@@ -108,30 +110,6 @@ void page0_process(MCU_Parameters *para)
 			TIM_Cmd(TIM5,DISABLE);
 		}
 		break;
-//	case KEY_UpArrow_PRES:
-//		printf("up_pressed = %d\r\n",up_pressed);
-//		TIM_Cmd(TIM5,DISABLE);
-//		TIM_Cmd(TIM5,ENABLE);
-//		if(up_pressed >= 3000)
-//		{
-//			printf("printing!!!!!!!!! \r\n");
-//			printer_info_init();
-//			confirmed_pressed  = 0;
-//			TIM_Cmd(TIM5,DISABLE);
-//		}
-//		break;
-//	case KEY_DownArrow_PRES:
-//		printf("down_pressed = %d\r\n ",down_pressed);
-//		TIM_Cmd(TIM5,DISABLE);
-//		TIM_Cmd(TIM5,ENABLE);
-//		if(down_pressed >= 3000)
-//		{
-//			printf("printing!!!!!!!!! \r\n");
-////				printer_info_init();
-//			confirmed_pressed  = 0;
-//			TIM_Cmd(TIM5,DISABLE);
-//		}
-//		break;
 	case KEY_menu_PRES:
 		TIM_Cmd(TIM5,DISABLE);
 		TIM_Cmd(TIM5,ENABLE);
@@ -156,21 +134,38 @@ void page0_process(MCU_Parameters *para)
 				printf("para->parse.OvertimeDriveRecord.DriverLicenseNum:%s\r\n",para->parse.OvertimeDriveRecord.DriverLicenseNum);
 				printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para->parse.OvertimeDriveRecord.startTime.year, para->parse.OvertimeDriveRecord.startTime.month, para->parse.OvertimeDriveRecord.startTime.date, para->parse.OvertimeDriveRecord.startTime.h,para->parse.OvertimeDriveRecord.startTime.m,para->parse.OvertimeDriveRecord.startTime.s);
 				printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para->parse.OvertimeDriveRecord.endTime.year, para->parse.OvertimeDriveRecord.endTime.month, para->parse.OvertimeDriveRecord.endTime.date, para->parse.OvertimeDriveRecord.endTime.h,para->parse.OvertimeDriveRecord.endTime.m,para->parse.OvertimeDriveRecord.endTime.s);
-//					if()
 			}
 			confirmed_pressed  = 0;
 			TIM_Cmd(TIM5,DISABLE);
 		}
-
 		break;
-
+//	case KEY_UpArrow_PRES:
+//		printf("up_pressed = %d\r\n",up_pressed);
+//		TIM_Cmd(TIM5,DISABLE);
+//		TIM_Cmd(TIM5,ENABLE);
+//		if(up_pressed >= 3000)
+//		{
+//			printf("printing!!!!!!!!! \r\n");
+//			printer_info_init();
+//			confirmed_pressed  = 0;
+//			TIM_Cmd(TIM5,DISABLE);
+//		}
+//		break;
+//	case KEY_DownArrow_PRES:
+//		printf("down_pressed = %d\r\n ",down_pressed);
+//		TIM_Cmd(TIM5,DISABLE);
+//		TIM_Cmd(TIM5,ENABLE);
+//		if(down_pressed >= 3000)
+//		{
+//			printf("printing!!!!!!!!! \r\n");
+////				printer_info_init();
+//			confirmed_pressed  = 0;
+//			TIM_Cmd(TIM5,DISABLE);
+//		}
+//		break;
 	}
-	
-
-	showMainMenu(para);
 	if(OTnumberNow!=0) OTnumberNow=0;
 	if(para->packager.OTpageNum!=1) para->packager.OTpageNum=1;
-	if(page_status!=page) LCD_Clear();
 	if(noOTflag!=0) noOTflag=0;
 }
 

@@ -25,22 +25,22 @@ void printer_send_cmd(uint8_t *Buffer, uint16_t Length)
 
 void UART4_init(u32 bound) {
     //GPIO∂Àø⁄…Ë÷√
-    GPIO_InitTypeDef GPIO_InitStructure;
+//    GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART4, ENABLE);
 	
-    //USART4_TX
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_Init(GPIOC, &GPIO_InitStructure);
+//    //USART4_TX
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+//    GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-    //USART4_RX
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOC, &GPIO_InitStructure);
+//    //USART4_RX
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+//    GPIO_Init(GPIOC, &GPIO_InitStructure);
 
     //Usart4 NVIC ≈‰÷√
     NVIC_InitStructure.NVIC_IRQChannel = UART4_IRQn;

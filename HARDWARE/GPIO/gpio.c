@@ -22,6 +22,17 @@ void InPut_Init(void) //IO初始化
  	GPIO_InitTypeDef GPIO_InitStructure;
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);//使能GPIOA时钟
+	//USART1_TX   GPIOA.9
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9; //PA.9
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;	//复用推挽输出
+	GPIO_Init(GPIOA, &GPIO_InitStructure);//初始化GPIOA.9
+
+	//USART1_RX	  GPIOA.10初始化
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;//PA10
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;//浮空输入
+	GPIO_Init(GPIOA, &GPIO_InitStructure);//初始化GPIOA.10  
+	
 	/*使能PA11，PA12 can总线*/
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -40,10 +51,19 @@ void InPut_Init(void) //IO初始化
     GPIO_Init(GPIOB, &GPIO_InitStructure);
     GPIO_SetBits(GPIOB,GPIO_Pin_6|GPIO_Pin_7); 	//PB6,PB7 输出高
 
-    RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOB, ENABLE );	//使能GPIOB时钟
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;   //上拉输入
     GPIO_Init(GPIOB, &GPIO_InitStructure);
+	
+	//USART3_TX   PB10
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;            //PB10
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;	     //复用推挽输出
+    GPIO_Init(GPIOB, &GPIO_InitStructure);               //初始化PB10
+    //USART3_RX	  PB11
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;            //PA.3
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;//浮空输入
+    GPIO_Init(GPIOB, &GPIO_InitStructure);               //初始化PB11
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC,ENABLE);//使能GPIOC时钟
 	/*使能PC1 3 13 显示屏， 13为显示屏背光 */
@@ -52,6 +72,17 @@ void InPut_Init(void) //IO初始化
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
 	GPIO_SetBits(GPIOC,GPIO_Pin_1|GPIO_Pin_3);
+	
+	//USART4_TX
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+    //USART4_RX
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD,ENABLE);//使能GPIOD时钟
 	/*使能PD0，1，3，4 开关量 */
@@ -87,7 +118,6 @@ void InPut_Init(void) //IO初始化
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN; 			 
 	GPIO_Init(GPIOF, &GPIO_InitStructure);
-	
 
 }
 
@@ -121,7 +151,6 @@ u8 KEY_Scan(u8 mode)
 		
     } 
 	else if(KEY0==1&&KEY1==1&&KEY2==1&&KEY3==1) key_up=1;
-//	else if(KEY0==0&&KEY1==0&&KEY2==0&&KEY3==0) key_up=1;
 	
     return 0;// 无按键按下
 }

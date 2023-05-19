@@ -21,16 +21,6 @@ unsigned short kTerminalParserCMD[8] = {
 
 int parsingMessage(const unsigned char *in, unsigned int in_len)
 {
-//    unsigned short msg_id;
-//    if (FrameParse(in, in_len, &parameter_) < 0)
-//    {
-//        printf("jt808FrameParse ERROR\r\n");
-//        return -1;
-//    }
-//    msg_id = parameter_.parse.msg_head.msg_id;
-	
-//	memcpy(BufferReceive, in, in_len);
-//	RealBufferReceiveSize = in_len;
 	union U16ToU8Array u16converter;
 	
 	unsigned char pos = 0;
@@ -43,7 +33,6 @@ int parsingMessage(const unsigned char *in, unsigned int in_len)
 	u16converter.u8array[0] = BufferReceive[pos];
 	u16converter.u8array[1] = BufferReceive[pos+1];
 	para.parse.parser.msg_flow_num = u16converter.u16val;
-//	para.packager.msg_flow_num = (BufferReceive[pos]<<8) + BufferReceive[pos+1];
 	pos+=2;
 	para.parse.parser.msg_length = BufferReceive[pos];
 	pos++;
@@ -134,7 +123,6 @@ int handle_kARMGeneralResponse(MCU_Parameters *para)
 	u16converter.u8array[0] = BufferReceive[5];
 	u16converter.u8array[1] = BufferReceive[6];
 	para->parse.parser.msg_flow_num = u16converter.u16val;
-//	para->packager.parse.msg_flow_num_receive = (BufferReceive[5]<<8) + BufferReceive[6];
 	para->parse.parser.msg_id = BufferReceive[7];
 	
 	return 0;
@@ -142,7 +130,6 @@ int handle_kARMGeneralResponse(MCU_Parameters *para)
 
 int handle_kArmOTrecord(MCU_Parameters *para)
 {
-	union U16ToU8Array u16converter;
 	unsigned int i;
 	unsigned char pos = 5;
 	para->parse.OvertimeDriveRecord.OTnumber = BufferReceive[pos];
@@ -198,7 +185,6 @@ int handle_kTimeCorrect(MCU_Parameters *para)
 	u16converter.u8array[0] = BufferReceive[pos];
 	u16converter.u8array[1] = BufferReceive[pos+1];
 	para->parse.time_info.w_year = u16converter.u16val;
-//	para->parse.time_info.w_year = (BufferReceive[pos]<<8) + BufferReceive[pos+1];
 	pos+=2;
 	para->parse.time_info.w_month = BufferReceive[pos];
 	pos++;
@@ -248,7 +234,6 @@ int handle_kCarInfo(MCU_Parameters *para)
 	u16converter.u8array[1] = BufferReceive[pos+1];
 	para->parse.rk_vehicle_info.pulseRatio = u16converter.u16val;
 	
-//	para->parse.rk_vehicle_info.pulseRatio = (BufferReceive[pos]<<8)+BufferReceive[pos+1];
 	pos+=2;
 	return 0;
 }
@@ -262,7 +247,6 @@ int handle_kForbidTime(MCU_Parameters *para)
 int handle_kLocation(MCU_Parameters *para)
 {
 	union U32ToU8Array u32converter;
-	union U16ToU8Array u16converter;
 	unsigned int i;
 	unsigned char pos = 5;
 	
@@ -270,7 +254,6 @@ int handle_kLocation(MCU_Parameters *para)
 	{
 		u32converter.u8array[i] = BufferReceive[pos];
 		para->parse.Location_info.alarm = u32converter.u32val;
-//		para->parse.Location_info.alarm = (BufferReceive[pos]<<24)+(BufferReceive[pos+1]<<16)+(BufferReceive[pos+2]<<8)+BufferReceive[pos+3];
 		pos++;
 	}
 	
@@ -278,7 +261,6 @@ int handle_kLocation(MCU_Parameters *para)
 	{
 		u32converter.u8array[i] = BufferReceive[pos];
 		para->parse.Location_info.status = u32converter.u32val;
-//		para->parse.Location_info.status = (BufferReceive[pos]<<24)+(BufferReceive[pos+1]<<16)+(BufferReceive[pos+2]<<8)+BufferReceive[pos+3];
 		pos++;
 	}
 	
@@ -286,7 +268,6 @@ int handle_kLocation(MCU_Parameters *para)
 	{
 		u32converter.u8array[i] = BufferReceive[pos];
 		para->parse.Location_info.latitude = u32converter.u32val;
-//		para->parse.Location_info.latitude = (BufferReceive[pos]<<24)+(BufferReceive[pos+1]<<16)+(BufferReceive[pos+2]<<8)+BufferReceive[pos+3];
 		pos++;
 	}
 	
@@ -294,7 +275,6 @@ int handle_kLocation(MCU_Parameters *para)
 	{
 		u32converter.u8array[i] = BufferReceive[pos];
 		para->parse.Location_info.longitude = u32converter.u32val;
-//		para->parse.Location_info.longitude = (BufferReceive[pos]<<24)+(BufferReceive[pos+1]<<16)+(BufferReceive[pos+2]<<8)+BufferReceive[pos+3];
 		pos++;
 	}
 	
