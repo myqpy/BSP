@@ -404,7 +404,7 @@ void showMainMenu(MCU_Parameters *para)
     weekday = WeekYearday(calendar.w_year,calendar.w_month,calendar.w_date);
 	if(weekday == 0) weekday = 7;
 
-
+	/*展示4G信号强度图标*/
 	if(para->parse.selfCheck_info.EC20Status == 1)
 	{
 		if((int)para->parse.selfCheck_info.EC20SignalStrength >=75) 														displayIcon(0xB0,0x10, 0x0,icon_4G_3bars);
@@ -417,7 +417,7 @@ void showMainMenu(MCU_Parameters *para)
 		displayIcon(0xB0,0x10, 0x0,icon_empty);
 	}
     
-	
+	/*展示北斗信号强度图标*/
 	if(para->parse.selfCheck_info.BDStatus == 1)
 	{
 		displayIcon(0xB0,0x11, 0x0,icon_beidou);
@@ -427,6 +427,7 @@ void showMainMenu(MCU_Parameters *para)
 		displayIcon(0xB0,0x11, 0x0,icon_empty);
 	}
     
+	/*展示人员登录图标*/
 	if(!AT24CXX_Check())
 	{
 		para->mcu_car_info.ICcardStatus = 1;
@@ -454,6 +455,7 @@ void showMainMenu(MCU_Parameters *para)
 		displayIcon(0xB0,0x12, 0x0,icon_empty);
 	}
     
+	/*展示SD卡图标*/
 	if(para->parse.selfCheck_info.SDStatus == 1)
 	{
 		displayIcon(0xB0,0x13, 0x0,icon_SD);
@@ -463,6 +465,7 @@ void showMainMenu(MCU_Parameters *para)
 		displayIcon(0xB0,0x13, 0x0,icon_empty);
 	}
     
+	/*展示外部供电图标*/
 	if(para->mcu_car_info.isCharged == 1)
 	{
 		displayIcon(0xB0,0x14, 0x0,icon_charged);
@@ -472,6 +475,7 @@ void showMainMenu(MCU_Parameters *para)
 		displayIcon(0xB0,0x14, 0x0,icon_battery);
 	}
 	
+	/*展示摄像头图标*/
 	if(para->parse.selfCheck_info.cameraStatus == 1)
 	{
 		displayIcon(0xB0,0x15, 0x0,icon_camera);
@@ -480,6 +484,8 @@ void showMainMenu(MCU_Parameters *para)
 	{
 		displayIcon(0xB0,0x15, 0x0,icon_empty);
 	}
+	
+	/*展示速度状态图标*/
 	if(para->parse.selfCheck_info.velocityStatus == 1)
 	{
 		displayIcon(0xB0,0x16, 0x0,icon_abnormalSpeed);
@@ -494,8 +500,9 @@ void showMainMenu(MCU_Parameters *para)
 //	displayIcon(0xB0,0x17, 0x0,icon_test);
 
 
-    sprintf(display_string,"%3d",para->mcu_car_info.velocity);
-    if(para->mcu_car_info.velocity > 50)
+	
+	/*展示超速*/
+    if(para->mcu_car_info.velocity > para->parse.rk_vehicle_info.speedLimit)
     {
 		/*超速驾驶*/
         displayChinese_16x16(0xB4,0x13, 0x4, over_speed, 0,1);
@@ -505,6 +512,7 @@ void showMainMenu(MCU_Parameters *para)
         displayChinese_16x16(0xB4,0x13, 0x4, empty, 0,1);
     }
 
+	/*展示超时驾驶提醒*/
     if(para->mcu_car_info.drive_time>=12600)
     {
 		/*连续驾驶*/
@@ -539,14 +547,18 @@ void showMainMenu(MCU_Parameters *para)
     }
 	
 //    displayWeekday(0xB4,0x10,0x0,weekday);
+	/*展示禁行时段*/
 	if(para->parse.parser.forbidTime==1) displayChinese_16x16(0xB4,0x10,0x0,forbidTimeArray,0,3);
 	else	displayChinese_16x16(0xB4,0x10, 0x0, empty, 0,3);
 //	displayChinese_16x16(0xB4,0x13,0x0,abnormal_speed,0,4);
-	sprintf(display_string,"%03d",para->mcu_car_info.velocity);
+	
+	/*展示速度值*/
+    sprintf(display_string,"%3d",para->mcu_car_info.velocity);
 	ShowString(0xB4,0x15, 0x0,display_string,12);
-
     sprintf(display_string,"km/h");
     ShowString(0xB4,0x16, 0x04,display_string,12);
+	
+	/*展示实时时间*/
     sprintf(display_string,"%04d-%02d-%02d,%02d:%02d:%02d",calendar.w_year,calendar.w_month,calendar.w_date,calendar.hour,calendar.min,calendar.sec);
     ShowString(0xB6,0x10, 0x00,display_string,12);
 }

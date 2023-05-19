@@ -34,7 +34,7 @@ int main(void)
 //    uint8_t i=0;
 //	extern u8 printer_cmd[200];
 //    u8 canbuf[8];
-    float volatageAD=0;
+    
     extern MCU_Parameters para;
 	para.packager.OTpageNum = 1;
 	para.mcu_car_info.isCharged = 1;
@@ -50,23 +50,11 @@ int main(void)
 	
     while(1)
     {
+		/*菜单处理*/
         MENU_processing(&para);
 
-        volatageAD = (float) (Get_Adc_Average(ADC_Channel_6,10) * 3.3 /4096) ;
-        /*电瓶欠压*/
-		LowVoltage_process(volatageAD);
-
-        /*车辆熄火*/
-		ACC_OFF_process();
-		
-		/*车辆制动*/
-		Brake_process();
-		
-		/*车辆左转*/
-		LeftSignal_process();
-		
-		/*近光灯*/
-		LowBeam_process();
+		/*开关量处理*/
+		Input_process();
 
 		/*一秒一帧做的所有操作*/
 		actionEverySecond();

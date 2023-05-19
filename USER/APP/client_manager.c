@@ -34,7 +34,7 @@
 MCU_Parameters para;
 uint8_t powerOffFlag, OTFlag = 0, time=0,receiveFlag = 0, carInfoFlag=0;
 uint32_t powerOffTime=0;
-
+float volatageAD=0;
 
 void bsp_init(void)
 {
@@ -53,6 +53,25 @@ void bsp_init(void)
 	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,mode);//CAN初始化环回模式,波特率500Kbps
 	Adc_Init();
 	RTC_Init(2000,1,1,0,0,0);	  			//RTC初始化
+}
+
+void Input_process(void)
+{
+	volatageAD = (float) (Get_Adc_Average(ADC_Channel_6,10) * 3.3 /4096) ;
+	/*电瓶欠压*/
+	LowVoltage_process(volatageAD);
+
+	/*车辆熄火*/
+	ACC_OFF_process();
+	
+	/*车辆制动*/
+	Brake_process();
+	
+	/*车辆左转*/
+	LeftSignal_process();
+	
+	/*近光灯*/
+	LowBeam_process();
 }
 
 void system_reboot(void)
@@ -170,7 +189,16 @@ void actionEverySecond(void)
 //		printf("ACC:%02x\r\n",ACC);
 
 //		printf("volatageAD:%f \r\n",volatageAD);
-		printf("powerOffTime:%d \r\n",powerOffTime);
+//		printf("time:%d\r\n",para.mcu_car_info.drive_time);
+//		for(i = 0; i<12; i++)
+//		{
+//			printf("%02x ",para.parse.rk_vehicle_info.car_plate_num[i]);
+//		}
+//		printf("\r\n");
+//		printf("pulseRatio:%d\r\n",para.parse.rk_vehicle_info.pulseRatio);
+//		printf("miles:%d\r\n",para.mcu_car_info.mileage);
+//		printf("speed:%d\r\n",para.mcu_car_info.velocity);
+//		printf("powerOffTime:%d \r\n",powerOffTime);
 
 		if(para.mcu_car_info.drive_time >= 14400)
 		{
@@ -183,15 +211,7 @@ void actionEverySecond(void)
 			update_status(kOverSpeed, 1);
 			sendMessage(kMCUAlarmReport);
 		}
-//			printf("time:%d\r\n",para.mcu_car_info.drive_time);
-//			for(i = 0; i<12; i++)
-//			{
-//				printf("%02x ",para.parse.rk_vehicle_info.car_plate_num[i]);
-//			}
-//			printf("\r\n");
-//			printf("pulseRatio:%d\r\n",para.parse.rk_vehicle_info.pulseRatio);
-//			printf("miles:%d\r\n",para.mcu_car_info.mileage);
-//			printf("speed:%d\r\n",para.mcu_car_info.velocity);
+
             sendMessage(kMCUStatusReport);
         }
 }
@@ -226,15 +246,21 @@ void LowBeam_process(void)
 	else	para.mcu_car_info.low_beam = 1;
 }
 
-//void Reception3399(u8* USART3_RX_BUF,u16 USART3_RX_STA)
 void Reception3399(void)
 {
 	if(USART3_RX_STA&0X8000)    //接收到数据
 	{
 		USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
-	if((USART3_RX_BUF[0] == 0xEE) && (USART3_RX_BUF[USART3_RX_STA - 1] == 0xEE))
+		Parse3399(USART3_RX_BUF, USART3_RX_STA);
+		USART3_RX_STA = 0;
+	}
+}
+
+void Parse3399(u8* receiveBuf,u16 length)
+{
+	if((receiveBuf[0] == 0xEE) && (receiveBuf[length-1] == 0xEE))
 	{
-		parsingMessage(USART3_RX_BUF, USART3_RX_STA);
+		parsingMessage(receiveBuf, length);
 		
 		switch(para.parse.parser.msg_id)
 		{
@@ -296,6 +322,7 @@ void Reception3399(void)
 		case kForbidTime:
 		{
 			printf("ForbidTime receive!!!\r\n");
+//			para.parse.parser.forbidTime = 1;
 			sendMessage(kMCUGeneralResponse);
 		}
 		break;
@@ -333,7 +360,6 @@ void Reception3399(void)
 		default:
 			break;
 		}
-		}
-	USART3_RX_STA = 0;
 	}
+	
 }
