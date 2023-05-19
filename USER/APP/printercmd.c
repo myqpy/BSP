@@ -111,69 +111,69 @@ void print_empty_line()
 
 void print_overTime_record_Header(MCU_Parameters *para)
 {
-	print_empty_line();
-	memset(printer_cmd ,0,sizeof(printer_cmd));
-	memcpy(printer_cmd,"机动车号牌号码：", sizeof("机动车号牌号码："));
-	Printer_printString(printer_cmd);
+//	print_empty_line();
+//	memset(printer_cmd ,0,sizeof(printer_cmd));
+//	memcpy(printer_cmd,"机动车号牌号码：", sizeof("机动车号牌号码："));
+//	Printer_printString(printer_cmd);
 
-//	memset(rk_vehicle_info->car_plate_num,0,12);
-//	memcpy(rk_vehicle_info->car_plate_num,"豫A88888",8);
-	Printer_printString(para->parse.rk_vehicle_info.car_plate_num);
+////	memset(rk_vehicle_info->car_plate_num,0,12);
+////	memcpy(rk_vehicle_info->car_plate_num,"豫A88888",8);
+//	Printer_printString(para->parse.rk_vehicle_info.car_plate_num);
 
-	print_empty_line();
-	memset(printer_cmd ,0,sizeof(printer_cmd));
-	memcpy(printer_cmd,"机动车号牌分类：", sizeof("机动车号牌分类："));
-	Printer_printString(printer_cmd);
+//	print_empty_line();
+//	memset(printer_cmd ,0,sizeof(printer_cmd));
+//	memcpy(printer_cmd,"机动车号牌分类：", sizeof("机动车号牌分类："));
+//	Printer_printString(printer_cmd);
 
-	memset(printer_cmd ,0,sizeof(printer_cmd));
-	if(para->parse.rk_vehicle_info.car_plate_color==0x00) memcpy(printer_cmd,"未上牌", sizeof("未上牌"));
-	else if(para->parse.rk_vehicle_info.car_plate_color==0x01) memcpy(printer_cmd,"蓝色", sizeof("蓝色"));
-	else if(para->parse.rk_vehicle_info.car_plate_color==0x02) memcpy(printer_cmd,"黄色", sizeof("黄色"));
-	else if(para->parse.rk_vehicle_info.car_plate_color==0x03) memcpy(printer_cmd,"黑色", sizeof("黑色"));
-	else if(para->parse.rk_vehicle_info.car_plate_color==0x04) memcpy(printer_cmd,"白色", sizeof("白色"));
-	else memcpy(printer_cmd,"其他", sizeof("其他"));
-	
-	Printer_printString(printer_cmd);
+//	memset(printer_cmd ,0,sizeof(printer_cmd));
+//	if(para->parse.rk_vehicle_info.car_plate_color==0x00) memcpy(printer_cmd,"未上牌", sizeof("未上牌"));
+//	else if(para->parse.rk_vehicle_info.car_plate_color==0x01) memcpy(printer_cmd,"蓝色", sizeof("蓝色"));
+//	else if(para->parse.rk_vehicle_info.car_plate_color==0x02) memcpy(printer_cmd,"黄色", sizeof("黄色"));
+//	else if(para->parse.rk_vehicle_info.car_plate_color==0x03) memcpy(printer_cmd,"黑色", sizeof("黑色"));
+//	else if(para->parse.rk_vehicle_info.car_plate_color==0x04) memcpy(printer_cmd,"白色", sizeof("白色"));
+//	else memcpy(printer_cmd,"其他", sizeof("其他"));
+//	
+//	Printer_printString(printer_cmd);
 
-	print_empty_line();
-	memset(printer_cmd ,0,sizeof(printer_cmd));
-	memcpy(printer_cmd,"机动车驾驶证号码：", sizeof("机动车驾驶证号码："));
-	Printer_printString(printer_cmd);
+//	print_empty_line();
+//	memset(printer_cmd ,0,sizeof(printer_cmd));
+//	memcpy(printer_cmd,"机动车驾驶证号码：", sizeof("机动车驾驶证号码："));
+//	Printer_printString(printer_cmd);
 
-	print_empty_line();
-	memset(printer_cmd ,0,sizeof(printer_cmd));
-	memcpy(printer_cmd,&para->mcu_car_info.driver_num, sizeof(para->mcu_car_info.driver_num));
-	Printer_printString(printer_cmd);
+//	print_empty_line();
+//	memset(printer_cmd ,0,sizeof(printer_cmd));
+//	memcpy(printer_cmd,&para->mcu_car_info.driver_num, sizeof(para->mcu_car_info.driver_num));
+//	Printer_printString(printer_cmd);
 
-	print_empty_line();
-	memset(printer_cmd ,0,sizeof(printer_cmd));
-	memcpy(printer_cmd,"速度状态：", sizeof("速度状态："));
-	Printer_printString(printer_cmd);
+//	print_empty_line();
+//	memset(printer_cmd ,0,sizeof(printer_cmd));
+//	memcpy(printer_cmd,"速度状态：", sizeof("速度状态："));
+//	Printer_printString(printer_cmd);
 
-	memset(printer_cmd ,0,sizeof(printer_cmd));
-	if(para->parse.selfCheck_info.velocityStatus==0x00) memcpy(printer_cmd,"正常", sizeof("正常"));
-	if(para->parse.selfCheck_info.velocityStatus==0x01) memcpy(printer_cmd,"异常", sizeof("异常"));
-	Printer_printString(printer_cmd);
+//	memset(printer_cmd ,0,sizeof(printer_cmd));
+//	if(para->parse.selfCheck_info.velocityStatus==0x00) memcpy(printer_cmd,"正常", sizeof("正常"));
+//	if(para->parse.selfCheck_info.velocityStatus==0x01) memcpy(printer_cmd,"异常", sizeof("异常"));
+//	Printer_printString(printer_cmd);
 
-	print_empty_line();
-	memset(printer_cmd ,0,sizeof(printer_cmd));
-	memcpy(printer_cmd,"打印时间", sizeof("打印时间"));
-	Printer_printString(printer_cmd);
+//	print_empty_line();
+//	memset(printer_cmd ,0,sizeof(printer_cmd));
+//	memcpy(printer_cmd,"打印时间", sizeof("打印时间"));
+//	Printer_printString(printer_cmd);
 
-	memset(printer_cmd ,0,sizeof(printer_cmd));
-	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d \r\n",calendar.w_year, calendar.w_month, calendar.w_date, calendar.hour,calendar.min,calendar.sec);	
-	Printer_printString(printer_cmd);
+//	memset(printer_cmd ,0,sizeof(printer_cmd));
+//	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d",calendar.w_year, calendar.w_month, calendar.w_date, calendar.hour,calendar.min,calendar.sec);	
+//	Printer_printString(printer_cmd);
 
-	print_empty_line();
-	memset(printer_cmd ,0,sizeof(printer_cmd));
-	memcpy(printer_cmd,"两个日历天内超时驾驶记录：", sizeof("两个日历天内超时驾驶记录："));
-	Printer_printString(printer_cmd);
+//	print_empty_line();
+//	memset(printer_cmd ,0,sizeof(printer_cmd));
+//	memcpy(printer_cmd,"两个日历天内超时驾驶记录：", sizeof("两个日历天内超时驾驶记录："));
+//	Printer_printString(printer_cmd);
 
-	
-	print_empty_line();
-	print_empty_line();
-	print_empty_line();
-	print_empty_line();
+//	
+//	print_empty_line();
+//	print_empty_line();
+//	print_empty_line();
+//	print_empty_line();
 }
 
 void print_overTime_record_Body(MCU_Parameters *para, u8 recordNum)
@@ -205,7 +205,7 @@ void print_overTime_record_Body(MCU_Parameters *para, u8 recordNum)
 	
 	print_empty_line();
 	memset(printer_cmd ,0,sizeof(printer_cmd));
-	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d \r\n",para->parse.OvertimeDriveRecord.startTime.year, para->parse.OvertimeDriveRecord.startTime.month, para->parse.OvertimeDriveRecord.startTime.date, para->parse.OvertimeDriveRecord.startTime.h,para->parse.OvertimeDriveRecord.startTime.m,para->parse.OvertimeDriveRecord.startTime.s);
+	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d",para->parse.OvertimeDriveRecord.startTime.year, para->parse.OvertimeDriveRecord.startTime.month, para->parse.OvertimeDriveRecord.startTime.date, para->parse.OvertimeDriveRecord.startTime.h,para->parse.OvertimeDriveRecord.startTime.m,para->parse.OvertimeDriveRecord.startTime.s);
 	Printer_printString(printer_cmd);
 	
 	print_empty_line();
@@ -215,6 +215,6 @@ void print_overTime_record_Body(MCU_Parameters *para, u8 recordNum)
 	
 	print_empty_line();
 	memset(printer_cmd ,0,sizeof(printer_cmd));
-	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d \r\n",para->parse.OvertimeDriveRecord.endTime.year, para->parse.OvertimeDriveRecord.endTime.month, para->parse.OvertimeDriveRecord.endTime.date, para->parse.OvertimeDriveRecord.endTime.h,para->parse.OvertimeDriveRecord.endTime.m,para->parse.OvertimeDriveRecord.endTime.s);
+	sprintf(printer_cmd,"%04d-%02d-%02d,%02d:%02d:%02d",para->parse.OvertimeDriveRecord.endTime.year, para->parse.OvertimeDriveRecord.endTime.month, para->parse.OvertimeDriveRecord.endTime.date, para->parse.OvertimeDriveRecord.endTime.h,para->parse.OvertimeDriveRecord.endTime.m,para->parse.OvertimeDriveRecord.endTime.s);
 	Printer_printString(printer_cmd);	
 }
