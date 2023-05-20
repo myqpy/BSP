@@ -7,7 +7,7 @@ void bsp_init(void);
 void Input_process(void);
 void Reception3399(void);
 void Parse3399(u8* USART3_RX_BUF,u16 USART3_RX_STA);
-
+void Can_process(void);
 
 //void statusReport(unsigned char statusBit, unsigned char statusValue);
 void system_reboot(void);
@@ -19,8 +19,10 @@ void update_status(unsigned char statusbit, unsigned char value);
 int sendMessage(unsigned char msg_id);
 void ICcardWrite(uint8_t writeOrNah);
 
-
-
+void checkCommand_process(void);
+void checkCommand_E2_process(void);
+void checkCommand_E3_process(void);
+void checkCommand_E4_process(void);
 
 
 void LowVoltage_process(float voltage);

@@ -36,6 +36,9 @@ uint8_t powerOffFlag, OTFlag = 0, time=0,receiveFlag = 0, carInfoFlag=0;
 uint32_t powerOffTime=0;
 float volatageAD=0;
 
+uint8_t can_i=0;
+u8 canbuf[8];
+
 void bsp_init(void)
 {
 	u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
@@ -53,6 +56,8 @@ void bsp_init(void)
 	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,mode);//CAN初始化环回模式,波特率500Kbps
 	Adc_Init();
 	RTC_Init(2000,1,1,0,0,0);	  			//RTC初始化
+	para.packager.OTpageNum = 1;
+	para.mcu_car_info.isCharged = 1;
 }
 
 void Input_process(void)
@@ -212,8 +217,8 @@ void actionEverySecond(void)
 			sendMessage(kMCUAlarmReport);
 		}
 
-            sendMessage(kMCUStatusReport);
-        }
+		sendMessage(kMCUStatusReport);
+	}
 }
 
 void setThreeAndHalfHourFlag(void)
@@ -246,6 +251,40 @@ void LowBeam_process(void)
 	else	para.mcu_car_info.low_beam = 1;
 }
 
+void checkCommand_process(void)
+{
+	switch(para.parse.parser.checkCommand)
+	{
+	case(0xE2):
+		checkCommand_E2_process();
+		break;
+	case(0xE3):
+		checkCommand_E3_process();
+		break;
+	case(0xE4):
+		checkCommand_E4_process();
+		break;
+	default:
+		break;
+	}
+}
+
+void checkCommand_E2_process(void)
+{
+	
+}
+
+void checkCommand_E3_process(void)
+{
+	
+}
+
+void checkCommand_E4_process(void)
+{
+	
+}
+
+
 void Reception3399(void)
 {
 	if(USART3_RX_STA&0X8000)    //接收到数据
@@ -260,24 +299,32 @@ void Parse3399(u8* receiveBuf,u16 length)
 {
 	if((receiveBuf[0] == 0xEE) && (receiveBuf[length-1] == 0xEE))
 	{
+		for(can_i = 0; can_i<length; can_i++)
+		{
+			printf("%02x ",receiveBuf[can_i]);
+		}
+		printf("\r\n");
+		
 		parsingMessage(receiveBuf, length);
 		
 		switch(para.parse.parser.msg_id)
 		{
 		case kARMGeneralResponse:
 		{
-			printf("para.parse.parser.msg_id:0x%02x\r\n",para.parse.parser.msg_id);
-			printf("para.parse.parser.msg_flow_num:%d\r\n",para.parse.parser.msg_flow_num);
-			printf("para.parse.parser.msg_length:0x%02x\r\n",para.parse.parser.msg_length);	
+			printf("kARMGeneralResponse receive!!!\r\n");
+			printf("para.parse.parser.response_id:0x%02x\r\n",para.parse.parser.response_id);
+			printf("para.parse.parser.response_flow_num:%d\r\n",para.parse.parser.response_flow_num);
+			printf("para.parse.parser.response_result:0x%02x\r\n",para.parse.parser.response_result);	
 		}
 		case kArmOTrecord:
 		{
+			sendMessage(kMCUGeneralResponse);
 			printf("kArmOTrecord receive!!!\r\n");
 		}
 		case kTimeCorrect:
 		{
-			printf("TimeCorrect receive!!!\r\n");
 			sendMessage(kMCUGeneralResponse);
+			printf("TimeCorrect receive!!!\r\n");		
 			if(receiveFlag == 0)
 			{
 				RTC_Init(para.parse.time_info.w_year, para.parse.time_info.w_month, para.parse.time_info.w_date, para.parse.time_info.hour, para.parse.time_info.min, para.parse.time_info.sec);	//RTC初始化
@@ -291,6 +338,7 @@ void Parse3399(u8* receiveBuf,u16 length)
 		break;
 		case kSelfCheck:
 		{
+			sendMessage(kMCUGeneralResponse);
 			printf("SelfCheck receive!!!\r\n");
 //			printf("rk_info->SDStatus:%02x\r\n", para.parse.selfCheck_info.SDStatus);
 //			printf("rk_info->EC20Status:%02x\r\n",para.parse.selfCheck_info.EC20Status);
@@ -298,12 +346,12 @@ void Parse3399(u8* receiveBuf,u16 length)
 //			printf("rk_info->cameraStatus:%02x\r\n", para.parse.selfCheck_info.cameraStatus);
 //			printf("rk_info->velocityStatus:%02x\r\n", para.parse.selfCheck_info.velocityStatus);
 //			printf("rk_info->BDStatus:%02x\r\n", para.parse.selfCheck_info.BDStatus);
-			sendMessage(kMCUGeneralResponse);
 		}
 		break;
 		
 		case kCarInfo:
 		{
+			sendMessage(kMCUGeneralResponse);
 			printf("CarInfo receive!!!\r\n");
 			if(carInfoFlag==0)
 			{
@@ -314,21 +362,19 @@ void Parse3399(u8* receiveBuf,u16 length)
 //			printf("para.parse.rk_vehicle_info.car_plate_color:0x%02x\r\n", para.parse.rk_vehicle_info.car_plate_color);
 //			printf("para.parse.rk_vehicle_info.speedLimit:0x%02x\r\n", para.parse.rk_vehicle_info.speedLimit);
 //			printf("para.parse.rk_vehicle_info.pulseRatio:%d\r\n", para.parse.rk_vehicle_info.pulseRatio);
-
-			sendMessage(kMCUGeneralResponse);
 		}
 		break;
 		
 		case kForbidTime:
 		{
-			printf("ForbidTime receive!!!\r\n");
-//			para.parse.parser.forbidTime = 1;
 			sendMessage(kMCUGeneralResponse);
+			printf("ForbidTime receive!!!\r\n");		
 		}
 		break;
 		
 		case kLocation:
-		{					
+		{		
+			sendMessage(kMCUGeneralResponse);			
 			printf("Location receive!!!\r\n");
 //			// 报警标志 4B
 //			printf("alarm %d\r\n", para.parse.Location_info.alarm);
@@ -343,23 +389,43 @@ void Parse3399(u8* receiveBuf,u16 length)
 //			// 速度 1/10km/h 2B
 //			printf("speed %d\r\n",para.parse.Location_info.speed);
 //			// 方向 0-359,正北为0, 顺时针 2B
-//			printf("bearing %d\r\n",para.parse.Location_info.bearing);
-			
-			sendMessage(kMCUGeneralResponse);
+//			printf("bearing %d\r\n",para.parse.Location_info.bearing);	
 		}
 		break;
 		
 		case kOTwarning:
 		{
+			sendMessage(kMCUGeneralResponse);
 			printf("OTwarning received!!!\r\n");
 			setThreeAndHalfHourFlag();
-			sendMessage(kMCUGeneralResponse);
 		}
 		break;
+		
+		case kZeroMileage:
+		{
+			sendMessage(kMCUGeneralResponse);
+			if(para.parse.parser.zeroMileage == 1) para.mcu_car_info.mileage = 0;
+		}
 
+		case kcheckCommand:
+		{
+			sendMessage(kMCUGeneralResponse);
+			
+		}
+		
 		default:
 			break;
 		}
+	}	
+}
+
+void Can_process()
+{
+	if(Can_Receive_Msg(canbuf))//接收到有数据
+	{
+		for(can_i = 0; can_i<sizeof(canbuf); can_i++)
+		{
+			printf("%c",canbuf[can_i]);
+		}
 	}
-	
 }

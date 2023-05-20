@@ -12,7 +12,7 @@ typedef struct{
 
 #pragma pack()
 
-extern unsigned char out_line[];
+extern char out_line[];
 //extern ARM_OvertimeDriveRecord_info OvertimeDriveRecord_info;
 //extern MCU_Parameters para;
 
@@ -61,7 +61,7 @@ extern unsigned char out_line[];
 //extern unsigned char car_plate_province_Ao[]	;/*"°Ä",32*/
 
 
-void Printer_printString(uint8_t* printString);
+void Printer_printString(char* printString);
 void print_empty_line(void);
 void printChinese(void);
 void print_overTime_record_Header(MCU_Parameters *para);

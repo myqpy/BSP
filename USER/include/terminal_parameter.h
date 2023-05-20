@@ -31,6 +31,8 @@ enum parserCMD
     kForbidTime,
     kLocation,
     kOTwarning,
+	kZeroMileage,
+	kcheckCommand,
 };
 
 enum EN_StatusBit
@@ -182,12 +184,17 @@ typedef struct Struct_MCU_Packager
 #pragma pack(1) // 结构体1字节对齐	
 typedef struct Struct_MCU_Parser
 {
-    uint8_t		msg_id;			//解析消息id
-    uint16_t	msg_flow_num;	//解析流水号
-    uint8_t		msg_length;		//解析消息长度
-    uint8_t		bccCheck;		//异或校验
-    uint8_t		forbidTime;		//禁行时段
-    uint8_t 	OTwarning;		//超时预警
+    uint8_t		msg_id;				//解析消息id
+    uint16_t	msg_flow_num;		//解析流水号
+	uint8_t		response_id;		//解析通用应答消息id
+    uint16_t	response_flow_num;	//解析通用应答流水号
+	uint8_t		response_result;	//解析通用应答结果
+    uint8_t		msg_length;			//解析消息长度
+    uint8_t		bccCheck;			//异或校验
+    uint8_t		forbidTime;			//禁行时段
+    uint8_t 	OTwarning;			//超时预警
+	uint8_t		zeroMileage;		//里程清零
+	uint8_t		checkCommand;		//检定命令字
 } MCU_Parser;
 #pragma pack() // 恢复默认字节对齐
 

@@ -14,7 +14,7 @@ void UART4_send_byte(uint8_t byte)
 }
 
 //发送多字节数据
-void printer_send_cmd(uint8_t *Buffer, uint16_t Length)
+void printer_send_cmd(char *Buffer, uint16_t Length)
 {
     char i=0;
     while(i<Length)

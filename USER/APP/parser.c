@@ -110,6 +110,20 @@ int frameParse(MCU_Parameters *para)
 	}
 	break;
 	
+	// +3399下发里程清零.
+	case kZeroMileage:
+	{
+		result = handle_kZeroMileage(para);
+	}
+	break;
+	
+	// +3399下发鉴定命令字.
+	case kcheckCommand:
+	{
+		result = handle_kcheckCommand(para);
+	}
+	break;
+	
 	default:
 	break;
 	}
@@ -117,18 +131,25 @@ int frameParse(MCU_Parameters *para)
 	return result;
 }
 
-int handle_kARMGeneralResponse(MCU_Parameters *para)
+int handle_kARMGeneralResponse(MCU_Parameters *para)// +3399通用应答.
 {
+	unsigned char pos = 5;
 	union U16ToU8Array u16converter;
-	u16converter.u8array[0] = BufferReceive[5];
-	u16converter.u8array[1] = BufferReceive[6];
-	para->parse.parser.msg_flow_num = u16converter.u16val;
-	para->parse.parser.msg_id = BufferReceive[7];
+	u16converter.u8array[0] = BufferReceive[pos];
+	u16converter.u8array[1] = BufferReceive[pos+1];
+	pos+=2;
+	para->parse.parser.response_flow_num = u16converter.u16val;
+	
+	para->parse.parser.response_id = BufferReceive[pos];
+	pos++;
+	
+	para->parse.parser.response_result = BufferReceive[pos];
+	pos++;
 	
 	return 0;
 }
 
-int handle_kArmOTrecord(MCU_Parameters *para)
+int handle_kArmOTrecord(MCU_Parameters *para)// +3399下发超时驾驶记录.
 {
 	unsigned int i;
 	unsigned char pos = 5;
@@ -171,7 +192,7 @@ int handle_kArmOTrecord(MCU_Parameters *para)
 	return 0;
 }
 
-int handle_kTimeCorrect(MCU_Parameters *para)
+int handle_kTimeCorrect(MCU_Parameters *para)// +3399下发时间校准.
 {
 	union U16ToU8Array u16converter;
 	unsigned char pos = 5;
@@ -194,11 +215,10 @@ int handle_kTimeCorrect(MCU_Parameters *para)
 	return 0;
 }
 
-int handle_kSelfCheck(MCU_Parameters *para)
+int handle_kSelfCheck(MCU_Parameters *para)// +3399下发自检结果.
 {
 	
 	unsigned char pos = 5;
-	
 
 	para->parse.selfCheck_info.EC20Status = BufferReceive[pos];
 	pos++;
@@ -215,7 +235,7 @@ int handle_kSelfCheck(MCU_Parameters *para)
 	return 0;
 }
 
-int handle_kCarInfo(MCU_Parameters *para)
+int handle_kCarInfo(MCU_Parameters *para)// +3399下发车辆信息.
 {
 	union U16ToU8Array u16converter;
 	unsigned int i;
@@ -238,13 +258,13 @@ int handle_kCarInfo(MCU_Parameters *para)
 	return 0;
 }
 
-int handle_kForbidTime(MCU_Parameters *para)
+int handle_kForbidTime(MCU_Parameters *para)// +3399下发禁行时段.
 {
 	para->parse.parser.forbidTime = BufferReceive[5];
 	return 0;
 }
 
-int handle_kLocation(MCU_Parameters *para)
+int handle_kLocation(MCU_Parameters *para)// +3399下发位置上报.
 {
 	union U32ToU8Array u32converter;
 	unsigned int i;
@@ -301,8 +321,20 @@ int handle_kLocation(MCU_Parameters *para)
 	return pos;
 }
 
-int handle_kOTwarning(MCU_Parameters *para)
+int handle_kOTwarning(MCU_Parameters *para)// +3399下发超时预警.
 {
 	para->parse.parser.OTwarning = BufferReceive[5];
+	return 0;
+}
+
+int handle_kZeroMileage(MCU_Parameters *para)// +3399下发里程清零.
+{
+	para->parse.parser.zeroMileage = BufferReceive[5];
+	return 0;
+}
+
+int handle_kcheckCommand(MCU_Parameters *para)// +3399下发鉴定命令字.
+{
+	para->parse.parser.checkCommand = BufferReceive[5];
 	return 0;
 }

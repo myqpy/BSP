@@ -72,13 +72,13 @@ void MENU_processing(MCU_Parameters *para)
 		if(page_status!=page) LCD_Clear();
     }
     else if(page==1)
-    {
-		page1_process(para);	//一级目录
+    {		
 		/*
 		车辆及驾驶员信息
 		超时驾驶记录
 		更改载货状态
 		*/
+		page1_process(para);	//一级目录
     }
     else if(page==2)
     {
@@ -128,7 +128,7 @@ void page0_process(MCU_Parameters *para)
 		{
 			printf("printing!!!!!!!!! \r\n");
 			print_overTime_record_Header(para);
-			while(i<=100)
+			while(para->packager.OTpageNum<=100)
 			{
 				sendMessage(kAcquireOTReport); 
 				printf("para->parse.OvertimeDriveRecord.DriverLicenseNum:%s\r\n",para->parse.OvertimeDriveRecord.DriverLicenseNum);
