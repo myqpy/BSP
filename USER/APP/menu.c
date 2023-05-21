@@ -7,7 +7,6 @@
 #include "ST7567a.h"
 #include "client_manager.h"
 #include "printer.h"
-#include <stdio.h>
 #include <string.h>
 #include "rtc.h"
 #include "24cxx.h"
@@ -30,9 +29,6 @@ unsigned char page3_row_min = 0xB0;
 unsigned char page3_row = 0xB0;
 unsigned char page3_row_max = 0xB4;
 
-//unsigned char page3_subPage_row_min = 0xB0;
-//unsigned char page3_subPage_row = 0xB0;
-//unsigned char page3_subPage_row_max = 0xB2;
 unsigned char i,j;
 u16 time_1ms=0;
 u16 confirmed_pressed=0;
@@ -51,43 +47,53 @@ void MENU_processing(MCU_Parameters *para)
 
     key_text=KEY_Scan(1);		//得到键值
 
-    if(key_text!=0)time_1ms = 0;
+		/*********按键后重新计时*********/
+    if(key_text!=0)time_1ms = 0;	
+
+		/*********当计时大于10秒时重置*********/
     if(time_1ms>=10000)
     {
-        TIM_Cmd(TIM5,DISABLE);
-        LCD_Clear();
-        page=0;
-        time_1ms = 0;
-        confirmed_pressed  = 0;
-		up_down_pressed=0;
-		if(noOTflag!=0) noOTflag=0;
-		if(OTnumberNow!=0) OTnumberNow=0;
-		if(para->packager.OTpageNum!=1) para->packager.OTpageNum=1;
+			TIM_Cmd(TIM5,DISABLE);
+			LCD_Clear();
+			/*********回到主界面*********/
+			page=0;
+			/*********重新计时*********/
+			time_1ms = 0;
+			confirmed_pressed  = 0;
+			up_down_pressed=0;
+			if(noOTflag!=0) noOTflag=0;
+			if(OTnumberNow!=0) OTnumberNow=0;
+			if(para->OT_info.OTpageNum_Show!=1) para->OT_info.OTpageNum_Show=1;
     }
 
+		/*********主菜单*********/
     if(page<=0)
     {
-		page0_process(para);	//主菜单
-		showMainMenu(para);
-		if(page_status!=page) LCD_Clear();
+			page0_process(para);	
+			showMainMenu(para);
+			if(page_status!=page) LCD_Clear();
     }
+		
     else if(page==1)
     {		
-		/*
-		车辆及驾驶员信息
-		超时驾驶记录
-		更改载货状态
-		*/
-		page1_process(para);	//一级目录
+		/*********一级目录*********/
+			/*
+			车辆及驾驶员信息
+			超时驾驶记录
+			更改载货状态
+			*/
+			page1_process(para);	
     }
     else if(page==2)
     {
-        page2_process(para);	//二级目录
+		/*********二级目录*********/
+			page2_process(para);	
     }
 
     else if(page==3)
     {
-        page3_process(para);	//三级目录
+		/*********三级目录*********/
+			page3_process(para);	
     }
 }
 
@@ -97,7 +103,7 @@ void page0_process(MCU_Parameters *para)
 	switch(key_text)
 	{
 	case KEY_up_down_PRES:
-		TIM_Cmd(TIM5,DISABLE);
+//		TIM_Cmd(TIM5,DISABLE);
 		TIM_Cmd(TIM5,ENABLE);
 		printf("up_down_pressed = %d\r\n",up_down_pressed);
 		if(up_down_pressed>=3000)
@@ -111,7 +117,7 @@ void page0_process(MCU_Parameters *para)
 		}
 		break;
 	case KEY_menu_PRES:
-		TIM_Cmd(TIM5,DISABLE);
+//		TIM_Cmd(TIM5,DISABLE);
 		TIM_Cmd(TIM5,ENABLE);
 		page=page+1;
 		if(page>=page_max) page=page_max;
@@ -119,7 +125,7 @@ void page0_process(MCU_Parameters *para)
 		LCD_Clear();
 		break;
 	case KEY_confirmed_PRES:
-		TIM_Cmd(TIM5,DISABLE);
+//		TIM_Cmd(TIM5,DISABLE);
 		TIM_Cmd(TIM5,ENABLE);
 
 		printf("confirmed_pressed = %d \r\n",confirmed_pressed);
@@ -128,13 +134,10 @@ void page0_process(MCU_Parameters *para)
 		{
 			printf("printing!!!!!!!!! \r\n");
 			print_overTime_record_Header(para);
-			while(para->packager.OTpageNum<=100)
-			{
-				sendMessage(kAcquireOTReport); 
-				printf("para->parse.OvertimeDriveRecord.DriverLicenseNum:%s\r\n",para->parse.OvertimeDriveRecord.DriverLicenseNum);
-				printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para->parse.OvertimeDriveRecord.startTime.year, para->parse.OvertimeDriveRecord.startTime.month, para->parse.OvertimeDriveRecord.startTime.date, para->parse.OvertimeDriveRecord.startTime.h,para->parse.OvertimeDriveRecord.startTime.m,para->parse.OvertimeDriveRecord.startTime.s);
-				printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para->parse.OvertimeDriveRecord.endTime.year, para->parse.OvertimeDriveRecord.endTime.month, para->parse.OvertimeDriveRecord.endTime.date, para->parse.OvertimeDriveRecord.endTime.h,para->parse.OvertimeDriveRecord.endTime.m,para->parse.OvertimeDriveRecord.endTime.s);
-			}
+			para->OT_info.OTpageNum_print = 1;
+			para->packager.OTpageNum = para->OT_info.OTpageNum_print;
+			para->OT_info.print_flag = 1;
+			sendMessage(kAcquireOTReport); 
 			confirmed_pressed  = 0;
 			TIM_Cmd(TIM5,DISABLE);
 		}
@@ -165,7 +168,7 @@ void page0_process(MCU_Parameters *para)
 //		break;
 	}
 	if(OTnumberNow!=0) OTnumberNow=0;
-	if(para->packager.OTpageNum!=1) para->packager.OTpageNum=1;
+	if(para->OT_info.OTpageNum_Show!=1) para->OT_info.OTpageNum_Show=1;
 	if(noOTflag!=0) noOTflag=0;
 }
 
@@ -229,8 +232,8 @@ void page2_process(MCU_Parameters *para)
 		if(page2_row<=page2_row_min) page2_row=page2_row_min;
 		if(page1_row==0xB2)
 		{
-			para->packager.OTpageNum --;
-			if(para->packager.OTpageNum <= 1) para->packager.OTpageNum = 1;
+			para->OT_info.OTpageNum_Show --;
+			if(para->OT_info.OTpageNum_Show <= 1) para->OT_info.OTpageNum_Show = 1;
 		}
 		if(noOTflag!=0) noOTflag=0;
 		LCD_Clear();
@@ -242,8 +245,8 @@ void page2_process(MCU_Parameters *para)
 		if(page2_row<=page2_row_min) page2_row=page2_row_min;
 		if(page1_row==0xB2)
 		{
-			if(para->parse.OvertimeDriveRecord.OTnumber!=0xFF) para->packager.OTpageNum ++;
-			if(para->packager.OTpageNum >= 100) para->packager.OTpageNum = 100;
+			if(para->parse.OvertimeDriveRecord.OTnumber!=0xFF) para->OT_info.OTpageNum_Show ++;
+			if(para->OT_info.OTpageNum_Show >= 100) para->OT_info.OTpageNum_Show = 100;
 		}
 		if(noOTflag!=0) noOTflag=0;
 		LCD_Clear();
@@ -274,15 +277,15 @@ void page2_process(MCU_Parameters *para)
 		displayChinese_16x16(0xB2,0x12,0x0,vehicle_driver_info,3,7);
 		sprintf(printString,"-->");
 		ShowString(page2_row,0x10, 0x0,printString,12);
-		
 	}
 
 	if(page1_row==0xB2)
 	{
-		if(OTnumberNow!= para->packager.OTpageNum)
+		if(OTnumberNow!= para->OT_info.OTpageNum_Show)
 		{
+			para->packager.OTpageNum = para->OT_info.OTpageNum_Show;
 			sendMessage(kAcquireOTReport);  
-			OTnumberNow = para->packager.OTpageNum;
+			OTnumberNow = para->OT_info.OTpageNum_Show;
 		}
 
 		if(para->parse.OvertimeDriveRecord.OTnumber != 0xFF)
@@ -295,7 +298,7 @@ void page2_process(MCU_Parameters *para)
 			/*超时驾驶记录*/
 			displayChinese_16x16(0xB0,0x10,0x0,overTimeDriveRecord,1,2);
 			displayChinese_16x16(0xB0,0x12,0x0,overTimeDriveRecord,5,8);
-			sprintf(printString,"%03d",para->packager.OTpageNum);
+			sprintf(printString,"%03d",para->OT_info.OTpageNum_Show);
 			ShowString(0xB0,0x16, 0x0,printString,12);
 			memset(printString,0,200);
 			memcpy(printString,para->parse.OvertimeDriveRecord.DriverLicenseNum,18);
@@ -512,10 +515,11 @@ void TIM5_IRQHandler(void)
             {
                 confirmed_pressed++;
             }
-            if(key_text == KEY_up_down_PRES)
+            else if(key_text == KEY_up_down_PRES)
             {
                 up_down_pressed++;
             }
+						else;
         }
     }
 }

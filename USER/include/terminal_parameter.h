@@ -15,22 +15,22 @@
 
 enum packagerCMD
 {
-    kMCUGeneralResponse = 0x01,
-    kMCUStatusReport,
-    kMCUAlarmReport,
-    kAcquireOTReport,
+	kMCUGeneralResponse = 0x01,
+	kMCUStatusReport,
+	kMCUAlarmReport,
+	kAcquireOTReport,
 };
 
 enum parserCMD
 {
-    kARMGeneralResponse = 0x51,
-    kArmOTrecord,
-    kTimeCorrect,
-    kSelfCheck,
-    kCarInfo,
-    kForbidTime,
-    kLocation,
-    kOTwarning,
+	kARMGeneralResponse = 0x51,
+	kArmOTrecord,
+	kTimeCorrect,
+	kSelfCheck,
+	kCarInfo,
+	kForbidTime,
+	kLocation,
+	kOTwarning,
 	kZeroMileage,
 	kcheckCommand,
 };
@@ -107,13 +107,13 @@ typedef struct Struct_ARM_vehicle_info
 #pragma pack(1) // 结构体1字节对齐	
 typedef struct Struct_TimeInfo
 {
-    vu8 hour;
-    vu8 min;
-    vu8 sec;
-    //公历日月年周
-    vu16 w_year;
-    vu8  w_month;
-    vu8  w_date;
+	vu8 hour;
+	vu8 min;
+	vu8 sec;
+	//公历日月年周
+	vu16 w_year;
+	vu8  w_month;
+	vu8  w_date;
 } TimeInfo;
 #pragma pack() // 恢复默认字节对齐
 
@@ -121,7 +121,7 @@ typedef struct Struct_TimeInfo
 #pragma pack(1) // 结构体1字节对齐	
 typedef struct BCD_TimeInfo
 {
-    uint8_t year;
+	uint8_t year;
 	uint8_t month;
 	uint8_t date;
 	uint8_t h;
@@ -170,12 +170,12 @@ typedef struct Struct_ARM_Location_info
 #pragma pack(1) // 结构体1字节对齐	
 typedef struct Struct_MCU_Packager
 {
-    uint8_t		msg_id;			//打包消息id
+    uint8_t		msg_id;				//打包消息id
     uint16_t 	msg_flow_num;	//打包流水号
     uint8_t		msg_length;		//打包消息长度
     uint8_t		statusBit;		//车辆状态位
     uint8_t 	statusValue;	//车辆状态值
-    uint8_t		OTpageNum;		//超时驾驶记录编号
+    uint8_t		OTpageNum;		//超时驾驶记录请求
 } MCU_Packager;
 #pragma pack() // 恢复默认字节对齐
 
@@ -184,15 +184,15 @@ typedef struct Struct_MCU_Packager
 #pragma pack(1) // 结构体1字节对齐	
 typedef struct Struct_MCU_Parser
 {
-    uint8_t		msg_id;				//解析消息id
-    uint16_t	msg_flow_num;		//解析流水号
+	uint8_t		msg_id;				//解析消息id
+	uint16_t	msg_flow_num;		//解析流水号
 	uint8_t		response_id;		//解析通用应答消息id
-    uint16_t	response_flow_num;	//解析通用应答流水号
+	uint16_t	response_flow_num;	//解析通用应答流水号
 	uint8_t		response_result;	//解析通用应答结果
-    uint8_t		msg_length;			//解析消息长度
-    uint8_t		bccCheck;			//异或校验
-    uint8_t		forbidTime;			//禁行时段
-    uint8_t 	OTwarning;			//超时预警
+	uint8_t		msg_length;			//解析消息长度
+	uint8_t		bccCheck;			//异或校验
+	uint8_t		forbidTime;			//禁行时段
+	uint8_t 	OTwarning;			//超时预警
 	uint8_t		zeroMileage;		//里程清零
 	uint8_t		checkCommand;		//检定命令字
 } MCU_Parser;
@@ -212,9 +212,9 @@ typedef struct Struct_MCU_car_info
     uint8_t low_beam;//近光灯
     uint8_t hign_beam;//远光灯
     uint8_t isCharged; //外部供电or电池供电
-	uint8_t LoadingStatus;// 载货状态	3 满载 0 空载
-	uint8_t ICcardStatus;		// 人员登录 	1 登录 0 登出
-	uint32_t drive_time;
+		uint8_t LoadingStatus;// 载货状态	3 满载 0 空载
+		uint8_t ICcardStatus;		// 人员登录 	1 登录 0 登出
+		uint32_t drive_time;
 	
 } MCU_car_info;
 #pragma pack() // 恢复默认字节对齐
@@ -236,8 +236,13 @@ typedef struct Struct_MCU_ICcard_info
 } MCU_ICcard_info;
 #pragma pack() // 恢复默认字节对齐
 
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
+typedef struct Struct_MCU_OT_info
+{
+    uint8_t		OTpageNum_Show;		//超时驾驶记录编号
 
-
+} MCU_OT_info;
 #pragma pack() // 恢复默认字节对齐
 
 #pragma pack(push)
@@ -247,15 +252,16 @@ typedef struct Struct_MCU_Parameters
     MCU_Packager	packager;
     MCU_ICcard_info ICcard_info;
     MCU_car_info	mcu_car_info;
+		MCU_OT_info		OT_info;
     struct
     {
-        TimeInfo 				time_info;
-        ARM_selfCheck_info		selfCheck_info;
-        ARM_vehicle_info		rk_vehicle_info;
-        ARM_OvertimeDriveRecord	OvertimeDriveRecord;
-        ARM_Location_info		Location_info;
-		MCU_Parser				parser;
-		bcd_timeinfo			bcdtime;
+			TimeInfo 				time_info;
+			ARM_selfCheck_info		selfCheck_info;
+			ARM_vehicle_info		rk_vehicle_info;
+			ARM_OvertimeDriveRecord	OvertimeDriveRecord;
+			ARM_Location_info		Location_info;
+			MCU_Parser				parser;
+			bcd_timeinfo			bcdtime;
     } parse;
 
 } MCU_Parameters;

@@ -56,7 +56,7 @@ void bsp_init(void)
 	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,mode);//CAN初始化环回模式,波特率500Kbps
 	Adc_Init();
 	RTC_Init(2000,1,1,0,0,0);	  			//RTC初始化
-	para.packager.OTpageNum = 1;
+	para.OT_info.OTpageNum_Show = 1;
 	para.mcu_car_info.isCharged = 1;
 }
 
@@ -320,6 +320,19 @@ void Parse3399(u8* receiveBuf,u16 length)
 		{
 			sendMessage(kMCUGeneralResponse);
 			printf("kArmOTrecord receive!!!\r\n");
+			if(para.OT_info.print_flag == 1)
+			{
+				if(para.parse.OvertimeDriveRecord.OTnumber != 0xFF)
+				{
+					para.OT_info.OTpageNum_print++;
+					para.packager.OTpageNum = para.OT_info.OTpageNum_print;
+					printf("para->parse.OvertimeDriveRecord.DriverLicenseNum:%s\r\n",para.parse.OvertimeDriveRecord.DriverLicenseNum);
+					printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para.parse.OvertimeDriveRecord.startTime.year, para.parse.OvertimeDriveRecord.startTime.month, para.parse.OvertimeDriveRecord.startTime.date, para.parse.OvertimeDriveRecord.startTime.h,para.parse.OvertimeDriveRecord.startTime.m,para.parse.OvertimeDriveRecord.startTime.s);
+					printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para.parse.OvertimeDriveRecord.endTime.year, para.parse.OvertimeDriveRecord.endTime.month, para.parse.OvertimeDriveRecord.endTime.date, para.parse.OvertimeDriveRecord.endTime.h,para.parse.OvertimeDriveRecord.endTime.m,para.parse.OvertimeDriveRecord.endTime.s);
+					sendMessage(kAcquireOTReport);
+				}
+				else para.OT_info.print_flag = 0;
+			}
 		}
 		case kTimeCorrect:
 		{
@@ -418,6 +431,11 @@ void Parse3399(u8* receiveBuf,u16 length)
 		}
 	}	
 }
+
+//void print_process()
+//{
+//	if()
+//}
 
 void Can_process()
 {
