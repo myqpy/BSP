@@ -66,7 +66,7 @@ void print_empty_line(void);
 void printChinese(void);
 void print_overTime_record_Header(MCU_Parameters *para);
 void print_overTime_record_Body(MCU_Parameters *para, u8 recordNum);
-
+void print_overTime_Autograph(void);
 //void printer_info_init(u8 *cmd, u8 *reg_num);
 
 //void printNonChinese(uint8_t* printString,uint16_t printStringLength);

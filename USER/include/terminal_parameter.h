@@ -212,10 +212,10 @@ typedef struct Struct_MCU_car_info
     uint8_t low_beam;//近光灯
     uint8_t hign_beam;//远光灯
     uint8_t isCharged; //外部供电or电池供电
-		uint8_t LoadingStatus;// 载货状态	3 满载 0 空载
-		uint8_t ICcardStatus;		// 人员登录 	1 登录 0 登出
-		uint32_t drive_time;
-	
+	uint8_t LoadingStatus;// 载货状态	3 满载 0 空载
+	uint8_t ICcardStatus;		// 人员登录 	1 登录 0 登出
+	uint32_t drive_time;
+
 } MCU_car_info;
 #pragma pack() // 恢复默认字节对齐
 
@@ -240,8 +240,9 @@ typedef struct Struct_MCU_ICcard_info
 #pragma pack(1) // 结构体1字节对齐	
 typedef struct Struct_MCU_OT_info
 {
-    uint8_t		OTpageNum_Show;		//超时驾驶记录编号
-
+    uint8_t	OTpageNum_Show;			//超时驾驶记录显示
+	uint8_t	OTpageNum_print;//超时驾驶记录打印
+	uint8_t	print_flag;
 } MCU_OT_info;
 #pragma pack() // 恢复默认字节对齐
 

@@ -133,7 +133,7 @@ void page0_process(MCU_Parameters *para)
 		if(confirmed_pressed >= 3000)
 		{
 			printf("printing!!!!!!!!! \r\n");
-			print_overTime_record_Header(para);
+			
 			para->OT_info.OTpageNum_print = 1;
 			para->packager.OTpageNum = para->OT_info.OTpageNum_print;
 			para->OT_info.print_flag = 1;

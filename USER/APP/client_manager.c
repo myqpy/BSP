@@ -32,10 +32,9 @@
 #include "OverTimeRecord.h"
 
 MCU_Parameters para;
-uint8_t powerOffFlag, OTFlag = 0, time=0,receiveFlag = 0, carInfoFlag=0;
+uint8_t powerOffFlag, OTFlag = 0, time=0,receiveFlag = 0, carInfoFlag=0, OTprintHeadFlag = 0;
 uint32_t powerOffTime=0;
 float volatageAD=0;
-
 uint8_t can_i=0;
 u8 canbuf[8];
 
@@ -144,7 +143,17 @@ void update_status(unsigned char statusbit, unsigned char value)
 
 int sendMessage(unsigned char msg_id)
 {
+	uint8_t packcount;
 	packagingMessage(msg_id);
+	if(McuPackage[0] == 0x04)
+	{
+		for(packcount = 0; packcount<RealBufferSendSize; packcount++)
+		{
+			printf("%02x ",McuPackage[packcount]);
+		}
+		printf("\r\n");
+	}	
+	
 	Usart_SendStr_length(USART3, (uint8_t*)&McuPackage, RealBufferSendSize);
 	return 0;
 }
@@ -291,6 +300,7 @@ void Reception3399(void)
 	{
 		USART3_RX_STA = USART3_RX_STA&0x7FFF;//获取到实际字符数量
 		Parse3399(USART3_RX_BUF, USART3_RX_STA);
+		memset(USART3_RX_BUF,0,USART3_RX_STA);
 		USART3_RX_STA = 0;
 	}
 }
@@ -299,11 +309,18 @@ void Parse3399(u8* receiveBuf,u16 length)
 {
 	if((receiveBuf[0] == 0xEE) && (receiveBuf[length-1] == 0xEE))
 	{
-		for(can_i = 0; can_i<length; can_i++)
+		
+		#ifdef __STM32_DEBUG
+		uint8_t rk_i;		
+		for(rk_i = 0; rk_i<length; rk_i++)
 		{
-			printf("%02x ",receiveBuf[can_i]);
+			printf("%02x ",receiveBuf[rk_i]);
 		}
 		printf("\r\n");
+		#endif
+		
+		
+		
 		
 		parsingMessage(receiveBuf, length);
 		
@@ -311,33 +328,27 @@ void Parse3399(u8* receiveBuf,u16 length)
 		{
 		case kARMGeneralResponse:
 		{
+			#ifdef __STM32_DEBUG
 			printf("kARMGeneralResponse receive!!!\r\n");
 			printf("para.parse.parser.response_id:0x%02x\r\n",para.parse.parser.response_id);
 			printf("para.parse.parser.response_flow_num:%d\r\n",para.parse.parser.response_flow_num);
-			printf("para.parse.parser.response_result:0x%02x\r\n",para.parse.parser.response_result);	
+			printf("para.parse.parser.response_result:0x%02x\r\n",para.parse.parser.response_result);
+			#endif
 		}
+		break;
 		case kArmOTrecord:
 		{
 			sendMessage(kMCUGeneralResponse);
 			printf("kArmOTrecord receive!!!\r\n");
-			if(para.OT_info.print_flag == 1)
-			{
-				if(para.parse.OvertimeDriveRecord.OTnumber != 0xFF)
-				{
-					para.OT_info.OTpageNum_print++;
-					para.packager.OTpageNum = para.OT_info.OTpageNum_print;
-					printf("para->parse.OvertimeDriveRecord.DriverLicenseNum:%s\r\n",para.parse.OvertimeDriveRecord.DriverLicenseNum);
-					printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para.parse.OvertimeDriveRecord.startTime.year, para.parse.OvertimeDriveRecord.startTime.month, para.parse.OvertimeDriveRecord.startTime.date, para.parse.OvertimeDriveRecord.startTime.h,para.parse.OvertimeDriveRecord.startTime.m,para.parse.OvertimeDriveRecord.startTime.s);
-					printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para.parse.OvertimeDriveRecord.endTime.year, para.parse.OvertimeDriveRecord.endTime.month, para.parse.OvertimeDriveRecord.endTime.date, para.parse.OvertimeDriveRecord.endTime.h,para.parse.OvertimeDriveRecord.endTime.m,para.parse.OvertimeDriveRecord.endTime.s);
-					sendMessage(kAcquireOTReport);
-				}
-				else para.OT_info.print_flag = 0;
-			}
+			OT_print_process();
 		}
+		break;
 		case kTimeCorrect:
 		{
 			sendMessage(kMCUGeneralResponse);
-			printf("TimeCorrect receive!!!\r\n");		
+			#ifdef __STM32_DEBUG
+			printf("TimeCorrect receive!!!\r\n");	
+			#endif			
 			if(receiveFlag == 0)
 			{
 				RTC_Init(para.parse.time_info.w_year, para.parse.time_info.w_month, para.parse.time_info.w_date, para.parse.time_info.hour, para.parse.time_info.min, para.parse.time_info.sec);	//RTC初始化
@@ -352,6 +363,7 @@ void Parse3399(u8* receiveBuf,u16 length)
 		case kSelfCheck:
 		{
 			sendMessage(kMCUGeneralResponse);
+			#ifdef __STM32_DEBUG
 			printf("SelfCheck receive!!!\r\n");
 //			printf("rk_info->SDStatus:%02x\r\n", para.parse.selfCheck_info.SDStatus);
 //			printf("rk_info->EC20Status:%02x\r\n",para.parse.selfCheck_info.EC20Status);
@@ -359,6 +371,7 @@ void Parse3399(u8* receiveBuf,u16 length)
 //			printf("rk_info->cameraStatus:%02x\r\n", para.parse.selfCheck_info.cameraStatus);
 //			printf("rk_info->velocityStatus:%02x\r\n", para.parse.selfCheck_info.velocityStatus);
 //			printf("rk_info->BDStatus:%02x\r\n", para.parse.selfCheck_info.BDStatus);
+			#endif
 		}
 		break;
 		
@@ -371,10 +384,12 @@ void Parse3399(u8* receiveBuf,u16 length)
 				TIM3_ETR(para.parse.rk_vehicle_info.pulseRatio/10,0);//脉冲捕获计数器，统计里程
 				carInfoFlag = 1;
 			}
+			#ifdef __STM32_DEBUG
 //			printf("para.parse.rk_vehicle_info.car_plate_num:%s\r\n", para.parse.rk_vehicle_info.car_plate_num);
 //			printf("para.parse.rk_vehicle_info.car_plate_color:0x%02x\r\n", para.parse.rk_vehicle_info.car_plate_color);
 //			printf("para.parse.rk_vehicle_info.speedLimit:0x%02x\r\n", para.parse.rk_vehicle_info.speedLimit);
 //			printf("para.parse.rk_vehicle_info.pulseRatio:%d\r\n", para.parse.rk_vehicle_info.pulseRatio);
+			#endif
 		}
 		break;
 		
@@ -387,8 +402,10 @@ void Parse3399(u8* receiveBuf,u16 length)
 		
 		case kLocation:
 		{		
-			sendMessage(kMCUGeneralResponse);			
+			sendMessage(kMCUGeneralResponse);	
+#ifdef __STM32_DEBUG			
 			printf("Location receive!!!\r\n");
+			
 //			// 报警标志 4B
 //			printf("alarm %d\r\n", para.parse.Location_info.alarm);
 //			// 状态位定义 4B
@@ -403,6 +420,7 @@ void Parse3399(u8* receiveBuf,u16 length)
 //			printf("speed %d\r\n",para.parse.Location_info.speed);
 //			// 方向 0-359,正北为0, 顺时针 2B
 //			printf("bearing %d\r\n",para.parse.Location_info.bearing);	
+#endif
 		}
 		break;
 		
@@ -416,15 +434,23 @@ void Parse3399(u8* receiveBuf,u16 length)
 		
 		case kZeroMileage:
 		{
+			#ifdef __STM32_DEBUG	
+			printf("ZeroMileage received!!!\r\n");
+			#endif
 			sendMessage(kMCUGeneralResponse);
 			if(para.parse.parser.zeroMileage == 1) para.mcu_car_info.mileage = 0;
 		}
+		break;
 
 		case kcheckCommand:
 		{
+			#ifdef __STM32_DEBUG	
+			printf("checkCommand received!!!\r\n");
+			#endif
 			sendMessage(kMCUGeneralResponse);
 			
 		}
+		break;
 		
 		default:
 			break;
@@ -432,10 +458,36 @@ void Parse3399(u8* receiveBuf,u16 length)
 	}	
 }
 
-//void print_process()
-//{
-//	if()
-//}
+void OT_print_process(void)
+{
+	if(para.OT_info.print_flag == 1)
+	{
+		printf("para->parse.OvertimeDriveRecord.OTnumber:0x%02x\r\n",para.parse.OvertimeDriveRecord.OTnumber);
+		if(para.parse.OvertimeDriveRecord.OTnumber != 0xFF)
+		{
+			if(OTprintHeadFlag == 0)
+			{
+				print_overTime_record_Header(&para);
+				OTprintHeadFlag = 1;
+				
+			}
+			print_overTime_record_Body(&para, para.packager.OTpageNum);
+			para.OT_info.OTpageNum_print++;
+			para.packager.OTpageNum = para.OT_info.OTpageNum_print;
+			
+//			printf("para->parse.OvertimeDriveRecord.DriverLicenseNum:%s\r\n",para.parse.OvertimeDriveRecord.DriverLicenseNum);
+//			printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para.parse.OvertimeDriveRecord.startTime.year, para.parse.OvertimeDriveRecord.startTime.month, para.parse.OvertimeDriveRecord.startTime.date, para.parse.OvertimeDriveRecord.startTime.h,para.parse.OvertimeDriveRecord.startTime.m,para.parse.OvertimeDriveRecord.startTime.s);
+//			printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para.parse.OvertimeDriveRecord.endTime.year, para.parse.OvertimeDriveRecord.endTime.month, para.parse.OvertimeDriveRecord.endTime.date, para.parse.OvertimeDriveRecord.endTime.h,para.parse.OvertimeDriveRecord.endTime.m,para.parse.OvertimeDriveRecord.endTime.s);
+			sendMessage(kAcquireOTReport);
+		}
+		else 
+		{
+			para.OT_info.print_flag = 0;
+			OTprintHeadFlag = 0;
+			print_overTime_Autograph();
+		}
+	}
+}
 
 void Can_process()
 {
