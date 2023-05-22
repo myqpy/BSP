@@ -23,5 +23,7 @@ extern 	uint32_t impulse_ratio;
 void TIM3_ETR(u16 arr,u16 psc);
 void TIM6_Int_Init(u16 arr,u16 psc);
 void Tim5_Int_Init(u16 arr,u16 psc);
+void Timer4_Init(u16 arr,u16 psc);
+
 
 #endif

@@ -15,7 +15,7 @@ int main(void)
 	bsp_init();
 	ICcardWrite(0); //1写 0不写
 	printf("start up!!!!\r\n");
-	
+		
 	while(1)
 	{
 		/*菜单处理*/
@@ -34,7 +34,10 @@ int main(void)
 
 		/*解析can总线数据*/
 		Can_process();
-		}
+		
+		/*0.2秒一次发送车辆状态信息*/
+		CarStatusReport();
+	}
 }
 
 

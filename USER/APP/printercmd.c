@@ -29,6 +29,7 @@ void print_empty_line()
 
 void print_overTime_record_Header(MCU_Parameters *para)
 {
+	printf(" \r\n print_overTime_record_Header \r\n\r\n");
 	print_empty_line();
 	memset(printer_cmd ,0,sizeof(printer_cmd));
 	memcpy(printer_cmd,"机动车号牌号码：", sizeof("机动车号牌号码："));
@@ -141,6 +142,7 @@ void print_overTime_record_Body(MCU_Parameters *para, u8 recordNum)
 void print_overTime_Autograph(void)
 {
 	print_empty_line();
+	printf("auto!!! \r\n");
 	memset(printer_cmd ,0,sizeof(printer_cmd));
 	sprintf(printer_cmd,"签名：        _____________________");
 	Printer_printString(printer_cmd);

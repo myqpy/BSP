@@ -10,6 +10,7 @@ void Reception3399(void);
 void Parse3399(u8* USART3_RX_BUF,u16 USART3_RX_STA);
 void Can_process(void);
 void OT_print_process(void);
+void CarStatusReport(void);
 
 
 //void statusReport(unsigned char statusBit, unsigned char statusValue);

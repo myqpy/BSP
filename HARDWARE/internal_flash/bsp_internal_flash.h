@@ -1,6 +1,6 @@
 #ifndef __INTERNAL_FLASH_H
 #define	__INTERNAL_FLASH_H
-
+#include "sys.h"
 #include "stm32f10x.h"
 
 /* STM32大容量产品每页大小2KByte，中、小容量产品每页大小1KByte */

@@ -519,7 +519,7 @@ void TIM5_IRQHandler(void)
             {
                 up_down_pressed++;
             }
-						else;
+			else;
         }
     }
 }

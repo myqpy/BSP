@@ -33,14 +33,17 @@
 
 MCU_Parameters para;
 uint8_t powerOffFlag, OTFlag = 0, time=0,receiveFlag = 0, carInfoFlag=0, OTprintHeadFlag = 0;
-uint32_t powerOffTime=0;
+uint32_t powerOffTime=0, timer4_1ms = 0;
 float volatageAD=0;
 uint8_t can_i=0;
-u8 canbuf[8];
+u8 canRecvBuf[8];
+u8 canSendBuf[8];
+
 
 void bsp_init(void)
 {
-	u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
+//	u8 mode = CAN_Mode_LoopBack;//CAN工作模式;CAN_Mode_Normal(0)：普通模式，CAN_Mode_LoopBack(1)：环回模式
+	u8 mode = 0;
 	delay_init();	    	 //延时函数初始化
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置中断优先级分组为组2：2位抢占优先级，2位响应优先级
 	InPut_Init();//外部开关量
@@ -48,6 +51,7 @@ void bsp_init(void)
 	USART3_Init(19200);//3399通信串口
 	TIM6_Int_Init(10000,7199);//脉冲计数器，一秒钟
 	Tim5_Int_Init(9, 7199);	//定时计数器，一毫秒
+	Timer4_Init(9,7199);//定时计数器，一毫秒
 	LcdInitial();//显示屏
 	GPIO_SetBits(GPIOC,GPIO_Pin_13); //开显示屏背光
 	AT24CXX_Init();//IIC初始化，读IC卡
@@ -57,6 +61,14 @@ void bsp_init(void)
 	RTC_Init(2000,1,1,0,0,0);	  			//RTC初始化
 	para.OT_info.OTpageNum_Show = 1;
 	para.mcu_car_info.isCharged = 1;
+	canSendBuf[0] = 0x0;
+	canSendBuf[1] = 0x1;
+	canSendBuf[2] = 0x2;
+	canSendBuf[3] = 0x3;
+	canSendBuf[4] = 0x4;
+	canSendBuf[5] = 0x5;
+	canSendBuf[6] = 0x6;
+	canSendBuf[7] = 0x7;
 }
 
 void Input_process(void)
@@ -143,16 +155,17 @@ void update_status(unsigned char statusbit, unsigned char value)
 
 int sendMessage(unsigned char msg_id)
 {
-	uint8_t packcount;
+	
 	packagingMessage(msg_id);
-	if(McuPackage[0] == 0x04)
+
+	#ifdef __STM32_DEBUG	
+	uint8_t packcount;
+	for(packcount = 0; packcount<RealBufferSendSize; packcount++)
 	{
-		for(packcount = 0; packcount<RealBufferSendSize; packcount++)
-		{
-			printf("%02x ",McuPackage[packcount]);
-		}
-		printf("\r\n");
-	}	
+		printf("%02x ",McuPackage[packcount]);
+	}
+	printf("\r\n");
+	#endif
 	
 	Usart_SendStr_length(USART3, (uint8_t*)&McuPackage, RealBufferSendSize);
 	return 0;
@@ -226,7 +239,7 @@ void actionEverySecond(void)
 			sendMessage(kMCUAlarmReport);
 		}
 
-		sendMessage(kMCUStatusReport);
+		Can_Send_Msg(canSendBuf,8);
 	}
 }
 
@@ -475,9 +488,9 @@ void OT_print_process(void)
 			para.OT_info.OTpageNum_print++;
 			para.packager.OTpageNum = para.OT_info.OTpageNum_print;
 			
-//			printf("para->parse.OvertimeDriveRecord.DriverLicenseNum:%s\r\n",para.parse.OvertimeDriveRecord.DriverLicenseNum);
-//			printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para.parse.OvertimeDriveRecord.startTime.year, para.parse.OvertimeDriveRecord.startTime.month, para.parse.OvertimeDriveRecord.startTime.date, para.parse.OvertimeDriveRecord.startTime.h,para.parse.OvertimeDriveRecord.startTime.m,para.parse.OvertimeDriveRecord.startTime.s);
-//			printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para.parse.OvertimeDriveRecord.endTime.year, para.parse.OvertimeDriveRecord.endTime.month, para.parse.OvertimeDriveRecord.endTime.date, para.parse.OvertimeDriveRecord.endTime.h,para.parse.OvertimeDriveRecord.endTime.m,para.parse.OvertimeDriveRecord.endTime.s);
+			printf("para->parse.OvertimeDriveRecord.DriverLicenseNum:%s\r\n",para.parse.OvertimeDriveRecord.DriverLicenseNum);
+			printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para.parse.OvertimeDriveRecord.startTime.year, para.parse.OvertimeDriveRecord.startTime.month, para.parse.OvertimeDriveRecord.startTime.date, para.parse.OvertimeDriveRecord.startTime.h,para.parse.OvertimeDriveRecord.startTime.m,para.parse.OvertimeDriveRecord.startTime.s);
+			printf("%02d-%02d-%02d,%02d:%02d:%02d\r\n",para.parse.OvertimeDriveRecord.endTime.year, para.parse.OvertimeDriveRecord.endTime.month, para.parse.OvertimeDriveRecord.endTime.date, para.parse.OvertimeDriveRecord.endTime.h,para.parse.OvertimeDriveRecord.endTime.m,para.parse.OvertimeDriveRecord.endTime.s);
 			sendMessage(kAcquireOTReport);
 		}
 		else 
@@ -489,13 +502,33 @@ void OT_print_process(void)
 	}
 }
 
+void CarStatusReport()
+{
+//	printf("%d\r\n",timer4_1ms);
+	if(timer4_1ms >= 200)
+	{
+		sendMessage(kMCUStatusReport);
+		timer4_1ms = 0;
+	}
+}
+
 void Can_process()
 {
-	if(Can_Receive_Msg(canbuf))//接收到有数据
+	if(Can_Receive_Msg(canRecvBuf))//接收到有数据
 	{
-		for(can_i = 0; can_i<sizeof(canbuf); can_i++)
+		for(can_i = 0; can_i<sizeof(canRecvBuf); can_i++)
 		{
-			printf("%c",canbuf[can_i]);
+			printf("%02x ",canRecvBuf[can_i]);
 		}
+		printf("\r\n");
 	}
+}
+
+void TIM4_IRQHandler(void)
+{ 		    	
+	if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源
+    {
+        TIM_ClearITPendingBit(TIM4, TIM_IT_Update);  //清除TIMx的中断待处理位:TIM 中断源
+        timer4_1ms ++;
+    }  
 }
