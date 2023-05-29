@@ -4,11 +4,12 @@
 #include "util.h"
 #include "usart3.h"
 
-unsigned short packagerCMD[4] = {
+unsigned short packagerCMD[5] = {
 	kMCUGeneralResponse,
 	kMCUStatusReport,
 	kMCUAlarmReport,
 	kAcquireOTReport,
+	kMCUCANReport,
 };
 uint8_t McuPackage[BUFFER_SIZE_SEND];
 unsigned int RealBufferSendSize=0;
@@ -114,6 +115,13 @@ int McuFrameBodyPackage(MCU_Parameters *para)
         result = handle_AcquireOTReport(para);
     }
     break;
+	
+	// 32上报CAN总线数据.
+	case kMCUCANReport:
+    {
+        result = handle_MCUCANReport(para);
+    }
+    break;
 
     default:
         break;
@@ -203,11 +211,30 @@ int handle_AcquireOTReport(MCU_Parameters *para)
 	return msg_len;
 }
 
+int handle_MCUCANReport(MCU_Parameters *para)
+{
+	union U32ToU8Array u32converter;
+	uint16_t i;
+	msg_len=0;
+	bufferSendPushByte(para->packager.CANnum);
+	msg_len++;
+	for(i=0;i<para->packager.CANnum;i++)
+	{
+		u32converter.u32val = para->CAN_info.CAN_id.value;
+		bufferSendPushBytes(u32converter.u8array,4);
+		msg_len+=4;
+		bufferSendPushBytes(para->CAN_info.CAN_data,8);
+		msg_len+=8;
+	}
+	printf("CAN report!!\r\n");
+	return msg_len;
+}
+
 int findMsgIDFromTerminalPackagerCMD(unsigned int msg_id)
 {
     int result = 0;
     int i;
-    for (i = 0; i < 4; ++i)
+    for (i = 0; i < 5; ++i)
     {
         if (packagerCMD[i] == msg_id)
         {

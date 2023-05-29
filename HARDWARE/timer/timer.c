@@ -13,8 +13,12 @@ void TIM3_ETR(u16 arr,u16 psc)
 	NVIC_InitTypeDef NVIC_InitStructure;
 	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);   
-
-
+	
+//	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_2;  
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;   
+//	GPIO_Init(GPIOD, &GPIO_InitStructure);
+//	GPIO_ResetBits(GPIOD,GPIO_Pin_2); 
+	
 	//初始化定时器 TIM3 
     TIM_TimeBaseStructure.TIM_Period = arr; //设定计数器自动重装值 
     TIM_TimeBaseStructure.TIM_Prescaler =psc;     //预分频器 
@@ -33,7 +37,7 @@ void TIM3_ETR(u16 arr,u16 psc)
     TIM_ETRClockMode2Config(TIM3,TIM_ExtTRGPSC_OFF, TIM_ExtTRGPolarity_Inverted,0x00);
     TIM_SetCounter(TIM3, 0);  
     TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE);//允许更新中断  
-	TIM_Cmd(TIM3,ENABLE );
+	TIM_Cmd(TIM3,ENABLE);
 }
 
 //定时器3中断服务程序

@@ -38,7 +38,7 @@ float volatageAD=0;
 uint8_t can_i=0;
 u8 canRecvBuf[8];
 u8 canSendBuf[8];
-
+extern CanRxMsg RxMessage;
 
 void bsp_init(void)
 {
@@ -46,7 +46,7 @@ void bsp_init(void)
 	u8 mode = 0;
 	delay_init();	    	 //延时函数初始化
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置中断优先级分组为组2：2位抢占优先级，2位响应优先级
-	InPut_Init();//外部开关量
+	myGPIO_Init();//GPIO配置
 	uart_init(115200);	 	//串口初始化为115200
 	USART3_Init(19200);//3399通信串口
 	TIM6_Int_Init(10000,7199);//脉冲计数器，一秒钟
@@ -60,7 +60,10 @@ void bsp_init(void)
 	Adc_Init();
 	RTC_Init(2000,1,1,0,0,0);	  			//RTC初始化
 	para.OT_info.OTpageNum_Show = 1;
+	
+	para.parse.parser.checkCommand = 0xE3;
 	para.mcu_car_info.isCharged = 1;
+	
 	canSendBuf[0] = 0x0;
 	canSendBuf[1] = 0x1;
 	canSendBuf[2] = 0x2;
@@ -94,6 +97,24 @@ void system_reboot(void)
 {
 	__set_FAULTMASK(1); 
 	NVIC_SystemReset();
+}
+
+int sendMessage(unsigned char msg_id)
+{
+	
+	packagingMessage(msg_id);
+
+	#ifdef __STM32_DEBUG	
+	uint8_t packcount;
+	for(packcount = 0; packcount<RealBufferSendSize; packcount++)
+	{
+		printf("%02x ",McuPackage[packcount]);
+	}
+	printf("\r\n");
+	#endif
+	
+	Usart_SendStr_length(USART3, (uint8_t*)&McuPackage, RealBufferSendSize);
+	return 0;
 }
 
 int packagingMessage(unsigned char msg_id)
@@ -153,23 +174,7 @@ void update_status(unsigned char statusbit, unsigned char value)
 }
 
 
-int sendMessage(unsigned char msg_id)
-{
-	
-	packagingMessage(msg_id);
 
-	#ifdef __STM32_DEBUG	
-	uint8_t packcount;
-	for(packcount = 0; packcount<RealBufferSendSize; packcount++)
-	{
-		printf("%02x ",McuPackage[packcount]);
-	}
-	printf("\r\n");
-	#endif
-	
-	Usart_SendStr_length(USART3, (uint8_t*)&McuPackage, RealBufferSendSize);
-	return 0;
-}
 
 void LowVoltage_process(float voltage)
 {
@@ -239,7 +244,10 @@ void actionEverySecond(void)
 			sendMessage(kMCUAlarmReport);
 		}
 
-		Can_Send_Msg(canSendBuf,8);
+//		Can_Send_Msg(canSendBuf,8);
+		
+		/******检定命令字*******/
+		checkCommand_process();
 	}
 }
 
@@ -293,17 +301,26 @@ void checkCommand_process(void)
 
 void checkCommand_E2_process(void)
 {
-	
+	return;
 }
 
 void checkCommand_E3_process(void)
 {
-	
+	switch(GPIO_ReadOutputDataBit(GPIOA,GPIO_Pin_15))
+	{
+		case 0:
+			GPIO_SetBits(GPIOA,GPIO_Pin_15);
+			break;
+		case 1:
+			GPIO_ResetBits(GPIOA,GPIO_Pin_15);
+			break;
+	}
+	return;
 }
 
 void checkCommand_E4_process(void)
 {
-	
+	return;
 }
 
 
@@ -504,7 +521,6 @@ void OT_print_process(void)
 
 void CarStatusReport()
 {
-//	printf("%d\r\n",timer4_1ms);
 	if(timer4_1ms >= 200)
 	{
 		sendMessage(kMCUStatusReport);
@@ -521,7 +537,31 @@ void Can_process()
 			printf("%02x ",canRecvBuf[can_i]);
 		}
 		printf("\r\n");
+	
+		para.CAN_info.CAN_id.value = 0;
+		if(RxMessage.IDE == CAN_Id_Standard) 
+		{
+			para.CAN_info.CAN_id.bit.CAN_IDE = 0;					//标准帧
+			para.CAN_info.CAN_id.bit.CAN_Channel = 0; 				//通道1
+			para.CAN_info.CAN_id.bit.CAN_dataCollect=0;				//原始数据
+			para.CAN_info.CAN_id.bit.CAN_stdID = RxMessage.StdId;	//id赋值
+		}
+
+		if(RxMessage.IDE == CAN_Id_Extended) 
+		{
+			para.CAN_info.CAN_id.bit.CAN_IDE = 1;					//扩展帧
+			para.CAN_info.CAN_id.bit.CAN_Channel = 0; 				//通道1
+			para.CAN_info.CAN_id.bit.CAN_dataCollect=0;				//原始数据
+			para.CAN_info.CAN_id.bit.CAN_stdID = RxMessage.StdId;	//id赋值
+			para.CAN_info.CAN_id.bit.CAN_extID = RxMessage.ExtId;	//id赋值（扩展）
+		}
+
+		memcpy(para.CAN_info.CAN_data,RxMessage.Data,8);
+
+		para.packager.CANnum = 1;
+		sendMessage(kMCUCANReport);
 	}
+	
 }
 
 void TIM4_IRQHandler(void)

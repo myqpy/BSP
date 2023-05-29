@@ -34,7 +34,7 @@
 #define KEY_menu_PRES	4			//KEY3  
 #define KEY_up_down_PRES 5			//key ↑ + ↓
 
-void InPut_Init(void);//IO初始化
+void myGPIO_Init(void);//IO初始化
 u8 GPIO_Scan(void);  	//按键扫描函数	
 u8 KEY_Scan(u8 mode);  	//按键扫描函数
 #endif

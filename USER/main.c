@@ -3,6 +3,7 @@
 #include "menu.h"
 #include "client_manager.h"
 
+uint8_t test;
 
 int main(void)
 {
@@ -15,7 +16,11 @@ int main(void)
 	bsp_init();
 	ICcardWrite(0); //1写 0不写
 	printf("start up!!!!\r\n");
-		
+	
+//	GPIO_SetBits(GPIOA,GPIO_Pin_15);
+//	test = GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_15);
+//	printf("PA15: %02x",test);
+	
 	while(1)
 	{
 		/*菜单处理*/

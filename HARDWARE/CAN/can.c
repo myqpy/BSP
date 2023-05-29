@@ -28,6 +28,10 @@
 //则波特率为:36M/((8+9+1)*4)=500Kbps
 //返回值:0,初始化OK;
 //    其他,初始化失败; 
+
+CanRxMsg RxMessage;
+CanTxMsg TxMessage;
+
 u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 { 
 //	GPIO_InitTypeDef 		GPIO_InitStructure; 
@@ -110,7 +114,6 @@ u8 Can_Send_Msg(u8* msg,u8 len)
 {	
 	u8 mbox;
 	u16 i=0;
-	CanTxMsg TxMessage;
 	TxMessage.StdId=0x12;			// 标准标识符 
 	TxMessage.ExtId=0x12;			// 设置扩展标示符 
 	TxMessage.IDE=CAN_Id_Standard; 	// 标准帧
@@ -131,11 +134,11 @@ u8 Can_Send_Msg(u8* msg,u8 len)
 u8 Can_Receive_Msg(u8 *buf)
 {		   		   
  	u32 i;
-	CanRxMsg RxMessage;
     if( CAN_MessagePending(CAN1,CAN_FIFO0)==0)return 0;		//没有接收到数据,直接退出 
     CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);//读取数据	
     for(i=0;i<8;i++)
     buf[i]=RxMessage.Data[i];  
+//	printf("RxMessage.StdId:%x \r\n",RxMessage.StdId);
 	return RxMessage.DLC;	
 }
 

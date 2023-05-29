@@ -15,4 +15,5 @@ int handle_GeneralResponse(MCU_Parameters *para);
 int handle_StatusReport(MCU_Parameters *para);
 int handle_AlarmReport(MCU_Parameters *para);
 int handle_AcquireOTReport(MCU_Parameters *para);
+int handle_MCUCANReport(MCU_Parameters *para);
 #endif // PACKAGER_H_

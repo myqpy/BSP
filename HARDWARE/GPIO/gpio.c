@@ -17,11 +17,16 @@
 								    
 //按键初始化函数
 
-void InPut_Init(void) //IO初始化
+void myGPIO_Init(void) //IO初始化
 { 
  	GPIO_InitTypeDef GPIO_InitStructure;
 
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);//使能端口复用时钟
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);//失能JTAG
+
+	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);//使能GPIOA时钟
+
 	//USART1_TX   GPIOA.9
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9; //PA.9
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -41,6 +46,13 @@ void InPut_Init(void) //IO初始化
 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;	//上拉输入
+	GPIO_Init(GPIOA, &GPIO_InitStructure);			//初始化IO
+	
+	
+	/*输出DB9_7秒脉冲*/
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;	//推挽输出
 	GPIO_Init(GPIOA, &GPIO_InitStructure);			//初始化IO
 	
     RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOB, ENABLE );	//使能GPIOB时钟
