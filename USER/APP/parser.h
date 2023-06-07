@@ -1,7 +1,7 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 #include "terminal_parameter.h"
-
+#define TerminalParserCMDNum 12
 
 int parsingMessage(const unsigned char *in, unsigned int in_len);
 int frameParse(MCU_Parameters *para);
@@ -15,6 +15,8 @@ int handle_kLocation(MCU_Parameters *para);// +3399下发位置上报.
 int handle_kOTwarning(MCU_Parameters *para);// +3399下发超时预警.
 int handle_kZeroMileage(MCU_Parameters *para);// +3399下发里程清零.
 int handle_kcheckCommand(MCU_Parameters *para);// +3399下发鉴定命令字.
+int handle_kWakeUp(MCU_Parameters *para);//+3399下发休眠唤醒模式数据.
+int handle_kAwakeOver(MCU_Parameters *para);//+3399下发休眠唤醒结束命令.
 
 
 #endif // PARSER_H_

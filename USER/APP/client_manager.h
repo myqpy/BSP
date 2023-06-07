@@ -2,6 +2,7 @@
 #include "terminal_parameter.h"
 
 #define FLASH_GPS_ADDR (uint32_t)0x08034800
+#define FLASH_WakeUp_ADDR (uint32_t)0x08035000
 //#define __STM32_DEBUG
 
 void bsp_init(void);
@@ -17,6 +18,7 @@ void CarStatusReport(void);
 void system_reboot(void);
 void GPS_FLASH_WRITE(void);
 void ICcardRead(void);
+void WakeUpRead(void);
 int packagingMessage(unsigned char msg_id);
 int findMsgIDFromTerminalPackagerCMD(unsigned int msg_id);
 void update_status(unsigned char statusbit, unsigned char value);
@@ -37,3 +39,5 @@ void LowBeam_process(void);
 uint8_t ACC_OFF_process(void);
 void actionEverySecond(void);
 void setThreeAndHalfHourFlag(void);
+void awakeOver_process(void);
+

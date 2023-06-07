@@ -32,7 +32,7 @@
 #include "OverTimeRecord.h"
 
 MCU_Parameters para;
-uint8_t powerOffFlag, OTFlag = 0, time=0,receiveFlag = 0, carInfoFlag=0, OTprintHeadFlag = 0;
+uint8_t powerOffFlag, OTFlag = 0, time=0,receiveFlag = 0, carInfoFlag=0, OTprintHeadFlag = 0, WakeupSendFlag = 0;
 uint32_t powerOffTime=0, timer4_1ms = 0;
 float volatageAD=0;
 uint8_t can_i=0;
@@ -244,6 +244,10 @@ void actionEverySecond(void)
 			sendMessage(kMCUAlarmReport);
 		}
 
+		if(WakeupSendFlag == 1)
+		{
+			sendMessage(kMCUWakeup);
+		}
 //		Can_Send_Msg(canSendBuf,8);
 		
 		/******¼ì¶¨ÃüÁî×Ö*******/
@@ -364,6 +368,11 @@ void Parse3399(u8* receiveBuf,u16 length)
 			printf("para.parse.parser.response_flow_num:%d\r\n",para.parse.parser.response_flow_num);
 			printf("para.parse.parser.response_result:0x%02x\r\n",para.parse.parser.response_result);
 			#endif
+			
+			if(para.parse.parser.response_id == kMCUWakeup)
+			{
+				WakeupSendFlag = 0;
+			}
 		}
 		break;
 		case kArmOTrecord:
@@ -482,6 +491,19 @@ void Parse3399(u8* receiveBuf,u16 length)
 		}
 		break;
 		
+		case kAwakeOver:
+		{
+			#ifdef __STM32_DEBUG	
+			printf("AwakeOver received!!!\r\n");
+			#endif
+			sendMessage(kMCUGeneralResponse);
+			para.parse.WakeUp.WakeUpMode_MCU.value = 0;
+			FLASH_WriteByte(FLASH_WakeUp_ADDR, (uint8_t*)&para.parse.WakeUp, sizeof(para.parse.WakeUp));
+			system_reboot();
+		}
+		break;
+		
+		
 		default:
 			break;
 		}
@@ -563,6 +585,25 @@ void Can_process()
 	}
 	
 }
+
+void WakeUpRead()
+{
+	Internal_ReadFlash(FLASH_WakeUp_ADDR, (uint8_t*)&para.parse.WakeUp, sizeof(para.parse.WakeUp));
+	if(para.parse.WakeUp.WakeUpMode_MCU.value!=0)
+	{
+		WakeupSendFlag = 1;
+	}
+}
+
+void awakeOver_process()
+{
+	if(para.parse.parser.awakeOver == 1)
+	{
+		para.parse.WakeUp.WakeUpMode_MCU.value = 0;
+		system_reboot();
+	}
+}
+
 
 void TIM4_IRQHandler(void)
 { 		    	

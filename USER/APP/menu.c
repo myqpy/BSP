@@ -47,53 +47,54 @@ void MENU_processing(MCU_Parameters *para)
 
     key_text=KEY_Scan(1);		//得到键值
 
-		/*********按键后重新计时*********/
+	/*********按键后重新计时*********/
     if(key_text!=0)time_1ms = 0;	
 
-		/*********当计时大于10秒时重置*********/
+	/*********当计时大于10秒时重置*********/
     if(time_1ms>=10000)
     {
-			TIM_Cmd(TIM5,DISABLE);
-			LCD_Clear();
-			/*********回到主界面*********/
-			page=0;
-			/*********重新计时*********/
-			time_1ms = 0;
-			confirmed_pressed  = 0;
-			up_down_pressed=0;
-			if(noOTflag!=0) noOTflag=0;
-			if(OTnumberNow!=0) OTnumberNow=0;
-			if(para->OT_info.OTpageNum_Show!=1) para->OT_info.OTpageNum_Show=1;
+		TIM_Cmd(TIM5,DISABLE);
+		LCD_Clear();
+		/*********回到主界面*********/
+		page=0;
+		/*********重新计时*********/
+		time_1ms = 0;
+		confirmed_pressed  = 0;
+		up_down_pressed=0;
+		para->OT_info.print_flag = 0;
+		if(noOTflag!=0) noOTflag=0;
+		if(OTnumberNow!=0) OTnumberNow=0;
+		if(para->OT_info.OTpageNum_Show!=1) para->OT_info.OTpageNum_Show=1;
     }
 
-		/*********主菜单*********/
+	/*********主菜单*********/
     if(page<=0)
     {
-			page0_process(para);	
-			showMainMenu(para);
-			if(page_status!=page) LCD_Clear();
+		page0_process(para);	
+		showMainMenu(para);
+		if(page_status!=page) LCD_Clear();
     }
 		
     else if(page==1)
     {		
-		/*********一级目录*********/
-			/*
-			车辆及驾驶员信息
-			超时驾驶记录
-			更改载货状态
-			*/
-			page1_process(para);	
+	/*********一级目录*********/
+		/*
+		车辆及驾驶员信息
+		超时驾驶记录
+		更改载货状态
+		*/
+		page1_process(para);	
     }
     else if(page==2)
     {
-		/*********二级目录*********/
-			page2_process(para);	
+	/*********二级目录*********/
+		page2_process(para);	
     }
 
     else if(page==3)
     {
-		/*********三级目录*********/
-			page3_process(para);	
+	/*********三级目录*********/
+		page3_process(para);	
     }
 }
 
@@ -117,7 +118,6 @@ void page0_process(MCU_Parameters *para)
 		}
 		break;
 	case KEY_menu_PRES:
-//		TIM_Cmd(TIM5,DISABLE);
 		TIM_Cmd(TIM5,ENABLE);
 		page=page+1;
 		if(page>=page_max) page=page_max;
@@ -125,7 +125,6 @@ void page0_process(MCU_Parameters *para)
 		LCD_Clear();
 		break;
 	case KEY_confirmed_PRES:
-//		TIM_Cmd(TIM5,DISABLE);
 		TIM_Cmd(TIM5,ENABLE);
 
 		printf("confirmed_pressed = %d \r\n",confirmed_pressed);

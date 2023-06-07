@@ -2,6 +2,7 @@
 #define PACKAGER_H_
 #include "terminal_parameter.h"
 #define BUFFER_SIZE_SEND 200 // buffer size 发送缓存大小
+#define packagerCMDNum 6
 
 
 extern uint8_t McuPackage[BUFFER_SIZE_SEND]; //发送缓存
@@ -16,4 +17,5 @@ int handle_StatusReport(MCU_Parameters *para);
 int handle_AlarmReport(MCU_Parameters *para);
 int handle_AcquireOTReport(MCU_Parameters *para);
 int handle_MCUCANReport(MCU_Parameters *para);
+int handle_MCUWakeup(MCU_Parameters *para);
 #endif // PACKAGER_H_

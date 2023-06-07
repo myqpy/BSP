@@ -8,7 +8,7 @@ u8 BufferReceive[200];
 unsigned int RealBufferReceiveSize=0;
 extern MCU_Parameters para;
 
-unsigned short kTerminalParserCMD[8] = {
+unsigned short kTerminalParserCMD[TerminalParserCMDNum] = {
 	kARMGeneralResponse,
 	kArmOTrecord,
 	kTimeCorrect,
@@ -17,6 +17,7 @@ unsigned short kTerminalParserCMD[8] = {
 	kForbidTime,
 	kLocation,
 	kOTwarning,
+	kWakeUp,
 };
 
 int parsingMessage(const unsigned char *in, unsigned int in_len)
@@ -123,6 +124,21 @@ int frameParse(MCU_Parameters *para)
 		result = handle_kcheckCommand(para);
 	}
 	break;
+	
+	// +3399下发休眠唤醒模式数据.
+	case kWakeUp:
+	{
+		result = handle_kWakeUp(para);
+	}
+	break;
+	
+	
+	case kAwakeOver:
+	{
+		result = handle_kAwakeOver(para);
+	}
+	break;
+	
 	
 	default:
 	break;
@@ -336,5 +352,77 @@ int handle_kZeroMileage(MCU_Parameters *para)// +3399下发里程清零.
 int handle_kcheckCommand(MCU_Parameters *para)// +3399下发鉴定命令字.
 {
 	para->parse.parser.checkCommand = BufferReceive[5];
+	return 0;
+}
+
+int handle_kWakeUp(MCU_Parameters *para)//+3399下发休眠唤醒模式数据.
+{
+	unsigned char pos = 5;
+//	para->parse.WakeUp.WakeUpMode.value = BufferReceive[pos];
+	pos++;
+	
+	para->parse.WakeUp.WakeUpConditonType.value = BufferReceive[pos];
+	pos++;
+	
+	para->parse.WakeUp.setWakeUpDay.value = BufferReceive[pos];
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.timeWakeUpFlag.value = BufferReceive[pos];
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time1WakeUpTime.HH = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time1WakeUpTime.MM = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time1ShutDownTime.HH = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time1ShutDownTime.MM = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time2WakeUpTime.HH = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time2WakeUpTime.MM = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time2ShutDownTime.HH = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time2ShutDownTime.MM = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time3WakeUpTime.HH = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time3WakeUpTime.MM = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time3ShutDownTime.HH = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time3ShutDownTime.MM = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time4WakeUpTime.HH = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time4WakeUpTime.MM = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time4ShutDownTime.HH = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	para->parse.WakeUp.WakeUpDay.time4ShutDownTime.MM = BcdToHex(BufferReceive[pos]);
+	pos++;
+	
+	return pos;
+}
+
+int handle_kAwakeOver(MCU_Parameters *para)//+3399下发休眠唤醒结束命令.
+{
+	para->parse.parser.awakeOver = BufferReceive[5];
 	return 0;
 }

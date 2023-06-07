@@ -2,8 +2,11 @@
 #include "usart.h"
 #include "menu.h"
 #include "client_manager.h"
+//#include <string.h>
+//#include "bsp_internal_flash.h"   
 
-uint8_t test;
+
+//uint8_t test;
 
 int main(void)
 {
@@ -16,10 +19,12 @@ int main(void)
 	bsp_init();
 	ICcardWrite(0); //1写 0不写
 	printf("start up!!!!\r\n");
-	
+	WakeUpRead();	//是否为意外唤醒检查
 //	GPIO_SetBits(GPIOA,GPIO_Pin_15);
 //	test = GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_15);
 //	printf("PA15: %02x",test);
+//	memset((uint8_t*)&para.parse.WakeUp,0,sizeof(para.parse.WakeUp));
+//	FLASH_WriteByte(FLASH_WakeUp_ADDR, (uint8_t*)&para.parse.WakeUp, sizeof(para.parse.WakeUp));
 	
 	while(1)
 	{
@@ -42,6 +47,9 @@ int main(void)
 		
 		/*0.2秒一次发送车辆状态信息*/
 		CarStatusReport();
+		
+		/*处理结束唤醒*/
+		awakeOver_process();
 	}
 }
 

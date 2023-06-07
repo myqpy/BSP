@@ -4,12 +4,13 @@
 #include "util.h"
 #include "usart3.h"
 
-unsigned short packagerCMD[5] = {
+unsigned short packagerCMD[packagerCMDNum] = {
 	kMCUGeneralResponse,
 	kMCUStatusReport,
 	kMCUAlarmReport,
 	kAcquireOTReport,
 	kMCUCANReport,
+	kMCUWakeup,
 };
 uint8_t McuPackage[BUFFER_SIZE_SEND];
 unsigned int RealBufferSendSize=0;
@@ -122,6 +123,13 @@ int McuFrameBodyPackage(MCU_Parameters *para)
         result = handle_MCUCANReport(para);
     }
     break;
+	
+	// 32上报唤醒.
+	case kMCUWakeup:
+    {
+        result = handle_MCUWakeup(para);
+    }
+    break;
 
     default:
         break;
@@ -230,11 +238,64 @@ int handle_MCUCANReport(MCU_Parameters *para)
 	return msg_len;
 }
 
+int handle_MCUWakeup(MCU_Parameters *para)
+{
+	union U16ToU8Array u16converter;
+	msg_len=0;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpMode.value);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpConditonType.value);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.setWakeUpDay.value);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.timeWakeUpFlag.value);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time1WakeUpTime.HH);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time1WakeUpTime.MM);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time1ShutDownTime.HH);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time1ShutDownTime.MM);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time2WakeUpTime.HH);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time2WakeUpTime.MM);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time2ShutDownTime.HH);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time2ShutDownTime.MM);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time3WakeUpTime.HH);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time3WakeUpTime.MM);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time3ShutDownTime.HH);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time3ShutDownTime.MM);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time4WakeUpTime.HH);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time4WakeUpTime.MM);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time4ShutDownTime.HH);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpDay.time4ShutDownTime.MM);
+	msg_len++;
+	bufferSendPushByte(para->parse.WakeUp.WakeUpMode_MCU.value);
+	msg_len++;
+	u16converter.u16val = para->parse.WakeUp.WakeUpDuration;
+	bufferSendPushBytes(u16converter.u8array,2);
+	msg_len+=2;
+	
+	return msg_len;
+}
+
 int findMsgIDFromTerminalPackagerCMD(unsigned int msg_id)
 {
     int result = 0;
     int i;
-    for (i = 0; i < 5; ++i)
+    for (i = 0; i < packagerCMDNum; ++i)
     {
         if (packagerCMD[i] == msg_id)
         {

@@ -19,6 +19,7 @@ enum packagerCMD
 	kMCUAlarmReport,
 	kAcquireOTReport,
 	kMCUCANReport,
+	kMCUWakeup,
 };
 
 enum parserCMD
@@ -33,6 +34,8 @@ enum parserCMD
 	kOTwarning,
 	kZeroMileage,
 	kcheckCommand,
+	kWakeUp,
+	kAwakeOver,
 };
 
 enum EN_StatusBit
@@ -165,6 +168,92 @@ typedef struct Struct_ARM_Location_info
     uint8_t time[13];
 } ARM_Location_info;
 
+/*休眠唤醒模式*/
+union UN_WakeUpMode
+{
+	struct
+	{
+		uint8_t conditionWakeUp:1;
+		uint8_t timeWakeUp:1;
+		uint8_t	manualWakeUp:1;
+	} bit;
+	uint8_t value;
+};
+
+/*唤醒条件类型*/
+union UN_WakeUpConditonType
+{
+	struct
+	{
+		uint8_t sosWakeUp:1;
+		uint8_t CollisionRollover:1;
+		uint8_t	doorOpen:1;
+	} bit;
+	uint8_t value;
+};
+
+/*定时唤醒日设置*/
+union UN_setWakeUpDay
+{
+	struct
+	{
+		uint8_t Mon:1;
+		uint8_t Tue:1;
+		uint8_t	Wed:1;
+		uint8_t Thurs:1;
+		uint8_t Fri:1;
+		uint8_t	Sat:1;
+		uint8_t	Sun:1;
+	} bit;
+	uint8_t value;
+};
+
+/*定时唤醒启用标志*/
+union UN_timeWakeUpFlag
+{
+	struct
+	{
+		uint8_t Time1:1;
+		uint8_t Time2:1;
+		uint8_t	Time3:1;
+		uint8_t Time4:1;
+	} bit;
+	uint8_t value;
+};
+
+/*时间段唤醒*/
+typedef struct Str_WakeUpInterval
+{
+	uint8_t HH;
+	uint8_t MM;
+}WakeUpInterval;
+	
+#pragma pack(push)
+#pragma pack(1) // 结构体1字节对齐	
+/*终端休眠唤醒模式设置数据格式*/
+typedef struct Struct_ARM_WakeUp
+{
+	union UN_WakeUpMode 		WakeUpMode;
+	union UN_WakeUpConditonType	WakeUpConditonType;
+	union UN_setWakeUpDay		setWakeUpDay;
+	struct str_WakeUpDay
+	{
+		union UN_timeWakeUpFlag timeWakeUpFlag;
+		WakeUpInterval	time1WakeUpTime;
+		WakeUpInterval	time1ShutDownTime;
+		WakeUpInterval	time2WakeUpTime;
+		WakeUpInterval	time2ShutDownTime;
+		WakeUpInterval	time3WakeUpTime;
+		WakeUpInterval	time3ShutDownTime;
+		WakeUpInterval	time4WakeUpTime;
+		WakeUpInterval	time4ShutDownTime;
+	}WakeUpDay;
+	union UN_WakeUpMode 		WakeUpMode_MCU;
+	uint16_t WakeUpDuration;
+} ARM_WakeUp;
+
+#pragma pack() // 恢复默认字节对齐
+
 
 #pragma pack(push)
 #pragma pack(1) // 结构体1字节对齐	
@@ -196,6 +285,7 @@ typedef struct Struct_MCU_Parser
 	uint8_t 	OTwarning;			//超时预警
 	uint8_t		zeroMileage;		//里程清零
 	uint8_t		checkCommand;		//检定命令字
+	uint8_t		awakeOver;			//唤醒中止
 } MCU_Parser;
 #pragma pack() // 恢复默认字节对齐
 
@@ -274,6 +364,11 @@ typedef struct Struct_MCU_CAN
 #pragma pack() // 恢复默认字节对齐
 
 
+
+
+
+
+
 #pragma pack(push)
 #pragma pack(1) // 结构体1字节对齐	
 typedef struct Struct_MCU_Parameters
@@ -292,6 +387,7 @@ typedef struct Struct_MCU_Parameters
 		ARM_Location_info		Location_info;
 		MCU_Parser				parser;
 		bcd_timeinfo			bcdtime;
+		ARM_WakeUp				WakeUp;
     } parse;
 
 } MCU_Parameters;
