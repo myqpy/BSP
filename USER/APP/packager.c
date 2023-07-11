@@ -222,10 +222,12 @@ int handle_AcquireOTReport(MCU_Parameters *para)
 int handle_MCUCANReport(MCU_Parameters *para)
 {
 	union U32ToU8Array u32converter;
+	union U16ToU8Array u16converter;
 	uint16_t i;
 	msg_len=0;
-	bufferSendPushByte(para->packager.CANnum);
-	msg_len++;
+	u16converter.u16val = para->packager.CANnum;
+	bufferSendPushBytes(u16converter.u8array,2);
+	msg_len+=2;
 	for(i=0;i<para->packager.CANnum;i++)
 	{
 		u32converter.u32val = para->CAN_info.CAN_id.value;

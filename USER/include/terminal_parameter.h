@@ -344,10 +344,10 @@ union UN_CAN_ID
   {
 	  //CAN总线ID
 	  unsigned int 	CAN_stdID:11;		//CAN总线标准帧ID
-	  unsigned int 	CAN_extID:11;		//CAN总线扩展帧ID
-	  unsigned char	CAN_dataCollect:1;	//数据采集格式
-	  unsigned char	CAN_IDE:1;			//帧格式
-	  unsigned char CAN_Channel:1;		//通道号
+	  unsigned int 	CAN_extID:18;		//CAN总线扩展帧ID
+	  unsigned int	CAN_dataCollect:1;	//数据采集格式
+	  unsigned int	CAN_IDE:1;			//帧格式
+	  unsigned int 	CAN_Channel:1;		//通道号
   } bit;
   unsigned int value;
 };
